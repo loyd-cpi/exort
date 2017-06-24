@@ -1,0 +1,16 @@
+{
+  "dependencies": {
+    "bytes": "registry:dt/bytes#2.4.0+20161128184045",
+    "dotenv": "registry:dt/dotenv#2.0.0+20170113195346",
+    "express": "registry:npm/express#4.14.0+20170217205433",
+    "formidable": "registry:dt/formidable#1.0.16+20160510010627",
+    "lodash": "registry:npm/lodash#4.0.0+20161015015725",
+    "morgan": "registry:dt/morgan#1.7.0+20160726064905",
+    "nunjucks": "registry:dt/nunjucks#0.0.0+20160803221903",
+    "serve-favicon": "registry:dt/serve-favicon#2.2.0+20161128184045"
+  },
+  "globalDependencies": {
+    "express-session": "registry:dt/express-session#0.0.0+20161119044246",
+    "node": "registry:dt/node#7.0.0+20170322231424"
+  }
+}

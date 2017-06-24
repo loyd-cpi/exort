@@ -1,0 +1,36 @@
+{
+  "name": "express-gears",
+  "version": "1.0.0",
+  "description": "ExpressJS extensions",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "postinstall": "typings install"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tontonskie/express-gears.git"
+  },
+  "keywords": [
+    "expressjs"
+  ],
+  "author": "tontonskie",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tontonskie/express-gears/issues"
+  },
+  "homepage": "https://github.com/tontonskie/express-gears#readme",
+  "dependencies": {
+    "bytes": "^2.5.0",
+    "dotenv": "^4.0.0",
+    "express": "^4.15.3",
+    "express-session": "^1.15.3",
+    "formidable": "^1.1.1",
+    "lodash": "^4.17.4",
+    "morgan": "^1.8.2",
+    "nunjucks": "^3.0.1",
+    "serve-favicon": "^2.4.3",
+    "typeorm": "0.1.0-alpha.19",
+    "typings": "^2.1.1"
+  }
+}
