@@ -1,4 +1,4 @@
-import { Config, checkAppConfig } from './boot';
+import { checkAppConfig, BaseApplication } from './app';
 import * as favicon from 'serve-favicon';
 import * as express from 'express';
 import * as pathlib from 'path';
@@ -10,11 +10,10 @@ import { _ } from './misc';
  * @param  {string} rootDir
  * @return {void}
  */
-export function installAssets<T extends express.Server>(app: T, rootDir: string): void {
+export function installAssets<T extends BaseApplication>(app: T, rootDir: string): void {
   checkAppConfig(app);
 
-  let config: Config = app.locals.config;
-  let assetsConf = config.get('assets');
+  let assetsConf = app.locals.config.get('assets');
   if (!assetsConf) return;
 
   rootDir = _.trimEnd(rootDir, '/');
@@ -39,7 +38,7 @@ export function installAssets<T extends express.Server>(app: T, rootDir: string)
  * @param  {string} faviconPath
  * @return {void}
  */
-export function installFavicon<T extends express.Server>(app: T, faviconPath: string): void {
+export function installFavicon<T extends BaseApplication>(app: T, faviconPath: string): void {
   checkAppConfig(app);
   app.use(favicon(faviconPath, app.locals.config.get('assets.favicon')));
 }

@@ -1,7 +1,6 @@
-import { Config, checkAppConfig } from './boot';
+import { checkAppConfig, BaseApplication } from './app';
 import { KeyValuePair } from './misc';
 import * as nunjucks from 'nunjucks';
-import * as express from 'express';
 import * as pathlib from 'path';
 import * as fs from 'fs';
 
@@ -53,16 +52,14 @@ export interface ViewConfig extends nunjucks.ConfigureOptions {}
 
 /**
  * Set express application view engine
- * @param  {express.Server} app
- * @param  {ViewConfig} config
+ * @param  {T} app
+ * @param  {string} viewsDir
  * @return {void}
  */
-export function installViewEngine<T extends express.Server>(app: T, viewsDir: string): void {
+export function installViewEngine<T extends BaseApplication>(app: T, viewsDir: string): void {
   checkAppConfig(app);
 
-  let config: Config = app.locals.config;
-  let env = new nunjucks.Environment(new TemplateLoader(viewsDir) as any, config.get('view'));
-
+  let env = new nunjucks.Environment(new TemplateLoader(viewsDir) as any, app.locals.config.get('view'));
   app.locals.view = env;
   app.set('views', viewsDir);
   app.engine('html', (filePath: string, options: KeyValuePair<string>, callback: Function) => {

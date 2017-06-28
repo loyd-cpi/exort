@@ -1,5 +1,4 @@
-import { checkAppConfig } from './boot';
-import * as express from 'express';
+import { checkAppConfig, BaseApplication } from './app';
 
 /**
  * Setup routes
@@ -7,7 +6,7 @@ import * as express from 'express';
  * @param  {string} routesFile
  * @return {void}
  */
-export function installRoutes<T extends express.Server>(app: T, routesFile: string): void {
+export function installRoutes<T extends BaseApplication>(app: T, routesFile: string): void {
   checkAppConfig(app);
 
   let routes = require(routesFile);

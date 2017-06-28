@@ -1,7 +1,8 @@
 import 'reflect-metadata';
 
+export * from './app';
 export * from './assets';
-export * from './boot';
+export * from './command';
 export * from './environment';
 export * from './filesystem';
 export * from './logger';

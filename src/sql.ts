@@ -1,19 +1,17 @@
-import { Config, checkAppConfig, AppProvider } from './boot';
-import { createConnection } from 'typeorm';
+import { checkAppConfig, AppProvider, BaseApplication } from './app';
+import { createConnection, getConnectionManager } from 'typeorm';
 import { KeyValuePair, _ } from './misc';
-import * as express from 'express';
 
 /**
  * Provide sql connection
  * @param  {string | KeyValuePair<string | string[]>} modelsDir
  * @return {AppProvider<T>}
  */
-export function provideSQLConnection<T extends express.Server>(modelsDir: string | KeyValuePair<string | string[]>): AppProvider<T> {
+export function provideSQLConnection<T extends BaseApplication>(modelsDir: string | KeyValuePair<string | string[]>): AppProvider<T> {
   return async function (app: T): Promise<void> {
     checkAppConfig(app);
 
-    let config: Config = app.locals.config;
-    let dbConf = config.get('db');
+    let dbConf = app.locals.config.get('db');
     for (let connectionName of dbConf.auto) {
 
       let conn = _.clone(dbConf.connections[connectionName]);
@@ -41,4 +39,13 @@ export function provideSQLConnection<T extends express.Server>(modelsDir: string
       await createConnection(conn);
     }
   };
+}
+
+/**
+ * Sync schema of the connection
+ * @param  {string} connectionName
+ * @return {Promise<void>}
+ */
+export async function syncSchema(connectionName?: string): Promise<void> {
+  return getConnectionManager().get(connectionName).syncSchema();
 }

@@ -1,5 +1,5 @@
+import { checkAppConfig, BaseApplication } from './app';
 import { Service, ServiceContext } from './service';
-import { Config, checkAppConfig } from './boot';
 import { KeyValuePair, Store } from './misc';
 import * as formidable from 'formidable';
 import { File } from './filesystem';
@@ -54,11 +54,10 @@ export interface Request extends express.Request {
  * @param  {T} app
  * @return {void}
  */
-export function installBodyParser<T extends express.Server>(app: T, rootDir: string): void {
+export function installBodyParser<T extends BaseApplication>(app: T, rootDir: string): void {
   checkAppConfig(app);
 
-  let config: Config = app.locals.config;
-  let requestConf = config.get('request') || {};
+  let requestConf = app.locals.config.get('request') || {};
   requestConf.encoding = requestConf.encoding || 'utf-8';
   requestConf.postMaxSize = requestConf.postMaxSize || '2MB';
   requestConf.uploadMaxSize = requestConf.uploadMaxSize || '5MB';

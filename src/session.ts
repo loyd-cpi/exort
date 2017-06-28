@@ -1,4 +1,4 @@
-import { Config, checkAppConfig } from './boot';
+import { checkAppConfig, BaseApplication } from './app';
 import * as expressSession from 'express-session';
 import { Request } from './request';
 import * as express from 'express';
@@ -226,15 +226,14 @@ export class Session implements Express.Session {
  * @param  {T} app
  * @return {void}
  */
-export function installSessionStorage<T extends express.Server>(app: T): void {
+export function installSessionStorage<T extends BaseApplication>(app: T): void {
   checkAppConfig(app);
 
-  let config: Config = app.locals.config;
-  let sessionConf = config.get('session');
+  let sessionConf = app.locals.config.get('session');
   if (!sessionConf) return;
 
   if (!sessionConf.secret) {
-    sessionConf.secret = config.get('app.key');
+    sessionConf.secret = app.locals.config.get('app.key');
   }
 
   let driver = 'memory';

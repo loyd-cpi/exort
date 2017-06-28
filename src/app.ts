@@ -1,8 +1,25 @@
+import { BaseApplication } from './app'
 import { Response } from './response';
+import * as nunjucks from 'nunjucks';
 import { Request } from './request';
 import * as express from 'express';
 import { Store, _ } from './misc';
 import * as pathlib from 'path';
+
+/**
+ * ApplicationProps interface
+ */
+export interface ApplicationProps {
+  config: Config;
+  view: nunjucks.Environment;
+}
+
+/**
+ * BaseApplication interface
+ */
+export interface BaseApplication extends express.Server {
+  locals: ApplicationProps;
+}
 
 /**
  * Config class
@@ -32,9 +49,13 @@ export class Config extends Store {
  * @param  {string[]} files
  * @return {void}
  */
-export function configure<T extends express.Server>(app: T, files: string[]): void {
-  let config = app.locals.config = Config.load(files);
-  app.set('env', config.get('app.env'));
+export function configure<T extends BaseApplication>(app: T, files: string[]): void {
+  if (app.locals.config instanceof Config) {
+    throw new Error('configure(app) is already called');
+  }
+
+  app.locals.config = Config.load(files);
+  app.set('env', app.locals.config.get('app.env'));
 
   app.disable('x-powered-by');
   app.disable('strict routing');
@@ -53,7 +74,7 @@ export function configure<T extends express.Server>(app: T, files: string[]): vo
  * @param  {T} app
  * @return {void}
  */
-export function checkAppConfig<T extends express.Server>(app: T): void {
+export function checkAppConfig<T extends BaseApplication>(app: T): void {
   if (!(app.locals.config instanceof Config)) {
     throw new Error('Should call configure(app) first');
   }
@@ -62,7 +83,7 @@ export function checkAppConfig<T extends express.Server>(app: T): void {
 /**
  * AppProvider interface
  */
-export interface AppProvider<T extends express.Server> {
+export interface AppProvider<T extends BaseApplication> {
   (app: T): Promise<void>;
 }
 
@@ -72,7 +93,7 @@ export interface AppProvider<T extends express.Server> {
  * @param  {AppProvider<U>} providers
  * @return {Promise<void>}
  */
-export async function boot<U extends express.Server>(app: U, providers: AppProvider<U>[]): Promise<void> {
+export async function boot<U extends BaseApplication>(app: U, providers: AppProvider<U>[]): Promise<void> {
   for (let provider of providers) {
     await provider(app);
   }

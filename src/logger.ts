@@ -1,4 +1,4 @@
-import { checkAppConfig, Config } from './boot';
+import { checkAppConfig, BaseApplication } from './app';
 import * as express from 'express';
 import * as morgan from 'morgan';
 import { _ } from './misc';
@@ -8,20 +8,19 @@ import { _ } from './misc';
  * @param  {T} app
  * @return {void}
  */
-export function installLogger<T extends express.Server>(app: T): void {
+export function installLogger<T extends BaseApplication>(app: T): void {
   checkAppConfig(app);
 
-  let config: Config = app.locals.config;
   let format = 'short';
   let options: any = {};
 
-  let logConf = config.get('logger');
+  let logConf = app.locals.config.get('logger');
   if (logConf) {
 
     if (logConf.includeAssets === false) {
 
       let prefixes: string[] = [];
-      for (let conf of config.get('assets')) {
+      for (let conf of app.locals.config.get('assets')) {
         if (conf.prefix) prefixes.push(`/${_.trim(conf.prefix, '/')}`);
       }
 

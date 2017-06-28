@@ -1,5 +1,5 @@
 import { getConnectionManager, Connection } from 'typeorm';
-import { checkAppConfig } from './boot';
+import { checkAppConfig, BaseApplication } from './app';
 import { Response } from './response';
 import { Request } from './request';
 import * as express from 'express';
@@ -53,7 +53,7 @@ export function Inject<U extends Service>(resolver: (type?: any) => new(...args:
  * @param  {T} app
  * @return {void}
  */
-export function installServices<T extends express.Server>(app: T): void {
+export function installServices<T extends BaseApplication>(app: T): void {
   checkAppConfig(app);
   app.use((req: Request, res: Response, next: express.NextFunction) => {
     if (!(req.serviceContext instanceof ServiceContext) || typeof req.make != 'function') {
