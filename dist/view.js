@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const boot_1 = require("./boot");
+const app_1 = require("./app");
 const nunjucks = require("nunjucks");
 const pathlib = require("path");
 const fs = require("fs");
@@ -43,14 +43,13 @@ class TemplateLoader extends nunjucks.Loader {
 exports.TemplateLoader = TemplateLoader;
 /**
  * Set express application view engine
- * @param  {express.Server} app
- * @param  {ViewConfig} config
+ * @param  {T} app
+ * @param  {string} viewsDir
  * @return {void}
  */
 function installViewEngine(app, viewsDir) {
-    boot_1.checkAppConfig(app);
-    let config = app.locals.config;
-    let env = new nunjucks.Environment(new TemplateLoader(viewsDir), config.get('view'));
+    app_1.checkAppConfig(app);
+    let env = new nunjucks.Environment(new TemplateLoader(viewsDir), app.locals.config.get('view'));
     app.locals.view = env;
     app.set('views', viewsDir);
     app.engine('html', (filePath, options, callback) => {

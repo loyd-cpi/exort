@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const boot_1 = require("./boot");
+const app_1 = require("./app");
 /**
  * Setup routes
  * @param  {express.Server} app
@@ -8,7 +8,7 @@ const boot_1 = require("./boot");
  * @return {void}
  */
 function installRoutes(app, routesFile) {
-    boot_1.checkAppConfig(app);
+    app_1.checkAppConfig(app);
     let routes = require(routesFile);
     if (typeof routes != 'object') {
         throw new Error('Invalid routes file');

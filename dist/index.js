@@ -4,8 +4,9 @@ function __export(m) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 require("reflect-metadata");
+__export(require("./app"));
 __export(require("./assets"));
-__export(require("./boot"));
+__export(require("./command"));
 __export(require("./environment"));
 __export(require("./filesystem"));
 __export(require("./logger"));

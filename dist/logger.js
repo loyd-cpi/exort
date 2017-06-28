@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const boot_1 = require("./boot");
+const app_1 = require("./app");
 const morgan = require("morgan");
 const misc_1 = require("./misc");
 /**
@@ -9,15 +9,14 @@ const misc_1 = require("./misc");
  * @return {void}
  */
 function installLogger(app) {
-    boot_1.checkAppConfig(app);
-    let config = app.locals.config;
+    app_1.checkAppConfig(app);
     let format = 'short';
     let options = {};
-    let logConf = config.get('logger');
+    let logConf = app.locals.config.get('logger');
     if (logConf) {
         if (logConf.includeAssets === false) {
             let prefixes = [];
-            for (let conf of config.get('assets')) {
+            for (let conf of app.locals.config.get('assets')) {
                 if (conf.prefix)
                     prefixes.push(`/${misc_1._.trim(conf.prefix, '/')}`);
             }

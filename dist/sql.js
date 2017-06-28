@@ -8,7 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const boot_1 = require("./boot");
+const app_1 = require("./app");
 const typeorm_1 = require("typeorm");
 const misc_1 = require("./misc");
 /**
@@ -19,9 +19,8 @@ const misc_1 = require("./misc");
 function provideSQLConnection(modelsDir) {
     return function (app) {
         return __awaiter(this, void 0, void 0, function* () {
-            boot_1.checkAppConfig(app);
-            let config = app.locals.config;
-            let dbConf = config.get('db');
+            app_1.checkAppConfig(app);
+            let dbConf = app.locals.config.get('db');
             for (let connectionName of dbConf.auto) {
                 let conn = misc_1._.clone(dbConf.connections[connectionName]);
                 conn.name = connectionName;
@@ -50,4 +49,15 @@ function provideSQLConnection(modelsDir) {
     };
 }
 exports.provideSQLConnection = provideSQLConnection;
+/**
+ * Sync schema of the connection
+ * @param  {string} connectionName
+ * @return {Promise<void>}
+ */
+function syncSchema(connectionName) {
+    return __awaiter(this, void 0, void 0, function* () {
+        return typeorm_1.getConnectionManager().get(connectionName).syncSchema();
+    });
+}
+exports.syncSchema = syncSchema;
 //# sourceMappingURL=sql.js.map

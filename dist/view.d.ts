@@ -1,5 +1,5 @@
+import { BaseApplication } from './app';
 import * as nunjucks from 'nunjucks';
-import * as express from 'express';
 /**
  * TemplateLoader class
  */
@@ -29,8 +29,8 @@ export interface ViewConfig extends nunjucks.ConfigureOptions {
 }
 /**
  * Set express application view engine
- * @param  {express.Server} app
- * @param  {ViewConfig} config
+ * @param  {T} app
+ * @param  {string} viewsDir
  * @return {void}
  */
-export declare function installViewEngine<T extends express.Server>(app: T, viewsDir: string): void;
+export declare function installViewEngine<T extends BaseApplication>(app: T, viewsDir: string): void;

@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const typeorm_1 = require("typeorm");
-const boot_1 = require("./boot");
+const app_1 = require("./app");
 const misc_1 = require("./misc");
 /**
  * ServiceContext class
@@ -48,7 +48,7 @@ exports.Inject = Inject;
  * @return {void}
  */
 function installServices(app) {
-    boot_1.checkAppConfig(app);
+    app_1.checkAppConfig(app);
     app.use((req, res, next) => {
         if (!(req.serviceContext instanceof ServiceContext) || typeof req.make != 'function') {
             req.serviceContext = new ServiceContext();

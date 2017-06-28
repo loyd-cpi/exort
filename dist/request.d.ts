@@ -1,3 +1,4 @@
+import { BaseApplication } from './app';
 import { Service, ServiceContext } from './service';
 import { KeyValuePair, Store } from './misc';
 import * as formidable from 'formidable';
@@ -40,7 +41,7 @@ export interface Request extends express.Request {
  * @param  {T} app
  * @return {void}
  */
-export declare function installBodyParser<T extends express.Server>(app: T, rootDir: string): void;
+export declare function installBodyParser<T extends BaseApplication>(app: T, rootDir: string): void;
 /**
  * Input class
  */

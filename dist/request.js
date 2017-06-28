@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const boot_1 = require("./boot");
+const app_1 = require("./app");
 const misc_1 = require("./misc");
 const formidable = require("formidable");
 const filesystem_1 = require("./filesystem");
@@ -15,9 +15,8 @@ const qs = require('qs');
  * @return {void}
  */
 function installBodyParser(app, rootDir) {
-    boot_1.checkAppConfig(app);
-    let config = app.locals.config;
-    let requestConf = config.get('request') || {};
+    app_1.checkAppConfig(app);
+    let requestConf = app.locals.config.get('request') || {};
     requestConf.encoding = requestConf.encoding || 'utf-8';
     requestConf.postMaxSize = requestConf.postMaxSize || '2MB';
     requestConf.uploadMaxSize = requestConf.uploadMaxSize || '5MB';

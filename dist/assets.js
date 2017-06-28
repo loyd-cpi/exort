@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const boot_1 = require("./boot");
+const app_1 = require("./app");
 const favicon = require("serve-favicon");
 const express = require("express");
 const pathlib = require("path");
@@ -12,9 +12,8 @@ const misc_1 = require("./misc");
  * @return {void}
  */
 function installAssets(app, rootDir) {
-    boot_1.checkAppConfig(app);
-    let config = app.locals.config;
-    let assetsConf = config.get('assets');
+    app_1.checkAppConfig(app);
+    let assetsConf = app.locals.config.get('assets');
     if (!assetsConf)
         return;
     rootDir = misc_1._.trimEnd(rootDir, '/');
@@ -37,7 +36,7 @@ exports.installAssets = installAssets;
  * @return {void}
  */
 function installFavicon(app, faviconPath) {
-    boot_1.checkAppConfig(app);
+    app_1.checkAppConfig(app);
     app.use(favicon(faviconPath, app.locals.config.get('assets.favicon')));
 }
 exports.installFavicon = installFavicon;

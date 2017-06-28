@@ -1,5 +1,20 @@
+import { BaseApplication } from './app';
+import * as nunjucks from 'nunjucks';
 import * as express from 'express';
 import { Store } from './misc';
+/**
+ * ApplicationProps interface
+ */
+export interface ApplicationProps {
+    config: Config;
+    view: nunjucks.Environment;
+}
+/**
+ * BaseApplication interface
+ */
+export interface BaseApplication extends express.Server {
+    locals: ApplicationProps;
+}
 /**
  * Config class
  */
@@ -17,17 +32,17 @@ export declare class Config extends Store {
  * @param  {string[]} files
  * @return {void}
  */
-export declare function configure<T extends express.Server>(app: T, files: string[]): void;
+export declare function configure<T extends BaseApplication>(app: T, files: string[]): void;
 /**
  * Check if application has config object
  * @param  {T} app
  * @return {void}
  */
-export declare function checkAppConfig<T extends express.Server>(app: T): void;
+export declare function checkAppConfig<T extends BaseApplication>(app: T): void;
 /**
  * AppProvider interface
  */
-export interface AppProvider<T extends express.Server> {
+export interface AppProvider<T extends BaseApplication> {
     (app: T): Promise<void>;
 }
 /**
@@ -36,4 +51,4 @@ export interface AppProvider<T extends express.Server> {
  * @param  {AppProvider<U>} providers
  * @return {Promise<void>}
  */
-export declare function boot<U extends express.Server>(app: U, providers: AppProvider<U>[]): Promise<void>;
+export declare function boot<U extends BaseApplication>(app: U, providers: AppProvider<U>[]): Promise<void>;

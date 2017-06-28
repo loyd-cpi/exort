@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const boot_1 = require("./boot");
+const app_1 = require("./app");
 const expressSession = require("express-session");
 const misc_1 = require("./misc");
 /**
@@ -211,13 +211,12 @@ exports.Session = Session;
  * @return {void}
  */
 function installSessionStorage(app) {
-    boot_1.checkAppConfig(app);
-    let config = app.locals.config;
-    let sessionConf = config.get('session');
+    app_1.checkAppConfig(app);
+    let sessionConf = app.locals.config.get('session');
     if (!sessionConf)
         return;
     if (!sessionConf.secret) {
-        sessionConf.secret = config.get('app.key');
+        sessionConf.secret = app.locals.config.get('app.key');
     }
     let driver = 'memory';
     if (sessionConf.store && sessionConf.store.driver) {

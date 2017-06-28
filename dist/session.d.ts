@@ -1,4 +1,4 @@
-import * as express from 'express';
+import { BaseApplication } from './app';
 /**
  * Session class
  */
@@ -124,4 +124,4 @@ export declare class Session implements Express.Session {
  * @param  {T} app
  * @return {void}
  */
-export declare function installSessionStorage<T extends express.Server>(app: T): void;
+export declare function installSessionStorage<T extends BaseApplication>(app: T): void;

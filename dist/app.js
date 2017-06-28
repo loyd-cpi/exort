@@ -38,8 +38,11 @@ exports.Config = Config;
  * @return {void}
  */
 function configure(app, files) {
-    let config = app.locals.config = Config.load(files);
-    app.set('env', config.get('app.env'));
+    if (app.locals.config instanceof Config) {
+        throw new Error('configure(app) is already called');
+    }
+    app.locals.config = Config.load(files);
+    app.set('env', app.locals.config.get('app.env'));
     app.disable('x-powered-by');
     app.disable('strict routing');
     app.enable('case sensitive routing');
@@ -76,4 +79,4 @@ function boot(app, providers) {
     });
 }
 exports.boot = boot;
-//# sourceMappingURL=boot.js.map
+//# sourceMappingURL=app.js.map

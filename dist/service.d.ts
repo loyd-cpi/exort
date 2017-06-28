@@ -1,5 +1,5 @@
 import { Connection } from 'typeorm';
-import * as express from 'express';
+import { BaseApplication } from './app';
 /**
  * ServiceContext class
  */
@@ -27,7 +27,7 @@ export declare function Inject<U extends Service>(resolver: (type?: any) => new 
  * @param  {T} app
  * @return {void}
  */
-export declare function installServices<T extends express.Server>(app: T): void;
+export declare function installServices<T extends BaseApplication>(app: T): void;
 /**
  * Abstract Service class
  */
