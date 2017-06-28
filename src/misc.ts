@@ -38,6 +38,13 @@ export interface Utilities extends lodash.LoDashStatic {
   classExtends(childClass: Function, parentClass: Function): boolean;
 
   /**
+   * Get parameter names of a function
+   * @param  {Function} fn
+   * @return {string[]}
+   */
+  getConstructorParamNames(fn: Function): string[];
+
+  /**
    * Require module
    * @param  {string} filePath
    * @return {any}
@@ -122,6 +129,26 @@ _.requireClass = function (path: string): Function {
   }
 
   return exportedModule[classToExport];
+};
+
+const COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
+const DEFAULT_PARAMS = /=[^,]+/mg;
+const FAT_ARROWS = /=>.*$/mg;
+
+_.getConstructorParamNames = function (fn: Function): string[] {
+  let code = fn.toString();
+  if (code.indexOf(' constructor(') == -1) return [];
+
+  code = code.replace(COMMENTS, '')
+    .replace(FAT_ARROWS, '')
+    .replace(DEFAULT_PARAMS, '');
+
+  let result = code.slice(code.indexOf('(') + 1, code.indexOf(')'))
+    .match(/([^\s,]+)/g);
+
+  return result === null
+    ? []
+    : result;
 };
 
 _.isNone = function (value: any): boolean {

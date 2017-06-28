@@ -1,14 +1,14 @@
-import { checkAppConfig, Config } from './config';
+import { checkAppConfig, Config } from './boot';
 import * as express from 'express';
 import * as morgan from 'morgan';
 import { _ } from './misc';
 
 /**
  * Install logger middleware
- * @param  {express.Application} app
+ * @param  {T} app
  * @return {void}
  */
-export function installLogger(app: express.Application): void {
+export function installLogger<T extends express.Server>(app: T): void {
   checkAppConfig(app);
 
   let config: Config = app.locals.config;

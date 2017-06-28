@@ -7,10 +7,12 @@
     "lodash": "registry:npm/lodash#4.0.0+20161015015725",
     "morgan": "registry:dt/morgan#1.7.0+20160726064905",
     "nunjucks": "registry:dt/nunjucks#0.0.0+20160803221903",
-    "serve-favicon": "registry:dt/serve-favicon#2.2.0+20161128184045"
+    "serve-favicon": "registry:dt/serve-favicon#2.2.0+20161128184045",
+    "yargs": "registry:npm/yargs#5.0.0+20160907000723"
   },
   "globalDependencies": {
     "express-session": "registry:dt/express-session#0.0.0+20161119044246",
-    "node": "registry:dt/node#7.0.0+20170322231424"
+    "node": "registry:dt/node#7.0.0+20170322231424",
+    "reflect-metadata": "registry:dt/reflect-metadata#0.0.0+20161005184000"
   }
 }

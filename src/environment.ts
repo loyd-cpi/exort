@@ -1,5 +1,6 @@
-import { KeyValuePair, _ } from './misc';
 import * as dotenv from 'dotenv';
+import * as yargs from 'yargs';
+import { _ } from './misc';
 
 /**
  * Load environment file
@@ -29,33 +30,11 @@ export function env(key: string, defaultVal?: any): any {
 }
 
 /**
- * Contains the parsed CLI arguments
- * @type {KeyValuePair<any>}
- */
-const CLI_ARGS: KeyValuePair<any> = {};
-
-/**
- * Parse CLI arguments then save
- */
-function parseCLIArguments(): void {
-  let args = process.argv.slice(2);
-  for (let arg of args) {
-    if (arg.indexOf('--') !== 0) {
-      continue;
-    }
-    let parts = _.split(_.trimStart(arg, '-'), '=', 2);
-    CLI_ARGS[parts[0]] = parts[1];
-  }
-}
-
-parseCLIArguments();
-
-/**
  * Get CLI argument
  * @param  {string} key
  * @param  {any} defaultVal
  * @return {any}
  */
 export function argument(key: string, defaultVal?: any): any {
-  return _.defaultIfNone(CLI_ARGS[key], defaultVal);
+  return _.defaultIfNone(yargs.argv[key], defaultVal);
 }

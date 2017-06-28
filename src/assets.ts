@@ -1,4 +1,4 @@
-import { Config, checkAppConfig } from './config';
+import { Config, checkAppConfig } from './boot';
 import * as favicon from 'serve-favicon';
 import * as express from 'express';
 import * as pathlib from 'path';
@@ -6,11 +6,11 @@ import { _ } from './misc';
 
 /**
  * Install assets
- * @param  {express.Application} app
+ * @param  {T} app
  * @param  {string} rootDir
  * @return {void}
  */
-export function installAssets(app: express.Application, rootDir: string): void {
+export function installAssets<T extends express.Server>(app: T, rootDir: string): void {
   checkAppConfig(app);
 
   let config: Config = app.locals.config;
@@ -20,24 +20,26 @@ export function installAssets(app: express.Application, rootDir: string): void {
   rootDir = _.trimEnd(rootDir, '/');
   assetsConf.paths.forEach((conf: any) => {
 
-    if (!conf || !conf.prefix || !conf.path) return;
+    if (!conf || !conf.prefix || !conf.path) {
+      throw new Error('Each item in assets.paths config requires prefix and path');
+    }
 
     conf.prefix = `/${_.trim(conf.prefix, '/')}`;
     if (!pathlib.isAbsolute(conf.path)) {
       conf.path = `${rootDir}${conf.path}`;
     }
 
-    app.use(express.static(conf.path), conf.prefix);
+    app.use(conf.prefix, express.static(conf.path, conf.options || {}));
   });
 }
 
 /**
  * Install app favicon
- * @param  {express.Application} app
+ * @param  {T} app
  * @param  {string} faviconPath
  * @return {void}
  */
-export function installFavicon(app: express.Application, faviconPath: string): void {
+export function installFavicon<T extends express.Server>(app: T, faviconPath: string): void {
   checkAppConfig(app);
   app.use(favicon(faviconPath, app.locals.config.get('assets.favicon')));
 }

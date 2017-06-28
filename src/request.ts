@@ -1,4 +1,5 @@
-import { Config, checkAppConfig } from './config';
+import { Service, ServiceContext } from './service';
+import { Config, checkAppConfig } from './boot';
 import { KeyValuePair, Store } from './misc';
 import * as formidable from 'formidable';
 import { File } from './filesystem';
@@ -33,14 +34,27 @@ export interface Request extends express.Request {
    * @type {Input}
    */
   input: Input;
+
+  /**
+   * Make an instance of service
+   * @param  {new(...args: any[]) => U} serviceClass
+   * @return {U}
+   */
+  make<U extends Service>(serviceClass: new(...args: any[]) => U): U;
+
+  /**
+   * ServiceContext instance
+   * @type {ServiceContext}
+   */
+  serviceContext: ServiceContext;
 }
 
 /**
  * Install body parser
- * @param  {express.Application} app
+ * @param  {T} app
  * @return {void}
  */
-export function installBodyParser(app: express.Application, rootDir: string): void {
+export function installBodyParser<T extends express.Server>(app: T, rootDir: string): void {
   checkAppConfig(app);
 
   let config: Config = app.locals.config;
