@@ -99,7 +99,7 @@ export declare class File {
         flag?: string;
     } | {
         flag?: string;
-    } | string): Promise<string>;
+    }): Promise<string>;
     /**
      * Create file from base64 string
      * @param  {string} base64String
