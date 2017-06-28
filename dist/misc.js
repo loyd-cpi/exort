@@ -1,0 +1,168 @@
+"use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const lodash = require("lodash");
+const crypto = require("crypto");
+const pathlib = require("path");
+const _ = lodash;
+exports._ = _;
+_.replaceAll = function (str, search, replace) {
+    return str.replace(new RegExp(_.escapeRegExp(search), 'g'), replace);
+};
+_.classExtends = function (childClass, parentClass) {
+    return typeof childClass == 'function' && childClass.prototype instanceof parentClass;
+};
+_.require = function (filePath) {
+    let content;
+    try {
+        content = require(filePath);
+    }
+    catch (err) {
+        if (err.code != 'MODULE_NOT_FOUND') {
+            throw err;
+        }
+    }
+    return content;
+};
+_.requireClass = function (path) {
+    let exportedModule = require(path);
+    if (typeof exportedModule != 'object') {
+        throw new Error(`exports from ${path} must be an object`);
+    }
+    let classToExport = pathlib.basename(path, '.js');
+    if (typeof exportedModule[classToExport] != 'function') {
+        throw new Error(`${classToExport} doesn't exists in ${path}`);
+    }
+    if (exportedModule[classToExport].prototype.constructor.name != classToExport) {
+        throw new Error(`Class name must be the same with the filename in: ${path}`);
+    }
+    return exportedModule[classToExport];
+};
+const COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
+const DEFAULT_PARAMS = /=[^,]+/mg;
+const FAT_ARROWS = /=>.*$/mg;
+_.getConstructorParamNames = function (fn) {
+    let code = fn.toString();
+    if (code.indexOf(' constructor(') == -1)
+        return [];
+    code = code.replace(COMMENTS, '')
+        .replace(FAT_ARROWS, '')
+        .replace(DEFAULT_PARAMS, '');
+    let result = code.slice(code.indexOf('(') + 1, code.indexOf(')'))
+        .match(/([^\s,]+)/g);
+    return result === null
+        ? []
+        : result;
+};
+_.isNone = function (value) {
+    return typeof value == 'undefined' || _.isNull(value);
+};
+_.defaultIfNone = function (value, defaultVal, returnNull = false) {
+    if (typeof value == 'undefined') {
+        if (returnNull) {
+            if (typeof defaultVal != 'undefined') {
+                return defaultVal;
+            }
+            return null;
+        }
+        else if (typeof defaultVal != 'undefined') {
+            return defaultVal;
+        }
+    }
+    return value;
+};
+_.sleep = function (milliseconds) {
+    return __awaiter(this, void 0, void 0, function* () {
+        yield new Promise((resolve, reject) => {
+            setTimeout(() => resolve(), milliseconds);
+        });
+    });
+};
+_.checksum = function (str, algorithm = 'md5', encoding = 'hex') {
+    return crypto.createHash(algorithm).update(str, 'utf8').digest(encoding);
+};
+/**
+ * Store class
+ */
+class Store {
+    /**
+     * Store constructor
+     * @param {KeyValuePair<any> = {}} private content
+     */
+    constructor(content = {}) {
+        this.content = content;
+    }
+    /**
+     * Get all
+     * @return {KeyValuePair<any>}
+     */
+    all() {
+        return _.clone(this.content);
+    }
+    /**
+     * Merge another Store object
+     * @param {Store} content
+     */
+    merge(content) {
+        this.content = _.merge(this.content, content.all());
+    }
+    /**
+     * Convert dotted notation key to brackets
+     * @param  {string} key
+     * @return {string}
+     */
+    convertToBrackets(key) {
+        return `["${key.split('.').join('"]["')}"]`;
+    }
+    /**
+     * Get a value from content
+     * @param  {string} key
+     * @param  {any} defaultVal
+     * @return {any}
+     */
+    get(key, defaultVal) {
+        let val;
+        if (key.indexOf('.') == -1) {
+            val = this.content[key];
+        }
+        else {
+            try {
+                val = eval(`this.content${this.convertToBrackets(key)}`);
+            }
+            catch (e) { }
+        }
+        return _.defaultIfNone(val, defaultVal);
+    }
+    /**
+     * Set a value to store
+     * @param {string} key
+     * @param {any} val
+     */
+    set(key, val) {
+        this.content[key] = val;
+    }
+    /**
+     * Delete a value by key
+     * @param {string} key
+     */
+    delete(key) {
+        delete this.content[key];
+    }
+    /**
+     * Check if value exists by using a key
+     * @param  {string}  key
+     * @return {boolean}
+     */
+    has(key) {
+        return typeof this.get(key) != 'undefined';
+    }
+}
+exports.Store = Store;
+//# sourceMappingURL=misc.js.map

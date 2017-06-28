@@ -1,5 +1,4 @@
 import 'reflect-metadata';
-
 export * from './assets';
 export * from './boot';
 export * from './environment';
