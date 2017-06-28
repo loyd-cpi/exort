@@ -182,7 +182,7 @@ export class File {
    * @param  {{ encoding: string; flag?: string; } | { flag?: string; } | string} options
    * @return {Promise<string>}
    */
-  public static read(path: string, options?: { encoding: string; flag?: string; } | { flag?: string; } | string): Promise<string> {
+  public static read(path: string, options?: { encoding: string; flag?: string; } | { flag?: string; }): Promise<string> {
     return new Promise<string>((resolve, reject) => {
       fs.readFile(path, options || {}, (err, content) => {
 
