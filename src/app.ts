@@ -5,6 +5,7 @@ import { Request } from './request';
 import * as express from 'express';
 import { Store, _ } from './misc';
 import * as pathlib from 'path';
+import * as fs from 'fs';
 
 /**
  * ApplicationProps interface
@@ -44,15 +45,45 @@ export class Config extends Store {
 }
 
 /**
+ * Create node_modules/app symlink
+ * @param  {string} rootDir
+ * @return {void}
+ */
+function buildAppNamespace(rootDir: string): void {
+  try {
+    fs.mkdirSync(`${rootDir}/node_modules`);
+  } catch (e) {}
+
+  try {
+    fs.unlinkSync(`${rootDir}/node_modules/app`);
+  } catch (e) {
+    if (e.code != 'ENOENT') {
+      throw e;
+    }
+  }
+
+  try {
+    fs.symlinkSync('../dist', `${rootDir}/node_modules/app`);
+  } catch (e) {
+    if (e.code != 'ENOENT' && e.code != 'EEXIST') {
+      throw e;
+    }
+  }
+}
+
+/**
  * Set config object of application
  * @param  {T} app
+ * @param  {string} rootDir
  * @param  {string[]} files
  * @return {void}
  */
-export function configure<T extends BaseApplication>(app: T, files: string[]): void {
+export function configure<T extends BaseApplication>(app: T, rootDir: string, files: string[]): void {
   if (app.locals.config instanceof Config) {
     throw new Error('configure(app) is already called');
   }
+
+  buildAppNamespace(rootDir);
 
   app.locals.config = Config.load(files);
   app.set('env', app.locals.config.get('app.env'));

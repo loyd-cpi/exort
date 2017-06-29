@@ -12,7 +12,7 @@
     "node_modules": true,
     "**/*.tgz": true
   },
-  "editor.rulers": [100],
+  "editor.rulers": [150],
   "files.eol": "\n",
   "files.trimTrailingWhitespace": true,
   "typescript.tsdk": "node_modules/typescript/lib",
