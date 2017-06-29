@@ -29,10 +29,11 @@ export declare class Config extends Store {
 /**
  * Set config object of application
  * @param  {T} app
+ * @param  {string} rootDir
  * @param  {string[]} files
  * @return {void}
  */
-export declare function configure<T extends BaseApplication>(app: T, files: string[]): void;
+export declare function configure<T extends BaseApplication>(app: T, rootDir: string, files: string[]): void;
 /**
  * Check if application has config object
  * @param  {T} app

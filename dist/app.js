@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const misc_1 = require("./misc");
 const pathlib = require("path");
+const fs = require("fs");
 /**
  * Config class
  */
@@ -32,15 +33,44 @@ class Config extends misc_1.Store {
 }
 exports.Config = Config;
 /**
+ * Create node_modules/app symlink
+ * @param  {string} rootDir
+ * @return {void}
+ */
+function buildAppNamespace(rootDir) {
+    try {
+        fs.mkdirSync(`${rootDir}/node_modules`);
+    }
+    catch (e) { }
+    try {
+        fs.unlinkSync(`${rootDir}/node_modules/app`);
+    }
+    catch (e) {
+        if (e.code != 'ENOENT') {
+            throw e;
+        }
+    }
+    try {
+        fs.symlinkSync('../dist', `${rootDir}/node_modules/app`);
+    }
+    catch (e) {
+        if (e.code != 'ENOENT' && e.code != 'EEXIST') {
+            throw e;
+        }
+    }
+}
+/**
  * Set config object of application
  * @param  {T} app
+ * @param  {string} rootDir
  * @param  {string[]} files
  * @return {void}
  */
-function configure(app, files) {
+function configure(app, rootDir, files) {
     if (app.locals.config instanceof Config) {
         throw new Error('configure(app) is already called');
     }
+    buildAppNamespace(rootDir);
     app.locals.config = Config.load(files);
     app.set('env', app.locals.config.get('app.env'));
     app.disable('x-powered-by');
