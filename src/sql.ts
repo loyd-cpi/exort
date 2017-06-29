@@ -47,5 +47,5 @@ export function provideSQLConnection<T extends BaseApplication>(modelsDir: strin
  * @return {Promise<void>}
  */
 export async function syncSchema(connectionName?: string): Promise<void> {
-  return getConnectionManager().get(connectionName).syncSchema();
+  await getConnectionManager().get(connectionName).syncSchema();
 }

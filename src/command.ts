@@ -49,7 +49,8 @@ export abstract class CLI {
           process.exit(0);
         })
         .catch(err => {
-          throw err;
+          console.error(`\n\n${err}`);
+          process.exit(1);
         });
     });
   }
