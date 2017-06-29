@@ -18,7 +18,7 @@ export class ServiceContext {
 
   /**
    * create instance via dependency injection and using this context
-   * @param  {new(...args: any[]) => U} serviceClass
+   * @param  {(new(...args: any[]) => U)} serviceClass
    * @return {U}
    */
   public make<U extends Service>(serviceClass: new(...args: any[]) => U): U {
@@ -38,13 +38,26 @@ export class ServiceContext {
 }
 
 /**
- * Decorator for injecting service dependencies
- * @param  {(type?: any) => new(...args: any[]) => U} resolver
- * @return {(target: Object, propertyKey: string) => void}
+ * ServiceClassResolver interface
  */
-export function Inject<U extends Service>(resolver: (type?: any) => new(...args: any[]) => U): (target: Object, propertyKey: string) => void {
+export interface ServiceClassResolver<U extends Service> {
+  (type?: any): new(...args: any[]) => U;
+}
+
+/**
+ * Decorator for injecting service dependencies
+ * @param  {ServiceClassResolver} resolver
+ * @return {((target: Object, propertyKey: string) => void)}
+ */
+export function Inject<U extends Service>
+  (resolver: ServiceClassResolver<U>): ((target: Object, propertyKey: string) => void) {
   return (target: Object, propertyKey: string) => {
 
+    Object.defineProperty(target, propertyKey, {
+      get() {
+        return (this as any).context.make(resolver());
+      }
+    });
   };
 }
 

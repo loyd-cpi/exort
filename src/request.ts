@@ -37,7 +37,7 @@ export interface Request extends express.Request {
 
   /**
    * Make an instance of service
-   * @param  {new(...args: any[]) => U} serviceClass
+   * @param  {(new(...args: any[]) => U)} serviceClass
    * @return {U}
    */
   make<U extends Service>(serviceClass: new(...args: any[]) => U): U;
