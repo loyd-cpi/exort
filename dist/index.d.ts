@@ -14,3 +14,4 @@ export * from './service';
 export * from './session';
 export * from './sql';
 export * from './view';
+export { NextFunction } from 'express';
