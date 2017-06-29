@@ -56,7 +56,7 @@ exports.provideSQLConnection = provideSQLConnection;
  */
 function syncSchema(connectionName) {
     return __awaiter(this, void 0, void 0, function* () {
-        return typeorm_1.getConnectionManager().get(connectionName).syncSchema();
+        yield typeorm_1.getConnectionManager().get(connectionName).syncSchema();
     });
 }
 exports.syncSchema = syncSchema;
