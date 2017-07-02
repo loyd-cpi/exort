@@ -1,15 +1,12 @@
-import { BaseApplication } from './app';
+import { AppProvider } from './app';
 /**
  * Install assets
- * @param  {T} app
- * @param  {string} rootDir
- * @return {void}
+ * @return {AppProvider}
  */
-export declare function installAssets<T extends BaseApplication>(app: T, rootDir: string): void;
+export declare function provideAssets(): AppProvider;
 /**
- * Install app favicon
- * @param  {T} app
+ * Provide favicon
  * @param  {string} faviconPath
- * @return {void}
+ * @return {AppProvider}
  */
-export declare function installFavicon<T extends BaseApplication>(app: T, faviconPath: string): void;
+export declare function provideFavicon(faviconPath: string): AppProvider;

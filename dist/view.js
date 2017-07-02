@@ -1,4 +1,12 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const app_1 = require("./app");
 const nunjucks = require("nunjucks");
@@ -43,25 +51,25 @@ class TemplateLoader extends nunjucks.Loader {
 exports.TemplateLoader = TemplateLoader;
 /**
  * Set express application view engine
- * @param  {T} app
  * @param  {string} viewsDir
- * @return {void}
+ * @return {AppProvider}
  */
-function installViewEngine(app, viewsDir) {
-    app_1.checkAppConfig(app);
-    let env = new nunjucks.Environment(new TemplateLoader(viewsDir), app.locals.config.get('view'));
-    app.locals.view = env;
-    app.set('views', viewsDir);
-    app.engine('html', (filePath, options, callback) => {
-        let viewPathObj = pathlib.parse(filePath);
-        let viewFilePath = pathlib.join(viewPathObj.dir.replace(viewsDir, ''), viewPathObj.name);
-        env.render(viewFilePath, options, (err, res) => {
-            if (err)
-                return callback(err);
-            callback(null, res);
+function provideViewEngine(viewsDir) {
+    return (app) => __awaiter(this, void 0, void 0, function* () {
+        app_1.checkAppConfig(app);
+        let env = new nunjucks.Environment(new TemplateLoader(viewsDir), app.config.get('view'));
+        app.set('views', viewsDir);
+        app.engine('html', (filePath, options, callback) => {
+            let viewPathObj = pathlib.parse(filePath);
+            let viewFilePath = pathlib.join(viewPathObj.dir.replace(viewsDir, ''), viewPathObj.name);
+            env.render(viewFilePath, options, (err, res) => {
+                if (err)
+                    return callback(err);
+                callback(null, res);
+            });
         });
+        app.set('view engine', 'html');
     });
-    app.set('view engine', 'html');
 }
-exports.installViewEngine = installViewEngine;
+exports.provideViewEngine = provideViewEngine;
 //# sourceMappingURL=view.js.map

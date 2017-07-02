@@ -1,14 +1,31 @@
+import { Application, AppProvider } from './app';
 import { Connection } from 'typeorm';
-import { BaseApplication } from './app';
 /**
- * ServiceContext class
+ * Decorator to make an injectable class
+ * @return {((target: Function) => void)}
  */
-export declare class ServiceContext {
+export declare function Injectable(): (target: Function) => void;
+/**
+ * Check if class is injectable
+ * @param  {Function} targetClass
+ * @return {boolean}
+ */
+export declare function isInjectable(targetClass: Function): boolean;
+/**
+ * Context class
+ */
+export declare class Context {
+    readonly app: Application;
     /**
      * Map of resolved instances
      * @type {Map<string, any>}
      */
     private resolvedInstances;
+    /**
+     * Context constructor
+     * @param {Application} app
+     */
+    constructor(app: Application);
     /**
      * create instance via dependency injection and using this context
      * @param  {(new(...args: any[]) => U)} serviceClass
@@ -17,33 +34,32 @@ export declare class ServiceContext {
     make<U extends Service>(serviceClass: new (...args: any[]) => U): U;
 }
 /**
- * ServiceClassResolver interface
+ * ServiceClass interface
  */
-export interface ServiceClassResolver<U extends Service> {
-    (type?: any): new (...args: any[]) => U;
+export interface ServiceClass {
+    new (...args: any[]): Service;
 }
 /**
- * Decorator for injecting service dependencies
- * @param  {ServiceClassResolver} resolver
- * @return {((target: Object, propertyKey: string) => void)}
+ * ServiceClassResolver interface
  */
-export declare function Inject<U extends Service>(resolver: ServiceClassResolver<U>): ((target: Object, propertyKey: string) => void);
+export interface ServiceClassResolver {
+    (type?: any): ServiceClass;
+}
 /**
- * Install services
- * @param  {T} app
- * @return {void}
+ * Provider service context
+ * @return {AppProvider}
  */
-export declare function installServices<T extends BaseApplication>(app: T): void;
+export declare function provideServices(): AppProvider;
 /**
  * Abstract Service class
  */
 export declare abstract class Service {
-    protected context: ServiceContext;
+    protected readonly context: Context;
     /**
      * Service constructor
-     * @param {ServiceContext} context
+     * @param {Context} context
      */
-    constructor(context: ServiceContext);
+    constructor(context: Context);
 }
 /**
  * Abstract SQLService class

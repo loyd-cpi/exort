@@ -8,9 +8,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const express = require("express");
 const misc_1 = require("./misc");
 const pathlib = require("path");
-const fs = require("fs");
 /**
  * Config class
  */
@@ -33,80 +33,62 @@ class Config extends misc_1.Store {
 }
 exports.Config = Config;
 /**
- * Create node_modules/app symlink
- * @param  {string} rootDir
- * @return {void}
+ * Initialize application instance and configure
+ * @param rootDir
+ * @param configFiles
  */
-function buildAppNamespace(rootDir) {
-    try {
-        fs.mkdirSync(`${rootDir}/node_modules`);
+function createApplication(rootDir, configFiles) {
+    let app = express();
+    if (typeof app.dir != 'undefined') {
+        throw new Error('app.dir is already set. There must be conflict with express');
     }
-    catch (e) { }
-    try {
-        fs.unlinkSync(`${rootDir}/node_modules/app`);
-    }
-    catch (e) {
-        if (e.code != 'ENOENT') {
-            throw e;
-        }
-    }
-    try {
-        fs.symlinkSync('../dist', `${rootDir}/node_modules/app`);
-    }
-    catch (e) {
-        if (e.code != 'ENOENT' && e.code != 'EEXIST') {
-            throw e;
-        }
-    }
+    app.dir = misc_1._.trimEnd(rootDir, '/');
+    configure(app, configFiles);
+    return app;
 }
+exports.createApplication = createApplication;
 /**
  * Set config object of application
- * @param  {T} app
- * @param  {string} rootDir
+ * @param  {Application} app
  * @param  {string[]} files
  * @return {void}
  */
-function configure(app, rootDir, files) {
-    if (app.locals.config instanceof Config) {
-        throw new Error('configure(app) is already called');
+function configure(app, files) {
+    if (typeof app.config != 'undefined') {
+        if (app.config instanceof Config) {
+            throw new Error('configure(app) is already called');
+        }
+        else {
+            throw new Error('app.config already exists. there must be conflict with express');
+        }
     }
-    buildAppNamespace(rootDir);
-    app.locals.config = Config.load(files);
-    app.set('env', app.locals.config.get('app.env'));
-    app.disable('x-powered-by');
-    app.disable('strict routing');
-    app.enable('case sensitive routing');
-    app.use((req, res, next) => {
-        res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
-        res.setHeader('Pragma', 'no-cache');
-        res.setHeader('Expires', '0');
-        next();
-    });
+    let config = app.config = Config.load(files);
+    app.set('env', config.get('app.env'));
 }
 exports.configure = configure;
 /**
  * Check if application has config object
- * @param  {T} app
+ * @param  {Application} app
  * @return {void}
  */
 function checkAppConfig(app) {
-    if (!(app.locals.config instanceof Config)) {
+    if (!(app.config instanceof Config)) {
         throw new Error('Should call configure(app) first');
     }
 }
 exports.checkAppConfig = checkAppConfig;
 /**
  * Execute providers and boot the application
- * @param  {U} app
- * @param  {AppProvider<U>} providers
+ * @param  {Application} app
+ * @param  {AppProvider[]} providers
  * @return {Promise<void>}
  */
-function boot(app, providers) {
+function executeProviders(app, providers) {
     return __awaiter(this, void 0, void 0, function* () {
         for (let provider of providers) {
             yield provider(app);
         }
     });
 }
-exports.boot = boot;
+exports.executeProviders = executeProviders;
 //# sourceMappingURL=app.js.map

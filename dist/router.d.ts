@@ -1,8 +1,7 @@
-import { BaseApplication } from './app';
+import { AppProvider } from './app';
 /**
- * Setup routes
- * @param  {express.Server} app
+ * Provide routes
  * @param  {string} routesFile
- * @return {void}
+ * @return {AppProvider}
  */
-export declare function installRoutes<T extends BaseApplication>(app: T, routesFile: string): void;
+export declare function provideRoutes(routesFile: string): AppProvider;

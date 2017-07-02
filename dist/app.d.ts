@@ -1,19 +1,26 @@
-import { BaseApplication } from './app';
-import * as nunjucks from 'nunjucks';
+import { Context } from './service';
 import * as express from 'express';
 import { Store } from './misc';
 /**
- * ApplicationProps interface
+ * Application interface
  */
-export interface ApplicationProps {
-    config: Config;
-    view: nunjucks.Environment;
-}
-/**
- * BaseApplication interface
- */
-export interface BaseApplication extends express.Server {
-    locals: ApplicationProps;
+export interface Application extends express.Server {
+    /**
+     * Config instance
+     * @type {Config}
+     */
+    readonly config: Config;
+    /**
+     * Application root directory
+     * @type {string}
+     */
+    readonly dir: string;
+    /**
+     * Single instance of context.
+     * Don't use this to create service instance per request
+     * @type {Context}
+     */
+    readonly context: Context;
 }
 /**
  * Config class
@@ -27,29 +34,34 @@ export declare class Config extends Store {
     static load(files: string[]): Config;
 }
 /**
+ * Initialize application instance and configure
+ * @param rootDir
+ * @param configFiles
+ */
+export declare function createApplication(rootDir: string, configFiles: string[]): Application;
+/**
  * Set config object of application
- * @param  {T} app
- * @param  {string} rootDir
+ * @param  {Application} app
  * @param  {string[]} files
  * @return {void}
  */
-export declare function configure<T extends BaseApplication>(app: T, rootDir: string, files: string[]): void;
+export declare function configure(app: Application, files: string[]): void;
 /**
  * Check if application has config object
- * @param  {T} app
+ * @param  {Application} app
  * @return {void}
  */
-export declare function checkAppConfig<T extends BaseApplication>(app: T): void;
+export declare function checkAppConfig(app: Application): void;
 /**
  * AppProvider interface
  */
-export interface AppProvider<T extends BaseApplication> {
-    (app: T): Promise<void>;
+export interface AppProvider {
+    (app: Application): Promise<void>;
 }
 /**
  * Execute providers and boot the application
- * @param  {U} app
- * @param  {AppProvider<U>} providers
+ * @param  {Application} app
+ * @param  {AppProvider[]} providers
  * @return {Promise<void>}
  */
-export declare function boot<U extends BaseApplication>(app: U, providers: AppProvider<U>[]): Promise<void>;
+export declare function executeProviders(app: Application, providers: AppProvider[]): Promise<void>;

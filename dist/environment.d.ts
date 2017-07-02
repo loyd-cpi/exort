@@ -1,8 +1,9 @@
 /**
- * Load environment file
- * @param {string} envFile
+ * Load environment file and setup namespace
+ * @param  {string} directory
+ * @return {void}
  */
-export declare function loadEnvironmentFromDir(directory: string): void;
+export declare function setupEnvironmentAndNamespace(directory: string): void;
 /**
  * Get environment value
  * @param  {string} key

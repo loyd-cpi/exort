@@ -1,4 +1,12 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const app_1 = require("./app");
 const favicon = require("serve-favicon");
@@ -7,37 +15,37 @@ const pathlib = require("path");
 const misc_1 = require("./misc");
 /**
  * Install assets
- * @param  {T} app
- * @param  {string} rootDir
- * @return {void}
+ * @return {AppProvider}
  */
-function installAssets(app, rootDir) {
-    app_1.checkAppConfig(app);
-    let assetsConf = app.locals.config.get('assets');
-    if (!assetsConf)
-        return;
-    rootDir = misc_1._.trimEnd(rootDir, '/');
-    assetsConf.paths.forEach((conf) => {
-        if (!conf || !conf.prefix || !conf.path) {
-            throw new Error('Each item in assets.paths config requires prefix and path');
-        }
-        conf.prefix = `/${misc_1._.trim(conf.prefix, '/')}`;
-        if (!pathlib.isAbsolute(conf.path)) {
-            conf.path = `${rootDir}${conf.path}`;
-        }
-        app.use(conf.prefix, express.static(conf.path, conf.options || {}));
+function provideAssets() {
+    return (app) => __awaiter(this, void 0, void 0, function* () {
+        app_1.checkAppConfig(app);
+        let assetsConf = app.config.get('assets');
+        if (!assetsConf)
+            return;
+        assetsConf.paths.forEach((conf) => {
+            if (!conf || !conf.prefix || !conf.path) {
+                throw new Error('Each item in assets.paths config requires prefix and path');
+            }
+            conf.prefix = `/${misc_1._.trim(conf.prefix, '/')}`;
+            if (!pathlib.isAbsolute(conf.path)) {
+                conf.path = `${app.dir}${conf.path}`;
+            }
+            app.use(conf.prefix, express.static(conf.path, conf.options || {}));
+        });
     });
 }
-exports.installAssets = installAssets;
+exports.provideAssets = provideAssets;
 /**
- * Install app favicon
- * @param  {T} app
+ * Provide favicon
  * @param  {string} faviconPath
- * @return {void}
+ * @return {AppProvider}
  */
-function installFavicon(app, faviconPath) {
-    app_1.checkAppConfig(app);
-    app.use(favicon(faviconPath, app.locals.config.get('assets.favicon')));
+function provideFavicon(faviconPath) {
+    return (app) => __awaiter(this, void 0, void 0, function* () {
+        app_1.checkAppConfig(app);
+        app.use(favicon(faviconPath, app.config.get('assets.favicon')));
+    });
 }
-exports.installFavicon = installFavicon;
+exports.provideFavicon = provideFavicon;
 //# sourceMappingURL=assets.js.map

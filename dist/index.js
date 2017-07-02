@@ -12,10 +12,13 @@ __export(require("./filesystem"));
 __export(require("./logger"));
 __export(require("./mime"));
 __export(require("./misc"));
-__export(require("./request"));
+__export(require("./http"));
 __export(require("./router"));
 __export(require("./service"));
 __export(require("./session"));
 __export(require("./sql"));
 __export(require("./view"));
+var express_1 = require("express");
+exports.Route = express_1.Route;
+exports.Router = express_1.Router;
 //# sourceMappingURL=index.js.map

@@ -20,7 +20,7 @@ function provideSQLConnection(modelsDir) {
     return function (app) {
         return __awaiter(this, void 0, void 0, function* () {
             app_1.checkAppConfig(app);
-            let dbConf = app.locals.config.get('db');
+            let dbConf = app.config.get('db');
             for (let connectionName of dbConf.auto) {
                 let conn = misc_1._.clone(dbConf.connections[connectionName]);
                 conn.name = connectionName;

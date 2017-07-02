@@ -1,4 +1,4 @@
-import { BaseApplication } from './app';
+import { AppProvider } from './app';
 /**
  * Session class
  */
@@ -120,8 +120,7 @@ export declare class Session implements Express.Session {
     setFlash(key: string, value: any): void;
 }
 /**
- * Install session storage
- * @param  {T} app
- * @return {void}
+ * Provide session storage
+ * @return {AppProvider}
  */
-export declare function installSessionStorage<T extends BaseApplication>(app: T): void;
+export declare function provideSessionStorage(): AppProvider;

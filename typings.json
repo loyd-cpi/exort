@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "bcrypt": "registry:npm/bcrypt#1.0.0+20161205015554",
     "bytes": "registry:dt/bytes#2.4.0+20161128184045",
     "dotenv": "registry:dt/dotenv#2.0.0+20170113195346",
     "express": "registry:npm/express#4.14.0+20170217205433",

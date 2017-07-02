@@ -1,7 +1,6 @@
-import { BaseApplication } from './app';
+import { AppProvider } from './app';
 /**
- * Install logger middleware
- * @param  {T} app
- * @return {void}
+ * Provide logger
+ * @return {AppProvider}
  */
-export declare function installLogger<T extends BaseApplication>(app: T): void;
+export declare function provideLogger(): AppProvider;

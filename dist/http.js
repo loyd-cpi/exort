@@ -1,4 +1,12 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const app_1 = require("./app");
 const misc_1 = require("./misc");
@@ -6,68 +14,71 @@ const formidable = require("formidable");
 const filesystem_1 = require("./filesystem");
 const pathlib = require("path");
 const bytes = require("bytes");
+const http = require("http");
 const os = require("os");
 const fs = require("fs");
 const qs = require('qs');
 /**
  * Install body parser
- * @param  {T} app
- * @return {void}
+ * @param  {Application} app
+ * @return {AppProvider}
  */
-function installBodyParser(app, rootDir) {
-    app_1.checkAppConfig(app);
-    let requestConf = app.locals.config.get('request') || {};
-    requestConf.encoding = requestConf.encoding || 'utf-8';
-    requestConf.postMaxSize = requestConf.postMaxSize || '2MB';
-    requestConf.uploadMaxSize = requestConf.uploadMaxSize || '5MB';
-    requestConf.tmpUploadDir = requestConf.tmpUploadDir || os.tmpdir();
-    if (!pathlib.isAbsolute(requestConf.tmpUploadDir)) {
-        requestConf.tmpUploadDir = pathlib.join(rootDir, requestConf.tmpUploadDir);
-    }
-    let postMaxSize = bytes.parse(requestConf.postMaxSize);
-    let uploadMaxSize = bytes.parse(requestConf.uploadMaxSize);
-    app.use((req, res, next) => {
-        req.body = {};
-        req._files = {};
-        let form = new formidable.IncomingForm();
-        form.encoding = requestConf.encoding;
-        form.uploadDir = requestConf.tmpUploadDir;
-        form.maxFieldsSize = postMaxSize;
-        form.multiples = true;
-        form.keepExtensions = true;
-        form.parse(req, (err, fields, files) => {
-            if (err)
-                return next(err);
-            if (fields) {
-                req.body = qs.parse(fields);
-            }
-            let totalUploadSize = 0;
-            if (files) {
-                for (let key in files) {
-                    if (Array.isArray(files[key])) {
-                        req._files[key] = [];
-                        req._files[key].forEach((file) => {
-                            let uploaded = new UploadedFile(file);
+function provideBodyParser() {
+    return (app) => __awaiter(this, void 0, void 0, function* () {
+        app_1.checkAppConfig(app);
+        let requestConf = app.config.get('request') || {};
+        requestConf.encoding = requestConf.encoding || 'utf-8';
+        requestConf.postMaxSize = requestConf.postMaxSize || '2MB';
+        requestConf.uploadMaxSize = requestConf.uploadMaxSize || '5MB';
+        requestConf.tmpUploadDir = requestConf.tmpUploadDir || os.tmpdir();
+        if (!pathlib.isAbsolute(requestConf.tmpUploadDir)) {
+            requestConf.tmpUploadDir = pathlib.join(app.dir, requestConf.tmpUploadDir);
+        }
+        let postMaxSize = bytes.parse(requestConf.postMaxSize);
+        let uploadMaxSize = bytes.parse(requestConf.uploadMaxSize);
+        app.use((req, res, next) => {
+            req.body = {};
+            req._files = {};
+            let form = new formidable.IncomingForm();
+            form.encoding = requestConf.encoding;
+            form.uploadDir = requestConf.tmpUploadDir;
+            form.maxFieldsSize = postMaxSize;
+            form.multiples = true;
+            form.keepExtensions = true;
+            form.parse(req, (err, fields, files) => {
+                if (err)
+                    return next(err);
+                if (fields) {
+                    req.body = qs.parse(fields);
+                }
+                let totalUploadSize = 0;
+                if (files) {
+                    for (let key in files) {
+                        if (Array.isArray(files[key])) {
+                            req._files[key] = [];
+                            req._files[key].forEach((file) => {
+                                let uploaded = new UploadedFile(file);
+                                totalUploadSize += uploaded.size;
+                                req._files[key].push(uploaded);
+                            });
+                        }
+                        else {
+                            let uploaded = new UploadedFile(files[key]);
                             totalUploadSize += uploaded.size;
-                            req._files[key].push(uploaded);
-                        });
-                    }
-                    else {
-                        let uploaded = new UploadedFile(files[key]);
-                        totalUploadSize += uploaded.size;
-                        req._files[key] = uploaded;
+                            req._files[key] = uploaded;
+                        }
                     }
                 }
-            }
-            if (totalUploadSize > uploadMaxSize) {
-                return next(new Error('Reached upload max size'));
-            }
-            req.input = new Input(req);
-            next();
+                if (totalUploadSize > uploadMaxSize) {
+                    return next(new Error('Reached upload max size'));
+                }
+                req.input = new Input(req);
+                next();
+            });
         });
     });
 }
-exports.installBodyParser = installBodyParser;
+exports.provideBodyParser = provideBodyParser;
 /**
  * Input class
  */
@@ -251,4 +262,38 @@ class UploadedFile extends filesystem_1.File {
     }
 }
 exports.UploadedFile = UploadedFile;
-//# sourceMappingURL=request.js.map
+/**
+ * Start HTTP Server
+ * @param  {Application} app
+ * @param  {AppProvider[]} providers
+ * @return {Promise<Application>}
+ */
+function startServer(app, providers) {
+    app_1.checkAppConfig(app);
+    app.disable('x-powered-by');
+    app.disable('strict routing');
+    app.enable('case sensitive routing');
+    app.use((req, res, next) => {
+        res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+        res.setHeader('Pragma', 'no-cache');
+        res.setHeader('Expires', '0');
+        next();
+    });
+    return new Promise((resolve, reject) => {
+        app_1.executeProviders(app, providers)
+            .then(() => {
+            let server = http.createServer(app);
+            server.on('error', err => reject(err));
+            server.on('listening', () => {
+                let addr = server.address();
+                let bind = typeof addr == 'string' ? `pipe ${addr}` : `port ${addr.port}`;
+                console.log(`Listening on ${bind}`);
+                resolve(app);
+            });
+            server.listen(app.config.get('app.port'));
+        })
+            .catch(err => reject(err));
+    });
+}
+exports.startServer = startServer;
+//# sourceMappingURL=http.js.map

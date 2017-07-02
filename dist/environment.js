@@ -3,14 +3,37 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const dotenv = require("dotenv");
 const yargs = require("yargs");
 const misc_1 = require("./misc");
+const fs = require("fs");
 /**
- * Load environment file
- * @param {string} envFile
+ * Load environment file and setup namespace
+ * @param  {string} directory
+ * @return {void}
  */
-function loadEnvironmentFromDir(directory) {
-    dotenv.config({ path: `${misc_1._.trimEnd(directory, '/')}/.env`, silent: true });
+function setupEnvironmentAndNamespace(directory) {
+    directory = misc_1._.trimEnd(directory, '/');
+    dotenv.config({ path: `${directory}/.env`, silent: true });
+    try {
+        fs.mkdirSync(`${directory}/node_modules`);
+    }
+    catch (e) { }
+    try {
+        fs.unlinkSync(`${directory}/node_modules/app`);
+    }
+    catch (e) {
+        if (e.code != 'ENOENT') {
+            throw e;
+        }
+    }
+    try {
+        fs.symlinkSync('../dist', `${directory}/node_modules/app`);
+    }
+    catch (e) {
+        if (e.code != 'ENOENT' && e.code != 'EEXIST') {
+            throw e;
+        }
+    }
 }
-exports.loadEnvironmentFromDir = loadEnvironmentFromDir;
+exports.setupEnvironmentAndNamespace = setupEnvironmentAndNamespace;
 /**
  * Get environment value
  * @param  {string} key

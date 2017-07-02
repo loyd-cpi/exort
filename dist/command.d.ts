@@ -1,4 +1,4 @@
-import { BaseApplication } from './app';
+import { Application, AppProvider } from './app';
 import { KeyValuePair } from './misc';
 import * as yargs from 'yargs';
 /**
@@ -24,27 +24,29 @@ export interface CommandOptions {
 /**
  * CLI class
  */
-export declare abstract class CLI {
-    /**
-     * Flag if CLI.configure() is already called
-     * @type {boolean}
-     */
-    private static isConfigured;
+export declare namespace CLI {
     /**
      * Add command
      * @param  {CommandOptions} options
      * @return {void}
      */
-    static command(options: CommandOptions): void;
+    function command(options: CommandOptions): void;
     /**
      * Configure command line interface
-     * @param  {T} app
+     * @param  {Application} app
      * @return {void}
      */
-    static configure<T extends BaseApplication>(app: T): void;
+    function configure(app: Application): void;
     /**
      * Execute command base from parsed arguments
      * @return {void}
      */
-    static execute(): void;
+    function execute(): void;
 }
+/**
+ * Start CLI and you can only execute it once
+ * @param  {Application} app
+ * @param  {AppProvider[]} providers
+ * @return {void}
+ */
+export declare function startCLI(app: Application, providers: AppProvider[]): void;

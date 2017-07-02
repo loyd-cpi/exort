@@ -1,4 +1,12 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const app_1 = require("./app");
 const expressSession = require("express-session");
@@ -206,41 +214,42 @@ Session.FLASH_KEY = '__$$flash';
 Session.USERDATA_KEY = '__$$userdata';
 exports.Session = Session;
 /**
- * Install session storage
- * @param  {T} app
- * @return {void}
+ * Provide session storage
+ * @return {AppProvider}
  */
-function installSessionStorage(app) {
-    app_1.checkAppConfig(app);
-    let sessionConf = app.locals.config.get('session');
-    if (!sessionConf)
-        return;
-    if (!sessionConf.secret) {
-        sessionConf.secret = app.locals.config.get('app.key');
-    }
-    let driver = 'memory';
-    if (sessionConf.store && sessionConf.store.driver) {
-        driver = sessionConf.store.driver;
-    }
-    let params = misc_1._.clone(sessionConf);
-    switch (driver) {
-        case 'redis':
-            let redisStore = require('connect-redis')(expressSession);
-            params.store = new redisStore(params.store.connection);
-            break;
-        default:
-            delete params.store;
-            break;
-    }
-    let sessionFn = expressSession(params);
-    app.use((request, response, next) => {
-        sessionFn(request, response, err => {
-            if (err)
-                return next(err);
-            request.session = new Session(request.session);
-            next();
+function provideSessionStorage() {
+    return (app) => __awaiter(this, void 0, void 0, function* () {
+        app_1.checkAppConfig(app);
+        let sessionConf = app.config.get('session');
+        if (!sessionConf)
+            return;
+        if (!sessionConf.secret) {
+            sessionConf.secret = app.config.get('app.key');
+        }
+        let driver = 'memory';
+        if (sessionConf.store && sessionConf.store.driver) {
+            driver = sessionConf.store.driver;
+        }
+        let params = misc_1._.clone(sessionConf);
+        switch (driver) {
+            case 'redis':
+                let redisStore = require('connect-redis')(expressSession);
+                params.store = new redisStore(params.store.connection);
+                break;
+            default:
+                delete params.store;
+                break;
+        }
+        let sessionFn = expressSession(params);
+        app.use((request, response, next) => {
+            sessionFn(request, response, err => {
+                if (err)
+                    return next(err);
+                request.session = new Session(request.session);
+                next();
+            });
         });
     });
 }
-exports.installSessionStorage = installSessionStorage;
+exports.provideSessionStorage = provideSessionStorage;
 //# sourceMappingURL=session.js.map

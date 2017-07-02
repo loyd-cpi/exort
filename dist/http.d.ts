@@ -1,5 +1,5 @@
-import { BaseApplication } from './app';
-import { Service, ServiceContext } from './service';
+import { AppProvider, Application } from './app';
+import { Service, Context } from './service';
 import { KeyValuePair, Store } from './misc';
 import * as formidable from 'formidable';
 import { File } from './filesystem';
@@ -31,17 +31,17 @@ export interface Request extends express.Request {
      */
     make<U extends Service>(serviceClass: new (...args: any[]) => U): U;
     /**
-     * ServiceContext instance
-     * @type {ServiceContext}
+     * Context instance
+     * @type {Context}
      */
-    serviceContext: ServiceContext;
+    readonly context: Context;
 }
 /**
  * Install body parser
- * @param  {T} app
- * @return {void}
+ * @param  {Application} app
+ * @return {AppProvider}
  */
-export declare function installBodyParser<T extends BaseApplication>(app: T, rootDir: string): void;
+export declare function provideBodyParser(): AppProvider;
 /**
  * Input class
  */
@@ -129,3 +129,15 @@ export declare class UploadedFile extends File {
      */
     deleteTempFile(): Promise<boolean>;
 }
+/**
+ * Response interface
+ */
+export interface Response extends express.Response {
+}
+/**
+ * Start HTTP Server
+ * @param  {Application} app
+ * @param  {AppProvider[]} providers
+ * @return {Promise<Application>}
+ */
+export declare function startServer(app: Application, providers: AppProvider[]): Promise<Application>;

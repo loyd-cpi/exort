@@ -14,13 +14,19 @@ const yargs = require("yargs");
 /**
  * CLI class
  */
-class CLI {
+var CLI;
+(function (CLI) {
+    /**
+     * Flag that CLI.configure() is already called
+     * @type {boolean}
+     */
+    let isConfigured = false;
     /**
      * Add command
      * @param  {CommandOptions} options
      * @return {void}
      */
-    static command(options) {
+    function command(options) {
         yargs.command(options.command, options.desc, options.params, (argv) => {
             options.handler(argv)
                 .then(() => {
@@ -33,17 +39,18 @@ class CLI {
             });
         });
     }
+    CLI.command = command;
     /**
      * Configure command line interface
-     * @param  {T} app
+     * @param  {Application} app
      * @return {void}
      */
-    static configure(app) {
-        if (this.isConfigured) {
+    function configure(app) {
+        if (isConfigured) {
             throw new Error('CLI.configure(app) is already called');
         }
         app_1.checkAppConfig(app);
-        this.command({
+        command({
             command: 'sync:schema',
             desc: 'Sync models and database schema',
             params: {
@@ -58,20 +65,27 @@ class CLI {
             }
         });
         yargs.help('help');
-        this.isConfigured = true;
+        isConfigured = true;
     }
+    CLI.configure = configure;
     /**
      * Execute command base from parsed arguments
      * @return {void}
      */
-    static execute() {
+    function execute() {
         yargs.parse(process.argv.slice(2));
     }
-}
+    CLI.execute = execute;
+})(CLI = exports.CLI || (exports.CLI = {}));
 /**
- * Flag if CLI.configure() is already called
- * @type {boolean}
+ * Start CLI and you can only execute it once
+ * @param  {Application} app
+ * @param  {AppProvider[]} providers
+ * @return {void}
  */
-CLI.isConfigured = false;
-exports.CLI = CLI;
+function startCLI(app, providers) {
+    CLI.configure(app);
+    CLI.execute();
+}
+exports.startCLI = startCLI;
 //# sourceMappingURL=command.js.map
