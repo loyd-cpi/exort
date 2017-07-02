@@ -1,4 +1,4 @@
-import { checkAppConfig, BaseApplication } from './app';
+import { checkAppConfig, Application, AppProvider } from './app';
 import { KeyValuePair } from './misc';
 import { syncSchema } from './sql';
 import * as yargs from 'yargs';
@@ -28,20 +28,20 @@ export interface CommandOptions {
 /**
  * CLI class
  */
-export abstract class CLI {
+export namespace CLI {
 
   /**
-   * Flag if CLI.configure() is already called
+   * Flag that CLI.configure() is already called
    * @type {boolean}
    */
-  private static isConfigured: boolean = false;
+  let isConfigured: boolean = false;
 
   /**
    * Add command
    * @param  {CommandOptions} options
    * @return {void}
    */
-  public static command(options: CommandOptions): void {
+  export function command(options: CommandOptions): void {
     yargs.command(options.command, options.desc, options.params, (argv: yargs.Argv) => {
       options.handler(argv)
         .then(() => {
@@ -57,17 +57,17 @@ export abstract class CLI {
 
   /**
    * Configure command line interface
-   * @param  {T} app
+   * @param  {Application} app
    * @return {void}
    */
-  public static configure<T extends BaseApplication>(app: T): void {
-    if (this.isConfigured) {
+  export function configure(app: Application): void {
+    if (isConfigured) {
       throw new Error('CLI.configure(app) is already called');
     }
 
     checkAppConfig(app);
 
-    this.command({
+    command({
       command: 'sync:schema',
       desc: 'Sync models and database schema',
       params: {
@@ -81,14 +81,25 @@ export abstract class CLI {
     });
 
     yargs.help('help');
-    this.isConfigured = true;
+    isConfigured = true;
   }
 
   /**
    * Execute command base from parsed arguments
    * @return {void}
    */
-  public static execute(): void {
+  export function execute() {
     yargs.parse(process.argv.slice(2));
   }
+}
+
+/**
+ * Start CLI and you can only execute it once
+ * @param  {Application} app
+ * @param  {AppProvider[]} providers
+ * @return {void}
+ */
+export function startCLI(app: Application, providers: AppProvider[]): void {
+  CLI.configure(app);
+  CLI.execute();
 }

@@ -1,4 +1,4 @@
-import { checkAppConfig, AppProvider, BaseApplication } from './app';
+import { checkAppConfig, AppProvider, Application } from './app';
 import { createConnection, getConnectionManager } from 'typeorm';
 import { KeyValuePair, _ } from './misc';
 
@@ -7,11 +7,11 @@ import { KeyValuePair, _ } from './misc';
  * @param  {string | KeyValuePair<string | string[]>} modelsDir
  * @return {AppProvider<T>}
  */
-export function provideSQLConnection<T extends BaseApplication>(modelsDir: string | KeyValuePair<string | string[]>): AppProvider<T> {
-  return async function (app: T): Promise<void> {
+export function provideSQLConnection(modelsDir: string | KeyValuePair<string | string[]>): AppProvider {
+  return async function (app: Application): Promise<void> {
     checkAppConfig(app);
 
-    let dbConf = app.locals.config.get('db');
+    let dbConf = app.config.get('db');
     for (let connectionName of dbConf.auto) {
 
       let conn = _.clone(dbConf.connections[connectionName]);

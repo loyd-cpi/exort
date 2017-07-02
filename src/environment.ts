@@ -1,13 +1,36 @@
 import * as dotenv from 'dotenv';
 import * as yargs from 'yargs';
 import { _ } from './misc';
+import * as fs from 'fs';
 
 /**
- * Load environment file
- * @param {string} envFile
+ * Load environment file and setup namespace
+ * @param  {string} directory
+ * @return {void}
  */
-export function loadEnvironmentFromDir(directory: string) {
-  dotenv.config({ path: `${_.trimEnd(directory, '/')}/.env`, silent: true });
+export function setupEnvironmentAndNamespace(directory: string): void {
+  directory = _.trimEnd(directory, '/');
+  dotenv.config({ path: `${directory}/.env`, silent: true });
+
+  try {
+    fs.mkdirSync(`${directory}/node_modules`);
+  } catch (e) {}
+
+  try {
+    fs.unlinkSync(`${directory}/node_modules/app`);
+  } catch (e) {
+    if (e.code != 'ENOENT') {
+      throw e;
+    }
+  }
+
+  try {
+    fs.symlinkSync('../dist', `${directory}/node_modules/app`);
+  } catch (e) {
+    if (e.code != 'ENOENT' && e.code != 'EEXIST') {
+      throw e;
+    }
+  }
 }
 
 /**

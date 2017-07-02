@@ -1,20 +1,52 @@
+import { checkAppConfig, Application, AppProvider } from './app';
 import { getConnectionManager, Connection } from 'typeorm';
-import { checkAppConfig, BaseApplication } from './app';
-import { Response } from './response';
-import { Request } from './request';
+import { Response, Request } from './http';
 import * as express from 'express';
 import { _ } from './misc';
 
 /**
- * ServiceContext class
+ * Decorator to make an injectable class
+ * @return {((target: Function) => void)}
  */
-export class ServiceContext {
+export function Injectable() {
+  return (target: Function) => {
+    if (typeof target != 'function') {
+      throw new Error(`${typeof target} cannot be injectable`);
+    }
+    (target as any).$injectParamNames = _.getConstructorParamNames(target);
+  };
+}
+
+/**
+ * Check if class is injectable
+ * @param  {Function} targetClass
+ * @return {boolean}
+ */
+export function isInjectable(targetClass: Function): boolean {
+  if (typeof targetClass != 'function') {
+    throw new Error('Invalid target class');
+  }
+  return Reflect.hasMetadata('design:paramtypes', targetClass) && Array.isArray((targetClass as any).$injectParamNames);
+}
+
+/**
+ * Context class
+ */
+export class Context {
 
   /**
    * Map of resolved instances
    * @type {Map<string, any>}
    */
   private resolvedInstances: Map<Function, any> = new Map<Function, any>();
+
+  /**
+   * Context constructor
+   * @param {Application} app
+   */
+  constructor(public readonly app: Application) {
+    this.resolvedInstances.set(Context, this);
+  }
 
   /**
    * create instance via dependency injection and using this context
@@ -26,55 +58,69 @@ export class ServiceContext {
       return this.resolvedInstances.get(serviceClass);
     }
 
+    if (!isInjectable(serviceClass)) {
+      throw new Error(`${serviceClass.name} is not an injectable class`);
+    }
+
     if (!_.classExtends(serviceClass, Service)) {
       throw new Error(`${serviceClass.name} is not a Service class`);
     }
 
-    let instance = Reflect.construct(serviceClass, [this]);
-    this.resolvedInstances.set(serviceClass, instance);
+    let params: Service[] = [];
+    let paramTypes: ServiceClass[] = Reflect.getMetadata('design:paramtypes', serviceClass);
+    for (let paramIndex in paramTypes) {
+      if (_.isNone(paramTypes[paramIndex])) {
+        throw new Error(
+          `Empty param type for ${(serviceClass as any).$injectParamNames[paramIndex]} in ${serviceClass.name} constructor.
+          It might be caused by circular dependency`
+        );
+      }
+      params.push(this.make(paramTypes[paramIndex]));
+    }
 
+    if (!params.length) {
+      (params as any).push(this);
+    }
+
+    let instance = Reflect.construct(serviceClass, params);
+    this.resolvedInstances.set(serviceClass, instance);
     return instance;
   }
 }
 
 /**
+ * ServiceClass interface
+ */
+export interface ServiceClass {
+  new(...args: any[]): Service;
+}
+
+/**
  * ServiceClassResolver interface
  */
-export interface ServiceClassResolver<U extends Service> {
-  (type?: any): new(...args: any[]) => U;
+export interface ServiceClassResolver {
+  (type?: any): ServiceClass;
 }
 
 /**
- * Decorator for injecting service dependencies
- * @param  {ServiceClassResolver} resolver
- * @return {((target: Object, propertyKey: string) => void)}
+ * Provider service context
+ * @return {AppProvider}
  */
-export function Inject<U extends Service>
-  (resolver: ServiceClassResolver<U>): ((target: Object, propertyKey: string) => void) {
-  return (target: Object, propertyKey: string) => {
+export function provideServices(): AppProvider {
+  return async (app: Application): Promise<void> => {
+    checkAppConfig(app);
 
-    Object.defineProperty(target, propertyKey, {
-      get() {
-        return (this as any).context.make(resolver());
+    (app as any).context = new Context(app);
+    app.use((req: Request, res: Response, next: express.NextFunction) => {
+
+      if (!(req.context instanceof Context) || typeof req.make != 'function') {
+        (req as any).context = new Context(app);
+        req.make = req.context.make.bind(req.context);
       }
+
+      next();
     });
   };
-}
-
-/**
- * Install services
- * @param  {T} app
- * @return {void}
- */
-export function installServices<T extends BaseApplication>(app: T): void {
-  checkAppConfig(app);
-  app.use((req: Request, res: Response, next: express.NextFunction) => {
-    if (!(req.serviceContext instanceof ServiceContext) || typeof req.make != 'function') {
-      req.serviceContext = new ServiceContext();
-      req.make = req.serviceContext.make.bind(req.serviceContext);
-    }
-    next();
-  });
 }
 
 /**
@@ -84,9 +130,9 @@ export abstract class Service {
 
   /**
    * Service constructor
-   * @param {ServiceContext} context
+   * @param {Context} context
    */
-  constructor(protected context: ServiceContext) {}
+  constructor(protected readonly context: Context) {}
 }
 
 /**

@@ -1,25 +1,31 @@
-import { BaseApplication } from './app'
-import { Response } from './response';
-import * as nunjucks from 'nunjucks';
-import { Request } from './request';
+import { Context } from './service';
 import * as express from 'express';
 import { Store, _ } from './misc';
 import * as pathlib from 'path';
-import * as fs from 'fs';
 
 /**
- * ApplicationProps interface
+ * Application interface
  */
-export interface ApplicationProps {
-  config: Config;
-  view: nunjucks.Environment;
-}
+export interface Application extends express.Server {
 
-/**
- * BaseApplication interface
- */
-export interface BaseApplication extends express.Server {
-  locals: ApplicationProps;
+  /**
+   * Config instance
+   * @type {Config}
+   */
+  readonly config: Config;
+
+  /**
+   * Application root directory
+   * @type {string}
+   */
+  readonly dir: string;
+
+  /**
+   * Single instance of context.
+   * Don't use this to create service instance per request
+   * @type {Context}
+   */
+  readonly context: Context;
 }
 
 /**
@@ -45,68 +51,46 @@ export class Config extends Store {
 }
 
 /**
- * Create node_modules/app symlink
- * @param  {string} rootDir
- * @return {void}
+ * Initialize application instance and configure
+ * @param rootDir
+ * @param configFiles
  */
-function buildAppNamespace(rootDir: string): void {
-  try {
-    fs.mkdirSync(`${rootDir}/node_modules`);
-  } catch (e) {}
-
-  try {
-    fs.unlinkSync(`${rootDir}/node_modules/app`);
-  } catch (e) {
-    if (e.code != 'ENOENT') {
-      throw e;
-    }
+export function createApplication(rootDir: string, configFiles: string[]): Application {
+  let app = express() as Application;
+  if (typeof app.dir != 'undefined') {
+    throw new Error('app.dir is already set. There must be conflict with express');
   }
-
-  try {
-    fs.symlinkSync('../dist', `${rootDir}/node_modules/app`);
-  } catch (e) {
-    if (e.code != 'ENOENT' && e.code != 'EEXIST') {
-      throw e;
-    }
-  }
+  (app as any).dir = _.trimEnd(rootDir, '/');
+  configure(app, configFiles);
+  return app;
 }
 
 /**
  * Set config object of application
- * @param  {T} app
- * @param  {string} rootDir
+ * @param  {Application} app
  * @param  {string[]} files
  * @return {void}
  */
-export function configure<T extends BaseApplication>(app: T, rootDir: string, files: string[]): void {
-  if (app.locals.config instanceof Config) {
-    throw new Error('configure(app) is already called');
+export function configure(app: Application, files: string[]): void {
+  if (typeof app.config != 'undefined') {
+    if (app.config instanceof Config) {
+      throw new Error('configure(app) is already called');
+    } else {
+      throw new Error('app.config already exists. there must be conflict with express');
+    }
   }
 
-  buildAppNamespace(rootDir);
-
-  app.locals.config = Config.load(files);
-  app.set('env', app.locals.config.get('app.env'));
-
-  app.disable('x-powered-by');
-  app.disable('strict routing');
-  app.enable('case sensitive routing');
-
-  app.use((req: Request, res: Response, next: express.NextFunction) => {
-    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
-    res.setHeader('Pragma', 'no-cache');
-    res.setHeader('Expires', '0');
-    next();
-  });
+  let config = (app as any).config = Config.load(files);
+  app.set('env', config.get('app.env'));
 }
 
 /**
  * Check if application has config object
- * @param  {T} app
+ * @param  {Application} app
  * @return {void}
  */
-export function checkAppConfig<T extends BaseApplication>(app: T): void {
-  if (!(app.locals.config instanceof Config)) {
+export function checkAppConfig(app: Application): void {
+  if (!(app.config instanceof Config)) {
     throw new Error('Should call configure(app) first');
   }
 }
@@ -114,17 +98,17 @@ export function checkAppConfig<T extends BaseApplication>(app: T): void {
 /**
  * AppProvider interface
  */
-export interface AppProvider<T extends BaseApplication> {
-  (app: T): Promise<void>;
+export interface AppProvider {
+  (app: Application): Promise<void>;
 }
 
 /**
  * Execute providers and boot the application
- * @param  {U} app
- * @param  {AppProvider<U>} providers
+ * @param  {Application} app
+ * @param  {AppProvider[]} providers
  * @return {Promise<void>}
  */
-export async function boot<U extends BaseApplication>(app: U, providers: AppProvider<U>[]): Promise<void> {
+export async function executeProviders(app: Application, providers: AppProvider[]): Promise<void> {
   for (let provider of providers) {
     await provider(app);
   }

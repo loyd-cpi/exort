@@ -1,4 +1,4 @@
-import { checkAppConfig, BaseApplication } from './app';
+import { checkAppConfig, Application, AppProvider } from './app';
 import { KeyValuePair } from './misc';
 import * as nunjucks from 'nunjucks';
 import * as pathlib from 'path';
@@ -52,26 +52,26 @@ export interface ViewConfig extends nunjucks.ConfigureOptions {}
 
 /**
  * Set express application view engine
- * @param  {T} app
  * @param  {string} viewsDir
- * @return {void}
+ * @return {AppProvider}
  */
-export function installViewEngine<T extends BaseApplication>(app: T, viewsDir: string): void {
-  checkAppConfig(app);
+export function provideViewEngine(viewsDir: string): AppProvider {
+  return async (app: Application): Promise<void> => {
+    checkAppConfig(app);
 
-  let env = new nunjucks.Environment(new TemplateLoader(viewsDir) as any, app.locals.config.get('view'));
-  app.locals.view = env;
-  app.set('views', viewsDir);
-  app.engine('html', (filePath: string, options: KeyValuePair<string>, callback: Function) => {
+    let env = new nunjucks.Environment(new TemplateLoader(viewsDir) as any, app.config.get('view'));
+    app.set('views', viewsDir);
+    app.engine('html', (filePath: string, options: KeyValuePair<string>, callback: Function) => {
 
-    let viewPathObj = pathlib.parse(filePath);
-    let viewFilePath = pathlib.join(viewPathObj.dir.replace(viewsDir, ''), viewPathObj.name);
-    env.render(viewFilePath, options, (err, res: string) => {
+      let viewPathObj = pathlib.parse(filePath);
+      let viewFilePath = pathlib.join(viewPathObj.dir.replace(viewsDir, ''), viewPathObj.name);
+      env.render(viewFilePath, options, (err, res: string) => {
 
-      if (err) return callback(err);
-      callback(null, res);
+        if (err) return callback(err);
+        callback(null, res);
+      });
     });
-  });
 
-  app.set('view engine', 'html');
+    app.set('view engine', 'html');
+  };
 }

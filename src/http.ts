@@ -1,5 +1,5 @@
-import { checkAppConfig, BaseApplication } from './app';
-import { Service, ServiceContext } from './service';
+import { checkAppConfig, executeProviders, AppProvider, Application } from './app';
+import { Service, Context } from './service';
 import { KeyValuePair, Store } from './misc';
 import * as formidable from 'formidable';
 import { File } from './filesystem';
@@ -7,6 +7,7 @@ import { Session } from './session';
 import * as express from 'express';
 import * as pathlib from 'path';
 import * as bytes from 'bytes';
+import * as http from 'http';
 import * as os from 'os';
 import * as fs from 'fs';
 
@@ -43,80 +44,82 @@ export interface Request extends express.Request {
   make<U extends Service>(serviceClass: new(...args: any[]) => U): U;
 
   /**
-   * ServiceContext instance
-   * @type {ServiceContext}
+   * Context instance
+   * @type {Context}
    */
-  serviceContext: ServiceContext;
+  readonly context: Context;
 }
 
 /**
  * Install body parser
- * @param  {T} app
- * @return {void}
+ * @param  {Application} app
+ * @return {AppProvider}
  */
-export function installBodyParser<T extends BaseApplication>(app: T, rootDir: string): void {
-  checkAppConfig(app);
+export function provideBodyParser(): AppProvider {
+  return async (app: Application): Promise<void> => {
+    checkAppConfig(app);
 
-  let requestConf = app.locals.config.get('request') || {};
-  requestConf.encoding = requestConf.encoding || 'utf-8';
-  requestConf.postMaxSize = requestConf.postMaxSize || '2MB';
-  requestConf.uploadMaxSize = requestConf.uploadMaxSize || '5MB';
-  requestConf.tmpUploadDir = requestConf.tmpUploadDir || os.tmpdir();
+    let requestConf = app.config.get('request') || {};
+    requestConf.encoding = requestConf.encoding || 'utf-8';
+    requestConf.postMaxSize = requestConf.postMaxSize || '2MB';
+    requestConf.uploadMaxSize = requestConf.uploadMaxSize || '5MB';
+    requestConf.tmpUploadDir = requestConf.tmpUploadDir || os.tmpdir();
 
-  if (!pathlib.isAbsolute(requestConf.tmpUploadDir)) {
-    requestConf.tmpUploadDir = pathlib.join(rootDir, requestConf.tmpUploadDir);
-  }
+    if (!pathlib.isAbsolute(requestConf.tmpUploadDir)) {
+      requestConf.tmpUploadDir = pathlib.join(app.dir, requestConf.tmpUploadDir);
+    }
 
-  let postMaxSize = bytes.parse(requestConf.postMaxSize);
-  let uploadMaxSize = bytes.parse(requestConf.uploadMaxSize);
+    let postMaxSize = bytes.parse(requestConf.postMaxSize);
+    let uploadMaxSize = bytes.parse(requestConf.uploadMaxSize);
 
-  app.use((req: Request, res: express.Response, next: Function) => {
+    app.use((req: Request, res: express.Response, next: Function) => {
 
-    req.body = {};
-    (req as any)._files = {};
+      req.body = {};
+      (req as any)._files = {};
 
-    let form = new formidable.IncomingForm();
-    form.encoding = requestConf.encoding;
-    form.uploadDir = requestConf.tmpUploadDir;
-    form.maxFieldsSize = postMaxSize;
-    form.multiples = true;
-    form.keepExtensions = true;
+      let form = new formidable.IncomingForm();
+      form.encoding = requestConf.encoding;
+      form.uploadDir = requestConf.tmpUploadDir;
+      form.maxFieldsSize = postMaxSize;
+      form.multiples = true;
+      form.keepExtensions = true;
 
-    form.parse(req, (err, fields, files) => {
-      if (err) return next(err);
+      form.parse(req, (err, fields, files) => {
+        if (err) return next(err);
 
-      if (fields) {
-        req.body = qs.parse(fields);
-      }
+        if (fields) {
+          req.body = qs.parse(fields);
+        }
 
-      let totalUploadSize = 0;
-      if (files) {
-        for (let key in files) {
-          if (Array.isArray(files[key])) {
+        let totalUploadSize = 0;
+        if (files) {
+          for (let key in files) {
+            if (Array.isArray(files[key])) {
 
-            (req as any)._files[key] = [];
-            (req as any)._files[key].forEach((file: formidable.File) => {
-              let uploaded = new UploadedFile(file);
+              (req as any)._files[key] = [];
+              (req as any)._files[key].forEach((file: formidable.File) => {
+                let uploaded = new UploadedFile(file);
+                totalUploadSize += uploaded.size;
+                (req as any)._files[key].push(uploaded);
+              });
+
+            } else {
+              let uploaded = new UploadedFile(files[key]);
               totalUploadSize += uploaded.size;
-              (req as any)._files[key].push(uploaded);
-            });
-
-          } else {
-            let uploaded = new UploadedFile(files[key]);
-            totalUploadSize += uploaded.size;
-            (req as any)._files[key] = uploaded;
+              (req as any)._files[key] = uploaded;
+            }
           }
         }
-      }
 
-      if (totalUploadSize > uploadMaxSize) {
-        return next(new Error('Reached upload max size'));
-      }
+        if (totalUploadSize > uploadMaxSize) {
+          return next(new Error('Reached upload max size'));
+        }
 
-      req.input = new Input(req);
-      next();
+        req.input = new Input(req);
+        next();
+      });
     });
-  });
+  };
 }
 
 /**
@@ -323,4 +326,48 @@ export class UploadedFile extends File {
       });
     });
   }
+}
+
+/**
+ * Response interface
+ */
+export interface Response extends express.Response {}
+
+/**
+ * Start HTTP Server
+ * @param  {Application} app
+ * @param  {AppProvider[]} providers
+ * @return {Promise<Application>}
+ */
+export function startServer(app: Application, providers: AppProvider[]): Promise<Application> {
+  checkAppConfig(app);
+
+  app.disable('x-powered-by');
+  app.disable('strict routing');
+  app.enable('case sensitive routing');
+
+  app.use((req: Request, res: Response, next: express.NextFunction) => {
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+    next();
+  });
+
+  return new Promise<Application>((resolve, reject) => {
+    executeProviders(app, providers)
+      .then(() => {
+
+        let server = http.createServer(app);
+        server.on('error', err => reject(err));
+        server.on('listening', () => {
+          let addr = server.address();
+          let bind = typeof addr == 'string' ? `pipe ${addr}` : `port ${addr.port}`;
+          console.log(`Listening on ${bind}`);
+          resolve(app);
+        });
+
+        server.listen(app.config.get('app.port'));
+      })
+      .catch(err => reject(err));
+  });
 }

@@ -8,12 +8,11 @@ export * from './filesystem';
 export * from './logger';
 export * from './mime';
 export * from './misc';
-export * from './request';
-export * from './response';
+export * from './http';
 export * from './router';
 export * from './service';
 export * from './session';
 export * from './sql';
 export * from './view';
 
-export { NextFunction } from 'express';
+export { Route, Router, NextFunction } from 'express';

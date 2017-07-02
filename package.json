@@ -1,7 +1,7 @@
 {
-  "name": "express-gears",
+  "name": "exort",
   "version": "0.1.0",
-  "description": "ExpressJS extensions",
+  "description": "A web framework on top of ExpressJS and React",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "scripts": {
@@ -12,7 +12,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/tontonskie/express-gears.git"
+    "url": "git+https://github.com/tontonskie/exort.git"
   },
   "keywords": [
     "expressjs"
@@ -20,13 +20,14 @@
   "author": "tontonskie",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/tontonskie/express-gears/issues"
+    "url": "https://github.com/tontonskie/exort/issues"
   },
-  "homepage": "https://github.com/tontonskie/express-gears#readme",
+  "homepage": "https://github.com/tontonskie/exort#readme",
   "dependencies": {
+    "bcrypt": "^1.0.2",
     "bytes": "^2.5.0",
     "dotenv": "^4.0.0",
-    "express": "git://github.com/tontonskie/express.git#express-gears",
+    "express": "git://github.com/tontonskie/express.git#exort",
     "express-session": "^1.15.3",
     "formidable": "^1.1.1",
     "lodash": "^4.17.4",

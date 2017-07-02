@@ -1,7 +1,7 @@
-import { checkAppConfig, BaseApplication } from './app';
+import { checkAppConfig, Application, AppProvider } from './app';
 import * as expressSession from 'express-session';
-import { Request } from './request';
 import * as express from 'express';
+import { Request } from './http';
 import { _ } from './misc';
 
 /**
@@ -222,43 +222,44 @@ export class Session implements Express.Session {
 }
 
 /**
- * Install session storage
- * @param  {T} app
- * @return {void}
+ * Provide session storage
+ * @return {AppProvider}
  */
-export function installSessionStorage<T extends BaseApplication>(app: T): void {
-  checkAppConfig(app);
+export function provideSessionStorage(): AppProvider {
+  return async (app: Application): Promise<void> => {
+    checkAppConfig(app);
 
-  let sessionConf = app.locals.config.get('session');
-  if (!sessionConf) return;
+    let sessionConf = app.config.get('session');
+    if (!sessionConf) return;
 
-  if (!sessionConf.secret) {
-    sessionConf.secret = app.locals.config.get('app.key');
-  }
+    if (!sessionConf.secret) {
+      sessionConf.secret = app.config.get('app.key');
+    }
 
-  let driver = 'memory';
-  if (sessionConf.store && sessionConf.store.driver) {
-    driver = sessionConf.store.driver;
-  }
+    let driver = 'memory';
+    if (sessionConf.store && sessionConf.store.driver) {
+      driver = sessionConf.store.driver;
+    }
 
-  let params = _.clone(sessionConf);
-  switch (driver) {
-    case 'redis':
-      let redisStore = require('connect-redis')(expressSession);
-      params.store = new redisStore(params.store.connection);
-      break;
-    default:
-      delete params.store;
-      break;
-  }
+    let params = _.clone(sessionConf);
+    switch (driver) {
+      case 'redis':
+        let redisStore = require('connect-redis')(expressSession);
+        params.store = new redisStore(params.store.connection);
+        break;
+      default:
+        delete params.store;
+        break;
+    }
 
-  let sessionFn = expressSession(params);
-  app.use((request: Request, response: express.Response, next: express.NextFunction) => {
-    sessionFn(request, response, err => {
+    let sessionFn = expressSession(params);
+    app.use((request: Request, response: express.Response, next: express.NextFunction) => {
+      sessionFn(request, response, err => {
 
-      if (err) return next(err);
-      request.session = new Session(request.session);
-      next();
+        if (err) return next(err);
+        request.session = new Session(request.session);
+        next();
+      });
     });
-  });
+  };
 }

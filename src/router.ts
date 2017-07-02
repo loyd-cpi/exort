@@ -1,20 +1,21 @@
-import { checkAppConfig, BaseApplication } from './app';
+import { checkAppConfig, Application, AppProvider } from './app';
 
 /**
- * Setup routes
- * @param  {express.Server} app
+ * Provide routes
  * @param  {string} routesFile
- * @return {void}
+ * @return {AppProvider}
  */
-export function installRoutes<T extends BaseApplication>(app: T, routesFile: string): void {
-  checkAppConfig(app);
+export function provideRoutes(routesFile: string): AppProvider {
+  return async (app: Application): Promise<void> => {
+    checkAppConfig(app);
 
-  let routes = require(routesFile);
-  if (typeof routes != 'object') {
-    throw new Error('Invalid routes file');
-  }
+    let routes = require(routesFile);
+    if (typeof routes != 'object') {
+      throw new Error('Invalid routes file');
+    }
 
-  if (typeof routes.setup == 'function') {
-    routes.setup(app);
-  }
+    if (typeof routes.setup == 'function') {
+      routes.setup(app);
+    }
+  };
 }
