@@ -1,4 +1,4 @@
-import { checkAppConfig, Application, AppProvider } from './app';
+import { checkAppConfig, executeProviders, Application, AppProvider } from './app';
 import { KeyValuePair } from './misc';
 import { syncSchema } from './sql';
 import * as yargs from 'yargs';
@@ -99,7 +99,8 @@ export namespace CLI {
  * @param  {AppProvider[]} providers
  * @return {void}
  */
-export function startCLI(app: Application, providers: AppProvider[]): void {
+export async function startCLI(app: Application, providers: AppProvider[]): Promise<void> {
+  await executeProviders(app, providers);
   CLI.configure(app);
   CLI.execute();
 }
