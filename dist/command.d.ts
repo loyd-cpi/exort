@@ -49,4 +49,4 @@ export declare namespace CLI {
  * @param  {AppProvider[]} providers
  * @return {void}
  */
-export declare function startCLI(app: Application, providers: AppProvider[]): void;
+export declare function startCLI(app: Application, providers: AppProvider[]): Promise<void>;

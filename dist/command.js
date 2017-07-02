@@ -84,8 +84,11 @@ var CLI;
  * @return {void}
  */
 function startCLI(app, providers) {
-    CLI.configure(app);
-    CLI.execute();
+    return __awaiter(this, void 0, void 0, function* () {
+        yield app_1.executeProviders(app, providers);
+        CLI.configure(app);
+        CLI.execute();
+    });
 }
 exports.startCLI = startCLI;
 //# sourceMappingURL=command.js.map
