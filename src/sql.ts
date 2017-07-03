@@ -1,5 +1,7 @@
+import { createConnection, Connection, Repository, getConnectionManager } from 'typeorm';
+import { SelectQueryBuilder } from 'typeorm/query-builder/SelectQueryBuilder';
 import { checkAppConfig, AppProvider, Application } from './app';
-import { createConnection, getConnectionManager } from 'typeorm';
+import { Model, Service } from './service';
 import { KeyValuePair, _ } from './misc';
 
 /**
@@ -48,4 +50,46 @@ export function provideSQLConnection(modelsDir: string | KeyValuePair<string | s
  */
 export async function syncSchema(connectionName?: string): Promise<void> {
   await getConnectionManager().get(connectionName).syncSchema();
+}
+
+/**
+ * Abstract SQLService class
+ */
+export abstract class SQLService<T extends Model> extends Service {
+
+  /**
+   * Model class
+   * @type {(new() => T)}
+   */
+  protected modelClass: new() => T;
+
+  /**
+   * Gets registered connection with the given name.
+   * If connection name is not given then it will get a default connection.
+   * Throws exception if connection with the given name was not found.
+   * @param  {string} name
+   * @return {Connection}
+   */
+  protected getConnection(name: string = 'default'): Connection {
+    return getConnectionManager().get(name);
+  }
+
+  /**
+   * Gets repository for the service entity
+   * @param  {string} connection
+   * @return {Repository<T>}
+   */
+  protected getRepository(connection: string = 'default'): Repository<T> {
+    return this.getConnection(connection).getRepository(this.modelClass);
+  }
+
+  /**
+   * Creates a new query builder that can be used to build a sql query
+   * @param  {string} alias
+   * @param  {string} connection
+   * @return {SelectQueryBuilder<T>}
+   */
+  protected createQueryBuilder(alias: string, connection: string = 'default'): SelectQueryBuilder<T> {
+    return this.getRepository(connection).createQueryBuilder(alias);
+  }
 }

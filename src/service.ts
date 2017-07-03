@@ -1,5 +1,4 @@
 import { checkAppConfig, Application, AppProvider } from './app';
-import { getConnectionManager, Connection } from 'typeorm';
 import { Response, Request } from './http';
 import * as express from 'express';
 import { _ } from './misc';
@@ -124,6 +123,11 @@ export function provideServices(): AppProvider {
 }
 
 /**
+ * Model interface
+ */
+export interface Model {}
+
+/**
  * Abstract Service class
  */
 export abstract class Service {
@@ -133,21 +137,4 @@ export abstract class Service {
    * @param {Context} context
    */
   constructor(protected readonly context: Context) {}
-}
-
-/**
- * Abstract SQLService class
- */
-export abstract class SQLService extends Service {
-
-  /**
-   * Gets registered connection with the given name.
-   * If connection name is not given then it will get a default connection.
-   * Throws exception if connection with the given name was not found.
-   * @param  {string} name
-   * @return {Connection}
-   */
-  public connection(name: string = 'default'): Connection {
-    return getConnectionManager().get(name);
-  }
 }
