@@ -1,5 +1,4 @@
 import { Application, AppProvider } from './app';
-import { Connection } from 'typeorm';
 /**
  * Decorator to make an injectable class
  * @return {((target: Function) => void)}
@@ -51,6 +50,11 @@ export interface ServiceClassResolver {
  */
 export declare function provideServices(): AppProvider;
 /**
+ * Model interface
+ */
+export interface Model {
+}
+/**
  * Abstract Service class
  */
 export declare abstract class Service {
@@ -60,17 +64,4 @@ export declare abstract class Service {
      * @param {Context} context
      */
     constructor(context: Context);
-}
-/**
- * Abstract SQLService class
- */
-export declare abstract class SQLService extends Service {
-    /**
-     * Gets registered connection with the given name.
-     * If connection name is not given then it will get a default connection.
-     * Throws exception if connection with the given name was not found.
-     * @param  {string} name
-     * @return {Connection}
-     */
-    connection(name?: string): Connection;
 }

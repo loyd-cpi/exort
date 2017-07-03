@@ -9,7 +9,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const app_1 = require("./app");
-const typeorm_1 = require("typeorm");
 const misc_1 = require("./misc");
 /**
  * Decorator to make an injectable class
@@ -117,20 +116,4 @@ class Service {
     }
 }
 exports.Service = Service;
-/**
- * Abstract SQLService class
- */
-class SQLService extends Service {
-    /**
-     * Gets registered connection with the given name.
-     * If connection name is not given then it will get a default connection.
-     * Throws exception if connection with the given name was not found.
-     * @param  {string} name
-     * @return {Connection}
-     */
-    connection(name = 'default') {
-        return typeorm_1.getConnectionManager().get(name);
-    }
-}
-exports.SQLService = SQLService;
 //# sourceMappingURL=service.js.map

@@ -8,8 +8,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const app_1 = require("./app");
 const typeorm_1 = require("typeorm");
+const app_1 = require("./app");
+const service_1 = require("./service");
 const misc_1 = require("./misc");
 /**
  * Provide sql connection
@@ -60,4 +61,37 @@ function syncSchema(connectionName) {
     });
 }
 exports.syncSchema = syncSchema;
+/**
+ * Abstract SQLService class
+ */
+class SQLService extends service_1.Service {
+    /**
+     * Gets registered connection with the given name.
+     * If connection name is not given then it will get a default connection.
+     * Throws exception if connection with the given name was not found.
+     * @param  {string} name
+     * @return {Connection}
+     */
+    getConnection(name = 'default') {
+        return typeorm_1.getConnectionManager().get(name);
+    }
+    /**
+     * Gets repository for the service entity
+     * @param  {string} connection
+     * @return {Repository<T>}
+     */
+    getRepository(connection = 'default') {
+        return this.getConnection(connection).getRepository(this.modelClass);
+    }
+    /**
+     * Creates a new query builder that can be used to build a sql query
+     * @param  {string} alias
+     * @param  {string} connection
+     * @return {SelectQueryBuilder<T>}
+     */
+    createQueryBuilder(alias, connection = 'default') {
+        return this.getRepository(connection).createQueryBuilder(alias);
+    }
+}
+exports.SQLService = SQLService;
 //# sourceMappingURL=sql.js.map
