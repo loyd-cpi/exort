@@ -12,11 +12,34 @@ export interface ValidationRule {
     attrs: KeyValuePair<string | number>;
 }
 /**
- * ValidationError interface
+ * FieldValidationError interface
  */
-export interface ValidationError {
+export interface FieldValidationError {
     rule: string;
     message: string;
+}
+/**
+ * FormValidationError class
+ */
+export declare class FormValidationError extends Error {
+    readonly fields: KeyValuePair<FieldValidationError[]>;
+    /**
+     * FormValidationError constructor
+     * @param {KeyValuePair<FieldValidationError[]>} fieldErrors
+     */
+    constructor(fields: KeyValuePair<FieldValidationError[]>);
+    /**
+     * Get first error message from a particular field
+     * @param  {string} fieldName
+     * @return {string | undefined}
+     */
+    getFirstMessage(fieldName: string): string | undefined;
+    /**
+     * Generate combined error message
+     * @param  {KeyValuePair<FieldValidationError[]>} fields
+     * @return {string}
+     */
+    static generateMessage(fields: KeyValuePair<FieldValidationError[]>): string;
 }
 /**
  * Rules class
@@ -31,7 +54,7 @@ export declare class FieldValidator {
     private rules;
     /**
      * Validation errors occured
-     * @type {ValidationError[]}
+     * @type {FieldValidationError[]}
      */
     private errors;
     /**
@@ -131,9 +154,9 @@ export declare class FieldValidator {
     addError(ruleName: string, message: string, attrs?: KeyValuePair<string | number>): void;
     /**
      * Get errors
-     * @return {ValidationError[]}
+     * @return {FieldValidationError[]}
      */
-    getErrors(): ValidationError[];
+    getErrors(): FieldValidationError[];
     /**
      * Check validation errors is not empty
      * @return {boolean}
@@ -158,7 +181,7 @@ export declare class FormValidator {
     private fields;
     /**
      * Map of validation errors
-     * @type {KeyValuePair<ValidationError[]>}
+     * @type {KeyValuePair<FieldValidationError[]>}
      */
     private fieldErrors;
     /**
@@ -191,10 +214,20 @@ export declare class FormValidator {
      */
     validate(): Promise<boolean>;
     /**
-     * Get errors
-     * @return {KeyValuePair<ValidationError[]>}
+     * Check if form validator has errors
+     * @return {boolean}
      */
-    getErrors(): KeyValuePair<ValidationError[]>;
+    hasErrors(): boolean;
+    /**
+     * Validate and throw error if validation fails
+     * @return {Promise<void>}
+     */
+    validateAndThrow(): Promise<void>;
+    /**
+     * Get errors
+     * @return {KeyValuePair<FieldValidationError[]>}
+     */
+    getErrors(): KeyValuePair<FieldValidationError[]>;
 }
 /**
  * Validator class

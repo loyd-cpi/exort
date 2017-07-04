@@ -18,6 +18,45 @@ const service_1 = require("./service");
 const misc_1 = require("./misc");
 const moment = require("moment");
 /**
+ * FormValidationError class
+ */
+class FormValidationError extends Error {
+    /**
+     * FormValidationError constructor
+     * @param {KeyValuePair<FieldValidationError[]>} fieldErrors
+     */
+    constructor(fields) {
+        super(FormValidationError.generateMessage(fields));
+        this.fields = fields;
+        this.name = this.constructor.name;
+    }
+    /**
+     * Get first error message from a particular field
+     * @param  {string} fieldName
+     * @return {string | undefined}
+     */
+    getFirstMessage(fieldName) {
+        if (typeof this.fields[fieldName] == 'undefined' || !this.fields[fieldName].length)
+            return;
+        return this.fields[fieldName][0].message;
+    }
+    /**
+     * Generate combined error message
+     * @param  {KeyValuePair<FieldValidationError[]>} fields
+     * @return {string}
+     */
+    static generateMessage(fields) {
+        let message = [];
+        for (let fieldName in fields) {
+            for (let fieldError of fields[fieldName]) {
+                message.push(fieldError.message);
+            }
+        }
+        return message.join('\n');
+    }
+}
+exports.FormValidationError = FormValidationError;
+/**
  * Rules class
  */
 class FieldValidator {
@@ -37,7 +76,7 @@ class FieldValidator {
         this.rules = {};
         /**
          * Validation errors occured
-         * @type {ValidationError[]}
+         * @type {FieldValidationError[]}
          */
         this.errors = [];
         this.fieldLabel = fieldLabel || misc_1._.lowerCase(fieldName);
@@ -289,7 +328,7 @@ class FieldValidator {
     }
     /**
      * Get errors
-     * @return {ValidationError[]}
+     * @return {FieldValidationError[]}
      */
     getErrors() {
         return this.errors;
@@ -344,7 +383,7 @@ class FormValidator {
         this.fields = {};
         /**
          * Map of validation errors
-         * @type {KeyValuePair<ValidationError[]>}
+         * @type {KeyValuePair<FieldValidationError[]>}
          */
         this.fieldErrors = {};
     }
@@ -394,8 +433,26 @@ class FormValidator {
         });
     }
     /**
+     * Check if form validator has errors
+     * @return {boolean}
+     */
+    hasErrors() {
+        return Object.keys(this.fieldErrors).length > 0;
+    }
+    /**
+     * Validate and throw error if validation fails
+     * @return {Promise<void>}
+     */
+    validateAndThrow() {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!(yield this.validate())) {
+                throw new FormValidationError(this.getErrors());
+            }
+        });
+    }
+    /**
      * Get errors
-     * @return {KeyValuePair<ValidationError[]>}
+     * @return {KeyValuePair<FieldValidationError[]>}
      */
     getErrors() {
         return this.fieldErrors;
