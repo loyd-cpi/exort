@@ -62,9 +62,9 @@ function syncSchema(connectionName) {
 }
 exports.syncSchema = syncSchema;
 /**
- * Abstract SQLService class
+ * Abstract SqlService class
  */
-class SQLService extends service_1.Service {
+class SqlService extends service_1.Service {
     /**
      * Gets registered connection with the given name.
      * If connection name is not given then it will get a default connection.
@@ -93,5 +93,5 @@ class SQLService extends service_1.Service {
         return this.getRepository(connection).createQueryBuilder(alias);
     }
 }
-exports.SQLService = SQLService;
+exports.SqlService = SqlService;
 //# sourceMappingURL=sql.js.map

@@ -24,9 +24,10 @@ class FormValidationError extends Error {
     /**
      * FormValidationError constructor
      * @param {KeyValuePair<FieldValidationError[]>} fieldErrors
+     * @param {string} message
      */
-    constructor(fields) {
-        super(FormValidationError.generateMessage(fields));
+    constructor(fields, message) {
+        super(message || 'Invalid form input');
         this.fields = fields;
         this.name = this.constructor.name;
     }
@@ -42,17 +43,17 @@ class FormValidationError extends Error {
     }
     /**
      * Generate combined error message
-     * @param  {KeyValuePair<FieldValidationError[]>} fields
+     * @param  {string} mergeToken
      * @return {string}
      */
-    static generateMessage(fields) {
+    getCompiledMessage(mergeToken = '\n') {
         let message = [];
-        for (let fieldName in fields) {
-            for (let fieldError of fields[fieldName]) {
+        for (let fieldName in this.fields) {
+            for (let fieldError of this.fields[fieldName]) {
                 message.push(fieldError.message);
             }
         }
-        return message.join('\n');
+        return message.join(mergeToken);
     }
 }
 exports.FormValidationError = FormValidationError;

@@ -141,3 +141,20 @@ export interface Response extends express.Response {
  * @return {Promise<Application>}
  */
 export declare function startServer(app: Application, providers: AppProvider[]): Promise<Application>;
+/**
+ * HttpError class
+ */
+export declare class HttpError extends Error {
+    statusCode: number;
+    /**
+     * HttpError constructor
+     * @param {number} statusCode
+     * @param {string} message
+     */
+    constructor(statusCode: number, message?: string);
+}
+/**
+ * Provide HTTP error handler
+ * @return {AppProvider}
+ */
+export declare function provideHttpErrorHandler(): AppProvider;

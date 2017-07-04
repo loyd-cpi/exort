@@ -16,9 +16,9 @@ export declare function provideSQLConnection(modelsDir: string | KeyValuePair<st
  */
 export declare function syncSchema(connectionName?: string): Promise<void>;
 /**
- * Abstract SQLService class
+ * Abstract SqlService class
  */
-export declare abstract class SQLService<T extends Model> extends Service {
+export declare abstract class SqlService<T extends Model> extends Service {
     /**
      * Model class
      * @type {(new() => T)}

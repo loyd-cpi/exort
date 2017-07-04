@@ -26,8 +26,9 @@ export declare class FormValidationError extends Error {
     /**
      * FormValidationError constructor
      * @param {KeyValuePair<FieldValidationError[]>} fieldErrors
+     * @param {string} message
      */
-    constructor(fields: KeyValuePair<FieldValidationError[]>);
+    constructor(fields: KeyValuePair<FieldValidationError[]>, message?: string);
     /**
      * Get first error message from a particular field
      * @param  {string} fieldName
@@ -36,10 +37,10 @@ export declare class FormValidationError extends Error {
     getFirstMessage(fieldName: string): string | undefined;
     /**
      * Generate combined error message
-     * @param  {KeyValuePair<FieldValidationError[]>} fields
+     * @param  {string} mergeToken
      * @return {string}
      */
-    static generateMessage(fields: KeyValuePair<FieldValidationError[]>): string;
+    getCompiledMessage(mergeToken?: string): string;
 }
 /**
  * Rules class

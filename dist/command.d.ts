@@ -22,9 +22,9 @@ export interface CommandOptions {
     handler: CommandHandler;
 }
 /**
- * CLI class
+ * Console namespace
  */
-export declare namespace CLI {
+export declare namespace Console {
     /**
      * Add command
      * @param  {CommandOptions} options
@@ -49,4 +49,4 @@ export declare namespace CLI {
  * @param  {AppProvider[]} providers
  * @return {void}
  */
-export declare function startCLI(app: Application, providers: AppProvider[]): Promise<void>;
+export declare function startConsole(app: Application, providers: AppProvider[]): Promise<void>;

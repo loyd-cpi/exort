@@ -12,10 +12,10 @@ const app_1 = require("./app");
 const sql_1 = require("./sql");
 const yargs = require("yargs");
 /**
- * CLI class
+ * Console namespace
  */
-var CLI;
-(function (CLI) {
+var Console;
+(function (Console) {
     /**
      * Flag that CLI.configure() is already called
      * @type {boolean}
@@ -39,7 +39,7 @@ var CLI;
             });
         });
     }
-    CLI.command = command;
+    Console.command = command;
     /**
      * Configure command line interface
      * @param  {Application} app
@@ -67,7 +67,7 @@ var CLI;
         yargs.help('help');
         isConfigured = true;
     }
-    CLI.configure = configure;
+    Console.configure = configure;
     /**
      * Execute command base from parsed arguments
      * @return {void}
@@ -75,20 +75,20 @@ var CLI;
     function execute() {
         yargs.parse(process.argv.slice(2));
     }
-    CLI.execute = execute;
-})(CLI = exports.CLI || (exports.CLI = {}));
+    Console.execute = execute;
+})(Console = exports.Console || (exports.Console = {}));
 /**
  * Start CLI and you can only execute it once
  * @param  {Application} app
  * @param  {AppProvider[]} providers
  * @return {void}
  */
-function startCLI(app, providers) {
+function startConsole(app, providers) {
     return __awaiter(this, void 0, void 0, function* () {
         yield app_1.executeProviders(app, providers);
-        CLI.configure(app);
-        CLI.execute();
+        Console.configure(app);
+        Console.execute();
     });
 }
-exports.startCLI = startCLI;
+exports.startConsole = startConsole;
 //# sourceMappingURL=command.js.map
