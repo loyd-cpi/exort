@@ -29,9 +29,10 @@ export class FormValidationError extends Error {
   /**
    * FormValidationError constructor
    * @param {KeyValuePair<FieldValidationError[]>} fieldErrors
+   * @param {string} message
    */
-  constructor(public readonly fields: KeyValuePair<FieldValidationError[]>) {
-    super(FormValidationError.generateMessage(fields));
+  constructor(public readonly fields: KeyValuePair<FieldValidationError[]>, message?: string) {
+    super(message || 'Invalid form input');
     this.name = this.constructor.name;
   }
 
@@ -47,17 +48,17 @@ export class FormValidationError extends Error {
 
   /**
    * Generate combined error message
-   * @param  {KeyValuePair<FieldValidationError[]>} fields
+   * @param  {string} mergeToken
    * @return {string}
    */
-  public static generateMessage(fields: KeyValuePair<FieldValidationError[]>): string {
+  public getCompiledMessage(mergeToken: string = '\n'): string {
     let message: string[] = [];
-    for (let fieldName in fields) {
-      for (let fieldError of fields[fieldName]) {
+    for (let fieldName in this.fields) {
+      for (let fieldError of this.fields[fieldName]) {
         message.push(fieldError.message);
       }
     }
-    return message.join('\n');
+    return message.join(mergeToken);
   }
 }
 

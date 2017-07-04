@@ -26,9 +26,9 @@ export interface CommandOptions {
 }
 
 /**
- * CLI class
+ * Console namespace
  */
-export namespace CLI {
+export namespace Console {
 
   /**
    * Flag that CLI.configure() is already called
@@ -99,8 +99,8 @@ export namespace CLI {
  * @param  {AppProvider[]} providers
  * @return {void}
  */
-export async function startCLI(app: Application, providers: AppProvider[]): Promise<void> {
+export async function startConsole(app: Application, providers: AppProvider[]): Promise<void> {
   await executeProviders(app, providers);
-  CLI.configure(app);
-  CLI.execute();
+  Console.configure(app);
+  Console.execute();
 }

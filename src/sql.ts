@@ -53,9 +53,9 @@ export async function syncSchema(connectionName?: string): Promise<void> {
 }
 
 /**
- * Abstract SQLService class
+ * Abstract SqlService class
  */
-export abstract class SQLService<T extends Model> extends Service {
+export abstract class SqlService<T extends Model> extends Service {
 
   /**
    * Model class

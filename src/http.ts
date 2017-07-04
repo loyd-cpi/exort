@@ -1,4 +1,5 @@
 import { checkAppConfig, executeProviders, AppProvider, Application } from './app';
+import { FormValidationError } from './validation';
 import { Service, Context } from './service';
 import { KeyValuePair, Store } from './misc';
 import * as formidable from 'formidable';
@@ -11,6 +12,7 @@ import * as http from 'http';
 import * as os from 'os';
 import * as fs from 'fs';
 
+const STATUSES = require('statuses');
 const qs = require('qs');
 
 /**
@@ -370,4 +372,62 @@ export function startServer(app: Application, providers: AppProvider[]): Promise
       })
       .catch(err => reject(err));
   });
+}
+
+/**
+ * HttpError class
+ */
+export class HttpError extends Error {
+
+  /**
+   * HttpError constructor
+   * @param {number} statusCode
+   * @param {string} message
+   */
+  constructor(public statusCode: number, message?: string) {
+    super(message || STATUSES[statusCode]);
+    if (statusCode < 400) {
+      throw new Error('HttpError only accepts status codes greater than 400');
+    }
+    if (!STATUSES[statusCode]) {
+      throw new Error('HttpError invalid status code');
+    }
+  }
+}
+
+/**
+ * Provide HTTP error handler
+ * @return {AppProvider}
+ */
+export function provideHttpErrorHandler(): AppProvider {
+  return async (app: Application): Promise<void> => {
+    app.use((err: Error, req: Request, res: Response, next: express.NextFunction) => {
+
+      let details: any = {
+        name: err.name,
+        message: err.message,
+      };
+
+      if (app.config.get('app.env') != 'production') {
+        details.stack = err.stack;
+      }
+
+      if (err instanceof FormValidationError) {
+        details.fields = err.fields;
+        res.status(400);
+      } else if (err instanceof HttpError) {
+        res.status(err.statusCode);
+      } else {
+        res.status(500);
+      }
+
+      if (req.accepts('json')) {
+        res.json({ error: details });
+      } else if (req.accepts('html')) {
+        res.render(`errors/${res.statusCode}`, { error: details });
+      } else {
+        res.send(JSON.stringify(details));
+      }
+    });
+  };
 }
