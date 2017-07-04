@@ -14,11 +14,51 @@ export interface ValidationRule {
 }
 
 /**
- * ValidationError interface
+ * FieldValidationError interface
  */
-export interface ValidationError {
+export interface FieldValidationError {
   rule: string;
   message: string;
+}
+
+/**
+ * FormValidationError class
+ */
+export class FormValidationError extends Error {
+
+  /**
+   * FormValidationError constructor
+   * @param {KeyValuePair<FieldValidationError[]>} fieldErrors
+   */
+  constructor(public readonly fields: KeyValuePair<FieldValidationError[]>) {
+    super(FormValidationError.generateMessage(fields));
+    this.name = this.constructor.name;
+  }
+
+  /**
+   * Get first error message from a particular field
+   * @param  {string} fieldName
+   * @return {string | undefined}
+   */
+  public getFirstMessage(fieldName: string): string | undefined {
+    if (typeof this.fields[fieldName] == 'undefined' || !this.fields[fieldName].length) return;
+    return this.fields[fieldName][0].message;
+  }
+
+  /**
+   * Generate combined error message
+   * @param  {KeyValuePair<FieldValidationError[]>} fields
+   * @return {string}
+   */
+  public static generateMessage(fields: KeyValuePair<FieldValidationError[]>): string {
+    let message: string[] = [];
+    for (let fieldName in fields) {
+      for (let fieldError of fields[fieldName]) {
+        message.push(fieldError.message);
+      }
+    }
+    return message.join('\n');
+  }
 }
 
 /**
@@ -34,9 +74,9 @@ export class FieldValidator {
 
   /**
    * Validation errors occured
-   * @type {ValidationError[]}
+   * @type {FieldValidationError[]}
    */
-  private errors: ValidationError[] = [];
+  private errors: FieldValidationError[] = [];
 
   /**
    * Field label
@@ -314,9 +354,9 @@ export class FieldValidator {
 
   /**
    * Get errors
-   * @return {ValidationError[]}
+   * @return {FieldValidationError[]}
    */
-  public getErrors(): ValidationError[] {
+  public getErrors(): FieldValidationError[] {
     return this.errors;
   }
 
@@ -365,9 +405,9 @@ export class FormValidator {
 
   /**
    * Map of validation errors
-   * @type {KeyValuePair<ValidationError[]>}
+   * @type {KeyValuePair<FieldValidationError[]>}
    */
-  private fieldErrors: KeyValuePair<ValidationError[]> = {};
+  private fieldErrors: KeyValuePair<FieldValidationError[]> = {};
 
   /**
    * Validator constructor
@@ -424,10 +464,28 @@ export class FormValidator {
   }
 
   /**
-   * Get errors
-   * @return {KeyValuePair<ValidationError[]>}
+   * Check if form validator has errors
+   * @return {boolean}
    */
-  public getErrors(): KeyValuePair<ValidationError[]> {
+  public hasErrors(): boolean {
+    return Object.keys(this.fieldErrors).length > 0;
+  }
+
+  /**
+   * Validate and throw error if validation fails
+   * @return {Promise<void>}
+   */
+  public async validateAndThrow(): Promise<void> {
+    if (!(await this.validate())) {
+      throw new FormValidationError(this.getErrors());
+    }
+  }
+
+  /**
+   * Get errors
+   * @return {KeyValuePair<FieldValidationError[]>}
+   */
+  public getErrors(): KeyValuePair<FieldValidationError[]> {
     return this.fieldErrors;
   }
 }
