@@ -137,6 +137,147 @@ class FieldValidator {
         return this;
     }
     /**
+     * The field under validation must be a value after or equal to the given date. The dates will be passed into moment library.
+     * @param  {moment.MomentInput} date
+     * @param  {string} message
+     * @return {this}
+     */
+    afterOrEqual(date, message) {
+        if (!moment.isMoment(date)) {
+            date = moment(date);
+        }
+        this.rules['afterOrEqual'] = {
+            name: 'afterOrEqual',
+            handle() {
+                return this.validator.getValidation().isAfterOrEqual(this.validator.getInput(this.fieldName), date);
+            },
+            message: message || Validation.RULE_MESSAGES.afterOrEqual,
+            attrs: {
+                label: this.fieldLabel,
+                date: date.toString()
+            }
+        };
+        return this;
+    }
+    /**
+     * The field under validation must be entirely alphabetic characters.
+     * @param  {string} message
+     * @return {this}
+     */
+    alpha(message) {
+        this.rules['alpha'] = {
+            name: 'alpha',
+            handle() {
+                return this.validator.getValidation().isAlpha(this.validator.getInput(this.fieldName));
+            },
+            message: message || Validation.RULE_MESSAGES.alpha,
+            attrs: {
+                label: this.fieldLabel
+            }
+        };
+        return this;
+    }
+    /**
+     * The field under validation may have alpha-numeric characters, as well as dashes and underscores.
+     * @param  {string} message
+     * @return {this}
+     */
+    alphaDash(message) {
+        this.rules['alphaDash'] = {
+            name: 'alphaDash',
+            handle() {
+                return this.validator.getValidation().isAlphaDash(this.validator.getInput(this.fieldName));
+            },
+            message: message || Validation.RULE_MESSAGES.alphaDash,
+            attrs: {
+                label: this.fieldLabel
+            }
+        };
+        return this;
+    }
+    /**
+     * The field under validation must be entirely alpha-numeric characters.
+     * @param  {string} message
+     * @return {this}
+     */
+    alphaNum(message) {
+        this.rules['alphaNum'] = {
+            name: 'alphaNum',
+            handle() {
+                return this.validator.getValidation().isAlphaNum(this.validator.getInput(this.fieldName));
+            },
+            message: message || Validation.RULE_MESSAGES.alphaNum,
+            attrs: {
+                label: this.fieldLabel
+            }
+        };
+        return this;
+    }
+    /**
+     * The field under validation must be a JavasScript array.
+     * @param  {string} message
+     * @return {this}
+     */
+    array(message) {
+        this.rules['array'] = {
+            name: 'array',
+            handle() {
+                return this.validator.getValidation().isArray(this.validator.getInput(this.fieldName));
+            },
+            message: message || Validation.RULE_MESSAGES.array,
+            attrs: {
+                label: this.fieldLabel
+            }
+        };
+        return this;
+    }
+    /**
+     * The field under validation must be a value preceding the given date. The dates will be passed into moment library.
+     * @param  {moment.MomentInput} date
+     * @param  {string} message
+     * @return {this}
+     */
+    before(date, message) {
+        if (!moment.isMoment(date)) {
+            date = moment(date);
+        }
+        this.rules['before'] = {
+            name: 'before',
+            handle() {
+                return this.validator.getValidation().isBefore(this.validator.getInput(this.fieldName), date);
+            },
+            message: message || Validation.RULE_MESSAGES.before,
+            attrs: {
+                label: this.fieldLabel,
+                date: date.toString()
+            }
+        };
+        return this;
+    }
+    /**
+     * The field under validation must be a value preceding or equal to the given date. The dates will be passed into moment library.
+     * @param  {moment.MomentInput} date
+     * @param  {string} message
+     * @return {this}
+     */
+    beforeOrEqual(date, message) {
+        if (!moment.isMoment(date)) {
+            date = moment(date);
+        }
+        this.rules['beforeOrEqual'] = {
+            name: 'beforeOrEqual',
+            handle() {
+                return this.validator.getValidation().isBeforeOrEqual(this.validator.getInput(this.fieldName), date);
+            },
+            message: message || Validation.RULE_MESSAGES.beforeOrEqual,
+            attrs: {
+                label: this.fieldLabel,
+                date: date.toString()
+            }
+        };
+        return this;
+    }
+    /**
      * Add error message
      * @param  {string} ruleName
      * @param  {string} message
@@ -276,7 +417,7 @@ let Validation = class Validation extends service_1.Service {
     }
     /**
      * Check if value is yes, 1 or true
-     * @param {boolean | string | number} val
+     * @param  {boolean | string | number} val
      * @return {boolean}
      */
     isAccepted(val) {
@@ -319,6 +460,65 @@ let Validation = class Validation extends service_1.Service {
      */
     isAfter(dateToCheck, afterDate) {
         return moment(dateToCheck).isAfter(afterDate);
+    }
+    /**
+     * After or same date validation
+     * @param  {moment.MomentInput} dateToCheck
+     * @param  {moment.MomentInput} afterDate
+     * @return {boolean}
+     */
+    isAfterOrEqual(dateToCheck, afterDate) {
+        return moment(dateToCheck).isSameOrAfter(afterDate);
+    }
+    /**
+     * Alphabetic characters validation
+     * @param  {string} val
+     * @return {boolean}
+     */
+    isAlpha(val) {
+        return (/^[a-zA-Z]+$/).test(val);
+    }
+    /**
+     * Alpha dash validation
+     * @param  {string} val
+     * @return {boolean}
+     */
+    isAlphaDash(val) {
+        return (/^[a-zA-Z0-9_\-]+$/).test(val);
+    }
+    /**
+     * Alpha numeric validation
+     * @param  {string} val
+     * @return {boolean}
+     */
+    isAlphaNum(val) {
+        return (/^[a-zA-Z0-9]+$/).test(val);
+    }
+    /**
+     * Array validation
+     * @param  {any} val
+     * @return {boolean}
+     */
+    isArray(val) {
+        return Array.isArray(val) && val instanceof Array;
+    }
+    /**
+     * Before date validation
+     * @param  {moment.MomentInput} dateToCheck
+     * @param  {moment.MomentInput} beforeDate
+     * @return {boolean}
+     */
+    isBefore(dateToCheck, beforeDate) {
+        return moment(dateToCheck).isBefore(beforeDate);
+    }
+    /**
+     * Before or same date validation
+     * @param  {moment.MomentInput} dateToCheck
+     * @param  {moment.MomentInput} beforeDate
+     * @return {boolean}
+     */
+    isBeforeOrEqual(dateToCheck, beforeDate) {
+        return moment(dateToCheck).isSameOrBefore(beforeDate);
     }
     /**
      * Create FormValidator instance

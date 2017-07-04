@@ -77,6 +77,51 @@ export declare class FieldValidator {
      */
     required(message?: string): this;
     /**
+     * The field under validation must be a value after or equal to the given date. The dates will be passed into moment library.
+     * @param  {moment.MomentInput} date
+     * @param  {string} message
+     * @return {this}
+     */
+    afterOrEqual(date: moment.MomentInput, message?: string): this;
+    /**
+     * The field under validation must be entirely alphabetic characters.
+     * @param  {string} message
+     * @return {this}
+     */
+    alpha(message?: string): this;
+    /**
+     * The field under validation may have alpha-numeric characters, as well as dashes and underscores.
+     * @param  {string} message
+     * @return {this}
+     */
+    alphaDash(message?: string): this;
+    /**
+     * The field under validation must be entirely alpha-numeric characters.
+     * @param  {string} message
+     * @return {this}
+     */
+    alphaNum(message?: string): this;
+    /**
+     * The field under validation must be a JavasScript array.
+     * @param  {string} message
+     * @return {this}
+     */
+    array(message?: string): this;
+    /**
+     * The field under validation must be a value preceding the given date. The dates will be passed into moment library.
+     * @param  {moment.MomentInput} date
+     * @param  {string} message
+     * @return {this}
+     */
+    before(date: moment.MomentInput, message?: string): this;
+    /**
+     * The field under validation must be a value preceding or equal to the given date. The dates will be passed into moment library.
+     * @param  {moment.MomentInput} date
+     * @param  {string} message
+     * @return {this}
+     */
+    beforeOrEqual(date: moment.MomentInput, message?: string): this;
+    /**
      * Add error message
      * @param  {string} ruleName
      * @param  {string} message
@@ -243,7 +288,7 @@ export declare class Validation extends Service {
     isEmail(val: string): boolean;
     /**
      * Check if value is yes, 1 or true
-     * @param {boolean | string | number} val
+     * @param  {boolean | string | number} val
      * @return {boolean}
      */
     isAccepted(val: string | boolean | number): boolean;
@@ -266,6 +311,51 @@ export declare class Validation extends Service {
      * @return {boolean}
      */
     isAfter(dateToCheck: moment.MomentInput, afterDate: moment.MomentInput): boolean;
+    /**
+     * After or same date validation
+     * @param  {moment.MomentInput} dateToCheck
+     * @param  {moment.MomentInput} afterDate
+     * @return {boolean}
+     */
+    isAfterOrEqual(dateToCheck: moment.MomentInput, afterDate: moment.MomentInput): boolean;
+    /**
+     * Alphabetic characters validation
+     * @param  {string} val
+     * @return {boolean}
+     */
+    isAlpha(val: string): boolean;
+    /**
+     * Alpha dash validation
+     * @param  {string} val
+     * @return {boolean}
+     */
+    isAlphaDash(val: string): boolean;
+    /**
+     * Alpha numeric validation
+     * @param  {string} val
+     * @return {boolean}
+     */
+    isAlphaNum(val: string): boolean;
+    /**
+     * Array validation
+     * @param  {any} val
+     * @return {boolean}
+     */
+    isArray(val: any): boolean;
+    /**
+     * Before date validation
+     * @param  {moment.MomentInput} dateToCheck
+     * @param  {moment.MomentInput} beforeDate
+     * @return {boolean}
+     */
+    isBefore(dateToCheck: moment.MomentInput, beforeDate: moment.MomentInput): boolean;
+    /**
+     * Before or same date validation
+     * @param  {moment.MomentInput} dateToCheck
+     * @param  {moment.MomentInput} beforeDate
+     * @return {boolean}
+     */
+    isBeforeOrEqual(dateToCheck: moment.MomentInput, beforeDate: moment.MomentInput): boolean;
     /**
      * Create FormValidator instance
      * @param  {KeyValuePair<any>} input
