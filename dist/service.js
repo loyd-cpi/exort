@@ -32,7 +32,7 @@ function isInjectable(targetClass) {
     if (typeof targetClass != 'function') {
         throw new Error('Invalid target class');
     }
-    return Reflect.hasMetadata('design:paramtypes', targetClass) && Array.isArray(targetClass.$injectParamNames);
+    return Array.isArray(targetClass.$injectParamNames);
 }
 exports.isInjectable = isInjectable;
 /**
@@ -68,13 +68,15 @@ class Context {
             throw new Error(`${serviceClass.name} is not a Service class`);
         }
         let params = [];
-        let paramTypes = Reflect.getMetadata('design:paramtypes', serviceClass);
-        for (let paramIndex in paramTypes) {
-            if (misc_1._.isNone(paramTypes[paramIndex])) {
-                throw new Error(`Empty param type for ${serviceClass.$injectParamNames[paramIndex]} in ${serviceClass.name} constructor.
-          It might be caused by circular dependency`);
+        if (Reflect.hasMetadata('design:paramtypes', serviceClass)) {
+            let paramTypes = Reflect.getMetadata('design:paramtypes', serviceClass);
+            for (let paramIndex in paramTypes) {
+                if (misc_1._.isNone(paramTypes[paramIndex])) {
+                    throw new Error(`Empty param type for ${serviceClass.$injectParamNames[paramIndex]} in ${serviceClass.name} constructor.
+            It might be caused by circular dependency`);
+                }
+                params.push(this.make(paramTypes[paramIndex]));
             }
-            params.push(this.make(paramTypes[paramIndex]));
         }
         if (!params.length) {
             params.push(this);
