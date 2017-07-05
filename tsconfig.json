@@ -17,6 +17,6 @@
   ],
   "include": [
     "core/**/*.ts",
-    "orm/**/*.ts"
+    "db/**/*.ts"
   ]
 }

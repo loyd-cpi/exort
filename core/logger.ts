@@ -5,7 +5,6 @@ import { _ } from './misc';
 
 /**
  * Provide logger
- * @return {AppProvider}
  */
 export function provideLogger(): AppProvider {
   return async (app: Application): Promise<void> => {

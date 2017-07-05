@@ -6,7 +6,6 @@ import { _ } from './misc';
 
 /**
  * Install assets
- * @return {AppProvider}
  */
 export function provideAssets(): AppProvider {
   return async (app: Application): Promise<void> => {
@@ -33,8 +32,6 @@ export function provideAssets(): AppProvider {
 
 /**
  * Provide favicon
- * @param  {string} faviconPath
- * @return {AppProvider}
  */
 export function provideFavicon(faviconPath: string): AppProvider {
   return async (app: Application): Promise<void> => {

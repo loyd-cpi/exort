@@ -22,43 +22,36 @@ export class File {
 
   /**
    * Filename
-   * @type {string}
    */
   public name: string;
 
   /**
    * File path
-   * @type {string}
    */
   public path: string;
 
   /**
    * File size in bytes
-   * @type {number}
    */
   public size: number;
 
   /**
    * Hash
-   * @type {string}
    */
   public hash: string | undefined;
 
   /**
    * File type
-   * @type {string}
    */
   public type: string;
 
   /**
    * Last date modified
-   * @type {Date}
    */
   public lastModifiedDate: Date | undefined;
 
   /**
    * File constructor
-   * @param {FileInfo} info
    */
   constructor(info: FileInfo) {
     this.name = info.name;
@@ -71,7 +64,6 @@ export class File {
 
   /**
    * Guess file extension using mime type
-   * @return {string}
    */
   public guessExtension(): string | undefined {
     return MIME_TYPE_EXTENSIONS.get(this.type);
@@ -79,11 +71,6 @@ export class File {
 
   /**
    * Create file
-   * @param  {string} path
-   * @param  {Buffer | string} content
-   * @param  {string} mimeType
-   * @param  {string} hash
-   * @return {Promise<File>}
    */
   public static create(path: string, content: Buffer | string, mimeType: string, hash?: string): Promise<File> {
     return new Promise<File>((resolve, reject) => {
@@ -115,9 +102,6 @@ export class File {
 
   /**
    * Append content to file
-   * @param  {string} path
-   * @param  {Buffer | string} content
-   * @return {Promise<boolean>}
    */
   public static append(path: string, content: Buffer | string): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
@@ -131,8 +115,6 @@ export class File {
 
   /**
    * Read directory
-   * @param  {string} path
-   * @return {Promise<string[]>}
    */
   public static readDirectory(path: string): Promise<string[]> {
     return new Promise<string[]>((resolve, reject) => {
@@ -146,8 +128,6 @@ export class File {
 
   /**
    * Get file or directory stats
-   * @param  {string} path
-   * @return {Promise<fs.Stats>}
    */
   public static getStats(path: string): Promise<fs.Stats> {
     return new Promise<fs.Stats>((resolve, reject) => {
@@ -161,8 +141,6 @@ export class File {
 
   /**
    * Check if file exists
-   * @param  {string} path
-   * @return {Promise<boolean>}
    */
   public static async exists(path: string): Promise<boolean> {
     try {
@@ -178,9 +156,6 @@ export class File {
 
   /**
    * Read content from file
-   * @param  {string} path
-   * @param  {{ encoding: string; flag?: string; } | { flag?: string; } | string} options
-   * @return {Promise<string>}
    */
   public static read(path: string, options?: { encoding: string; flag?: string; } | { flag?: string; }): Promise<string> {
     return new Promise<string>((resolve, reject) => {
@@ -194,11 +169,6 @@ export class File {
 
   /**
    * Create file from base64 string
-   * @param  {string} base64String
-   * @param  {string} mimeType
-   * @param  {string} path
-   * @param  {string} name
-   * @return {Promise<File>}
    */
   public static async createFromBase64String(base64String: string, mimeType: string, path: string, name?: string): Promise<File> {
     let fileBuffer = Buffer.from(base64String, 'base64');

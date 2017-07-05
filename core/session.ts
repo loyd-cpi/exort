@@ -11,25 +11,21 @@ export class Session implements Express.Session {
 
   /**
    * Flash key
-   * @type {string}
    */
   private static FLASH_KEY: string = '__$$flash';
 
   /**
    * Userdata key
-   * @type {string}
    */
   private static USERDATA_KEY: string = '__$$userdata';
 
   /**
    * Session constructor
-   * @param {Express.Session} private express
    */
   constructor(private express: Express.Session) {}
 
   /**
    * Regenerate session
-   * @param {(err: any) => void} callback
    */
   public regenerate(callback: (err: any) => void): void {
     this.express.regenerate(callback);
@@ -37,8 +33,6 @@ export class Session implements Express.Session {
 
   /**
    * Destroy session
-   * @param  {(err: any) => void} callback
-   * @return {void}
    */
   public destroy(callback: (err: any) => void): void {
     this.express.destroy(callback);
@@ -46,8 +40,6 @@ export class Session implements Express.Session {
 
   /**
    * Reload session
-   * @param  {(err: any) => void} callback
-   * @return {void}
    */
   public reload(callback: (err: any) => void): void {
     this.express.reload(callback);
@@ -55,7 +47,6 @@ export class Session implements Express.Session {
 
   /**
    * Save session
-   * @param {(err: any) => void} callback
    */
   public save(callback: (err: any) => void): void {
     this.express.save(callback);
@@ -63,7 +54,6 @@ export class Session implements Express.Session {
 
   /**
    * Touch session
-   * @param {(err: any) => void} callback
    */
   public touch(callback: (err: any) => void): void {
     this.express.touch(callback);
@@ -71,7 +61,6 @@ export class Session implements Express.Session {
 
   /**
    * Session cookie
-   * @return {Express.SessionCookie}
    */
   public get cookie(): Express.SessionCookie {
     return this.express.cookie;
@@ -79,7 +68,6 @@ export class Session implements Express.Session {
 
   /**
    * Session id
-   * @return {any}
    */
   public get id(): any {
     return this.express['id'];
@@ -94,9 +82,6 @@ export class Session implements Express.Session {
 
   /**
    * Get value and remove it from session
-   * @param  {string} key
-   * @param  {any} defaultVal
-   * @return {any}
    */
   public flash(key: string, defaultVal?: any): any {
     let val;
@@ -111,9 +96,6 @@ export class Session implements Express.Session {
 
   /**
    * Get value from session
-   * @param  {string} key
-   * @param  {any} defaultVal
-   * @return {any}
    */
   public get(key: string, defaultVal?: any): any {
     if (this.isFlash(key)) {
@@ -132,8 +114,6 @@ export class Session implements Express.Session {
 
   /**
    * Remove from session
-   * @param  {string} key
-   * @return {void}
    */
   public delete(key: string): void {
     if (this.has(key)) {
@@ -146,8 +126,6 @@ export class Session implements Express.Session {
 
   /**
    * Check if key is marked as flash
-   * @param  {string} key
-   * @return {boolean}
    */
   public isFlash(key: string): boolean {
     if (!Array.isArray(this.express[Session.FLASH_KEY])) return false;
@@ -156,9 +134,6 @@ export class Session implements Express.Session {
 
   /**
    * Save value to session
-   * @param  {string} key
-   * @param  {any} value
-   * @return {void}
    */
   public set(key: string, value: any): void {
     if (!this.express[Session.USERDATA_KEY]) {
@@ -169,8 +144,6 @@ export class Session implements Express.Session {
 
   /**
    * Check if key exists in session
-   * @param  {string} key
-   * @return {boolean}
    */
   public has(key: string): boolean {
     if (typeof this.express[Session.USERDATA_KEY] != 'object') return false;
@@ -179,8 +152,6 @@ export class Session implements Express.Session {
 
   /**
    * Mark existing data as flash
-   * @param  {string} key
-   * @return {void}
    */
   public markAsFlash(key: string): void {
     if (this.has(key)) {
@@ -194,8 +165,6 @@ export class Session implements Express.Session {
 
   /**
    * Unmark existing data as flash
-   * @param  {string} key
-   * @return {void}
    */
   public unmarkAsFlash(key: string): void {
     if (Array.isArray(this.express[Session.FLASH_KEY])) {
@@ -211,9 +180,6 @@ export class Session implements Express.Session {
 
   /**
    * Set flash data
-   * @param  {string} key
-   * @param  {any} value
-   * @return {void}
    */
   public setFlash(key: string, value: any): void {
     this.set(key, value);
@@ -223,7 +189,6 @@ export class Session implements Express.Session {
 
 /**
  * Provide session storage
- * @return {AppProvider}
  */
 export function provideSessionStorage(): AppProvider {
   return async (app: Application): Promise<void> => {

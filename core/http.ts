@@ -21,40 +21,32 @@ export interface Request extends express.Request {
 
   /**
    * Contains parsed request body
-   * @type {KeyValuePair<string>}
    */
   body: KeyValuePair<string>;
 
   /**
    * Session object
-   * @type {Session}
    */
   session: Session;
 
   /**
    * Input object that contains parsed body and query string
-   * @type {Input}
    */
   input: Input;
 
   /**
    * Make an instance of service
-   * @param  {(new(...args: any[]) => U)} serviceClass
-   * @return {U}
    */
   make<U extends Service>(serviceClass: new(...args: any[]) => U): U;
 
   /**
    * Context instance
-   * @type {Context}
    */
   readonly context: Context;
 }
 
 /**
  * Install body parser
- * @param  {Application} app
- * @return {AppProvider}
  */
 export function provideBodyParser(): AppProvider {
   return async (app: Application): Promise<void> => {
@@ -130,13 +122,11 @@ export class Input extends Store {
 
   /**
    * File input
-   * @type {KeyValuePair<any>}
    */
   private fileInput: KeyValuePair<any>;
 
   /**
    * Input constructor
-   * @param {Request} private req
    */
   constructor(private req: Request) {
     super();
@@ -156,8 +146,6 @@ export class Input extends Store {
 
   /**
    * Get input except for specified fields
-   * @param  {string[]} exception
-   * @return {KeyValuePair<any>}
    */
   public except(exception: string[]): KeyValuePair<any> {
     let values: KeyValuePair<string> = {};
@@ -174,8 +162,6 @@ export class Input extends Store {
 
   /**
    * Get input only for specified fields
-   * @param  {string[]} fields
-   * @return {KeyValuePair<any>}
    */
   public only(fields: string[]): KeyValuePair<any> {
     let values: KeyValuePair<string> = {};
@@ -190,8 +176,6 @@ export class Input extends Store {
 
   /**
    * Has file
-   * @param  {string} key
-   * @return {boolean}
    */
   public hasFile(key: string): boolean {
     return this.file(key) ? true : false;
@@ -199,8 +183,6 @@ export class Input extends Store {
 
   /**
    * Get input file
-   * @param  {string} key
-   * @return {UploadedFile}
    */
   public file(key: string): UploadedFile | undefined {
     if (!this.fileInput || !this.fileInput[key]) return;
@@ -212,8 +194,6 @@ export class Input extends Store {
 
   /**
    * Get input files
-   * @param  {string} key
-   * @return {UploadedFile[]}
    */
   public files(key: string): UploadedFile[] | undefined {
     if (!this.fileInput || !this.fileInput[key]) return;
@@ -231,19 +211,16 @@ export class UploadedFile extends File {
 
   /**
    * Flag if uploaded file is already moved to another location
-   * @type {boolean}
    */
   private moved: boolean = false;
 
   /**
    * Flag if uploaded file is currently in process
-   * @type {boolean}
    */
   private processing: boolean = false;
 
   /**
    * UploadedFile constructor
-   * @param {formidable.File} uploaded
    */
   constructor(uploaded: formidable.File) {
     super({
@@ -258,7 +235,6 @@ export class UploadedFile extends File {
 
   /**
    * Get JSON Object
-   * @return {KeyValuePair<any>}
    */
   public toJSON(): KeyValuePair<any> {
     return {
@@ -280,9 +256,6 @@ export class UploadedFile extends File {
 
   /**
    * Move uploaded file
-   * @param  {string} destination
-   * @param  {string} fileName
-   * @return {Promise<boolean>}
    */
   public move(destination: string, fileName?: string): Promise<boolean> {
     if (this.isMovedOrInProcess()) {
@@ -311,7 +284,6 @@ export class UploadedFile extends File {
 
   /**
    * Delete temporary file
-   * @return {Promise<boolean>}
    */
   public deleteTempFile(): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
@@ -336,9 +308,6 @@ export interface Response extends express.Response {}
 
 /**
  * Start HTTP Server
- * @param  {Application} app
- * @param  {AppProvider[]} providers
- * @return {Promise<Application>}
  */
 export function startServer(app: Application, providers: AppProvider[]): Promise<Application> {
   checkAppConfig(app);
@@ -380,8 +349,6 @@ export class HttpError extends Error {
 
   /**
    * HttpError constructor
-   * @param {number} statusCode
-   * @param {string} message
    */
   constructor(public statusCode: number, message?: string) {
     super(message || STATUSES[statusCode]);

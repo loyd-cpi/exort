@@ -5,8 +5,6 @@ import * as fs from 'fs';
 
 /**
  * Load environment file and setup namespace
- * @param  {string} directory
- * @return {void}
  */
 export function setupEnvironmentAndNamespace(directory: string): void {
   directory = _.trimEnd(directory, '/');
@@ -35,9 +33,6 @@ export function setupEnvironmentAndNamespace(directory: string): void {
 
 /**
  * Get environment value
- * @param  {string} key
- * @param  {any} defaultVal
- * @return {any}
  */
 export function env(key: string, defaultVal?: any): any {
   if (typeof process.env[key] == 'undefined' && typeof defaultVal != 'undefined') {
@@ -54,9 +49,6 @@ export function env(key: string, defaultVal?: any): any {
 
 /**
  * Get CLI argument
- * @param  {string} key
- * @param  {any} defaultVal
- * @return {any}
  */
 export function argument(key: string, defaultVal?: any): any {
   return _.defaultIfNone(yargs.argv[key], defaultVal);

@@ -11,13 +11,11 @@ export class TemplateLoader extends nunjucks.Loader {
 
   /**
    * property to your loader and it will be used asynchronously
-   * @type {boolean}
    */
   protected async: boolean = true;
 
   /**
    * TemplateLoader constructor
-   * @param {string} private searchPath
    */
   constructor(private viewDir: string) {
     super();
@@ -25,8 +23,6 @@ export class TemplateLoader extends nunjucks.Loader {
 
   /**
    * Load the template
-   * @param {string} name
-   * @param {Function} callback
    */
   public getSource(name: string, callback: Function) {
     let fullPath = pathlib.join(this.viewDir, `${name}.html`);
@@ -52,8 +48,6 @@ export interface ViewConfig extends nunjucks.ConfigureOptions {}
 
 /**
  * Set express application view engine
- * @param  {string} viewsDir
- * @return {AppProvider}
  */
 export function provideViewEngine(viewsDir: string): AppProvider {
   return async (app: Application): Promise<void> => {

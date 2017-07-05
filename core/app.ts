@@ -10,20 +10,17 @@ export interface Application extends express.Server {
 
   /**
    * Config instance
-   * @type {Config}
    */
   readonly config: Config;
 
   /**
    * Application root directory
-   * @type {string}
    */
   readonly dir: string;
 
   /**
    * Single instance of context.
    * Don't use this to create service instance per request
-   * @type {Context}
    */
   readonly context: Context;
 }
@@ -35,8 +32,6 @@ export class Config extends Store {
 
   /**
    * Load configuration files
-   * @param  {string[]} files
-   * @return {Config}
    */
   public static load(files: string[]): Config {
     let config = new Config();
@@ -52,9 +47,6 @@ export class Config extends Store {
 
 /**
  * Initialize application instance and configure
- * @param  {string} rootDir
- * @param  {string[]} configFiles
- * @return {Application}
  */
 export function createApplication(rootDir: string, configFiles: string[]): Application {
   let app = express() as Application;
@@ -68,9 +60,6 @@ export function createApplication(rootDir: string, configFiles: string[]): Appli
 
 /**
  * Set config object of application
- * @param  {Application} app
- * @param  {string[]} files
- * @return {void}
  */
 export function configure(app: Application, files: string[]): void {
   if (typeof app.config != 'undefined') {
@@ -87,8 +76,6 @@ export function configure(app: Application, files: string[]): void {
 
 /**
  * Check if application has config object
- * @param  {Application} app
- * @return {void}
  */
 export function checkAppConfig(app: Application): void {
   if (!(app.config instanceof Config)) {
@@ -105,9 +92,6 @@ export interface AppProvider {
 
 /**
  * Execute providers and boot the application
- * @param  {Application} app
- * @param  {AppProvider[]} providers
- * @return {Promise<void>}
  */
 export async function executeProviders(app: Application, providers: AppProvider[]): Promise<void> {
   for (let provider of providers) {

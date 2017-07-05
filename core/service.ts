@@ -5,7 +5,6 @@ import { _ } from './misc';
 
 /**
  * Decorator to make an injectable class
- * @return {((target: Function) => void)}
  */
 export function Injectable() {
   return (target: Function) => {
@@ -18,8 +17,6 @@ export function Injectable() {
 
 /**
  * Check if class is injectable
- * @param  {Function} targetClass
- * @return {boolean}
  */
 export function isInjectable(targetClass: Function): boolean {
   if (typeof targetClass != 'function') {
@@ -35,13 +32,11 @@ export class Context {
 
   /**
    * Map of resolved instances
-   * @type {Map<string, any>}
    */
   private resolvedInstances: Map<Function, any> = new Map<Function, any>();
 
   /**
    * Context constructor
-   * @param {Application} app
    */
   constructor(public readonly app: Application) {
     this.resolvedInstances.set(Context, this);
@@ -49,8 +44,6 @@ export class Context {
 
   /**
    * create instance via dependency injection and using this context
-   * @param  {(new(...args: any[]) => U)} serviceClass
-   * @return {U}
    */
   public make<U extends Service>(serviceClass: new(...args: any[]) => U): U {
     if (this.resolvedInstances.has(serviceClass)) {
@@ -108,7 +101,6 @@ export interface ServiceClassResolver {
 
 /**
  * Provider service context
- * @return {AppProvider}
  */
 export function provideServices(): AppProvider {
   return async (app: Application): Promise<void> => {
@@ -134,7 +126,6 @@ export abstract class Service {
 
   /**
    * Service constructor
-   * @param {Context} context
    */
   constructor(protected readonly context: Context) {}
 }

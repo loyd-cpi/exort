@@ -11,7 +11,6 @@ export interface KeyValuePair<T> {
 
 /**
  * Encoding types for hash.digest
- * @type {string}
  */
 export type HexBase64Latin1Encoding = 'latin1' | 'hex' | 'base64';
 
@@ -22,71 +21,46 @@ export interface Utilities extends lodash.LoDashStatic {
 
   /**
    * Replace all occurence
-   * @param  {string} str
-   * @param  {string} search
-   * @param  {string} replace
-   * @return {string}
    */
   replaceAll(str: string, search: string, replace: string): string;
 
   /**
    * Check if class extend the given parent class
-   * @param  {Function} childClass
-   * @param  {Function} parentClass
-   * @return {boolean}
    */
   classExtends(childClass: Function, parentClass: Function): boolean;
 
   /**
    * Get parameter names of a function
-   * @param  {Function} fn
-   * @return {string[]}
    */
   getConstructorParamNames(fn: Function): string[];
 
   /**
    * Require module
-   * @param  {string} filePath
-   * @return {any}
    */
   require(filePath: string): any;
 
   /**
    * Path to require
-   * @param  {string} path
-   * @return {Function}
    */
   requireClass(path: string): Function;
 
   /**
    * Return the value if not undefined or else return the second parameter
-   * @param  {any} value
-   * @param  {any} defaultVal
-   * @param  {any} returnNull
-   * @return {any}
    */
   defaultIfNone(value: any, defaultVal: any, returnNull?: boolean): any;
 
   /**
    * Generate checksum
-   * @param  {string | Buffer} str
-   * @param  {string = 'md5'} algorithm
-   * @param  {string = 'hex'} encoding
-   * @return {string}
    */
   checksum(str: string | Buffer, algorithm?: string, encoding?: string): string;
 
   /**
    * Delays the program execution for the given number of milliseconds
-   * @param  {number} milliseconds
-   * @return {Promise<void>}
    */
   sleep(milliseconds: number): Promise<void>;
 
   /**
    * Check if value is null or undefined
-   * @param  {any} value
-   * @return {boolean}
    */
   isNone(value: any): boolean;
 }
@@ -188,13 +162,11 @@ export class Store {
 
   /**
    * Store constructor
-   * @param {KeyValuePair<any> = {}} private content
    */
   constructor(protected content: KeyValuePair<any> = {}) {}
 
   /**
    * Get all
-   * @return {KeyValuePair<any>}
    */
   public all(): KeyValuePair<any> {
     return _.clone(this.content);
@@ -202,7 +174,6 @@ export class Store {
 
   /**
    * Merge another Store object
-   * @param {Store} content
    */
   public merge(content: Store): void {
     this.content = _.merge(this.content, content.all());
@@ -210,8 +181,6 @@ export class Store {
 
   /**
    * Convert dotted notation key to brackets
-   * @param  {string} key
-   * @return {string}
    */
   private convertToBrackets(key: string): string {
     return `["${key.split('.').join('"]["')}"]`;
@@ -219,9 +188,6 @@ export class Store {
 
   /**
    * Get a value from content
-   * @param  {string} key
-   * @param  {any} defaultVal
-   * @return {any}
    */
   public get(key: string, defaultVal?: any): any {
     let val;
@@ -237,8 +203,6 @@ export class Store {
 
   /**
    * Set a value to store
-   * @param {string} key
-   * @param {any} val
    */
   public set(key: string, val: any): void {
     this.content[key] = val;
@@ -246,7 +210,6 @@ export class Store {
 
   /**
    * Delete a value by key
-   * @param {string} key
    */
   public delete(key: string): void {
     delete this.content[key];
@@ -254,8 +217,6 @@ export class Store {
 
   /**
    * Check if value exists by using a key
-   * @param  {string}  key
-   * @return {boolean}
    */
   public has(key: string): boolean {
     return typeof this.get(key) != 'undefined';

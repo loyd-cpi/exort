@@ -1,6 +1,5 @@
 /**
  * Mime type extensions
- * @type {Map<string, string>}
  */
 export const MIME_TYPE_EXTENSIONS: Map<string, string> = new Map([
   ['application/andrew-inset', 'ez'],

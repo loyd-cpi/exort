@@ -10,8 +10,6 @@ export class Encryptor extends Service {
 
   /**
    * Encrypt using app configuration
-   * @param  {string} str
-   * @return {string}
    */
   public encrypt(str: string): string {
     let conf = this.context.app.config.get('app', {});
@@ -20,8 +18,6 @@ export class Encryptor extends Service {
 
   /**
    * Decrypt using app configuration
-   * @param  {string} encryptedStr
-   * @return {string}
    */
   public decrypt(encryptedStr: string): string {
     let conf = this.context.app.config.get('app', {});
@@ -30,10 +26,6 @@ export class Encryptor extends Service {
 
   /**
    * Encrypt
-   * @param  {string} str
-   * @param  {string} password
-   * @param  {string} algo
-   * @return {string}
    */
   public static encrypt(str: string, password: string, algo: string): string {
     let cipher = crypto.createCipher(algo, password);
@@ -44,10 +36,6 @@ export class Encryptor extends Service {
 
   /**
    * Decrypt
-   * @param  {string} encryptedStr
-   * @param  {string} password
-   * @param  {string} algo
-   * @return {string}
    */
   public static decrypt(encryptedStr: string, password: string, algo: string): string {
     let decipher = crypto.createDecipher(algo, password);
@@ -64,9 +52,6 @@ export namespace Hash {
 
   /**
    * Create a hash
-   * @param  {string} text
-   * @param  {number = 10} saltLength
-   * @return {Promise<string>}
    */
   export function make(text: string, saltLength: number = 10): Promise<string> {
     return new Promise<string>((resolve, reject) => {
@@ -84,9 +69,6 @@ export namespace Hash {
 
   /**
    * Check if the hashedText is equivalent to plain text
-   * @param  {string} plainText
-   * @param  {string} hashedText
-   * @return {Promise<boolean>}
    */
   export function check(plainText: string, hashedText: string): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
