@@ -50,11 +50,6 @@ export interface ServiceClassResolver {
  */
 export declare function provideServices(): AppProvider;
 /**
- * Model interface
- */
-export interface Model {
-}
-/**
  * Abstract Service class
  */
 export declare abstract class Service {

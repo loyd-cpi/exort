@@ -8,3 +8,4 @@ npm-debug.log
 *.tgz
 .idea
 .vscode
+clean.sh

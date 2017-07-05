@@ -7,5 +7,5 @@ npm-debug.log
 /typings
 *.tgz
 .idea
-/src
 .vscode
+clean.sh
