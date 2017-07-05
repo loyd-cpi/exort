@@ -8,10 +8,7 @@
     "experimentalDecorators": true,
     "removeComments": false,
     "strict": true,
-    "outDir": ".",
-    "rootDir": ".",
     "pretty": true,
-    "baseUrl": ".",
     "declaration": true,
     "noUnusedLocals": true
   },
