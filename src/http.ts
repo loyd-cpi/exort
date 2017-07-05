@@ -1,5 +1,4 @@
 import { checkAppConfig, executeProviders, AppProvider, Application } from './app';
-import { FormValidationError } from './validation';
 import { Service, Context } from './service';
 import { KeyValuePair, Store } from './misc';
 import * as formidable from 'formidable';
