@@ -12,3 +12,4 @@ clean.sh
 .editorconfig
 .gitignore
 .npmignore
+tsconfig.json
