@@ -18,21 +18,17 @@ const fs = require("fs");
 class TemplateLoader extends nunjucks.Loader {
     /**
      * TemplateLoader constructor
-     * @param {string} private searchPath
      */
     constructor(viewDir) {
         super();
         this.viewDir = viewDir;
         /**
          * property to your loader and it will be used asynchronously
-         * @type {boolean}
          */
         this.async = true;
     }
     /**
      * Load the template
-     * @param {string} name
-     * @param {Function} callback
      */
     getSource(name, callback) {
         let fullPath = pathlib.join(this.viewDir, `${name}.html`);
@@ -51,8 +47,6 @@ class TemplateLoader extends nunjucks.Loader {
 exports.TemplateLoader = TemplateLoader;
 /**
  * Set express application view engine
- * @param  {string} viewsDir
- * @return {AppProvider}
  */
 function provideViewEngine(viewsDir) {
     return (app) => __awaiter(this, void 0, void 0, function* () {

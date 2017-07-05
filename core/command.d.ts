@@ -27,26 +27,14 @@ export interface CommandOptions {
 export declare namespace Console {
     /**
      * Add command
-     * @param  {CommandOptions} options
-     * @return {void}
      */
-    function command(options: CommandOptions): void;
-    /**
-     * Configure command line interface
-     * @param  {Application} app
-     * @return {void}
-     */
-    function configure(app: Application): void;
+    function addCommand(options: CommandOptions): void;
     /**
      * Execute command base from parsed arguments
-     * @return {void}
      */
-    function execute(): void;
+    function execute(args: string[]): void;
 }
 /**
  * Start CLI and you can only execute it once
- * @param  {Application} app
- * @param  {AppProvider[]} providers
- * @return {void}
  */
 export declare function startConsole(app: Application, providers: AppProvider[]): Promise<void>;

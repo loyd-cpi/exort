@@ -6,8 +6,6 @@ const misc_1 = require("./misc");
 const fs = require("fs");
 /**
  * Load environment file and setup namespace
- * @param  {string} directory
- * @return {void}
  */
 function setupEnvironmentAndNamespace(directory) {
     directory = misc_1._.trimEnd(directory, '/');
@@ -36,9 +34,6 @@ function setupEnvironmentAndNamespace(directory) {
 exports.setupEnvironmentAndNamespace = setupEnvironmentAndNamespace;
 /**
  * Get environment value
- * @param  {string} key
- * @param  {any} defaultVal
- * @return {any}
  */
 function env(key, defaultVal) {
     if (typeof process.env[key] == 'undefined' && typeof defaultVal != 'undefined') {
@@ -53,9 +48,6 @@ function env(key, defaultVal) {
 exports.env = env;
 /**
  * Get CLI argument
- * @param  {string} key
- * @param  {any} defaultVal
- * @return {any}
  */
 function argument(key, defaultVal) {
     return misc_1._.defaultIfNone(yargs.argv[key], defaultVal);

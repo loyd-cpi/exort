@@ -12,7 +12,6 @@ const app_1 = require("./app");
 const misc_1 = require("./misc");
 /**
  * Decorator to make an injectable class
- * @return {((target: Function) => void)}
  */
 function Injectable() {
     return (target) => {
@@ -25,8 +24,6 @@ function Injectable() {
 exports.Injectable = Injectable;
 /**
  * Check if class is injectable
- * @param  {Function} targetClass
- * @return {boolean}
  */
 function isInjectable(targetClass) {
     if (typeof targetClass != 'function') {
@@ -41,21 +38,17 @@ exports.isInjectable = isInjectable;
 class Context {
     /**
      * Context constructor
-     * @param {Application} app
      */
     constructor(app) {
         this.app = app;
         /**
          * Map of resolved instances
-         * @type {Map<string, any>}
          */
         this.resolvedInstances = new Map();
         this.resolvedInstances.set(Context, this);
     }
     /**
      * create instance via dependency injection and using this context
-     * @param  {(new(...args: any[]) => U)} serviceClass
-     * @return {U}
      */
     make(serviceClass) {
         if (this.resolvedInstances.has(serviceClass)) {
@@ -89,7 +82,6 @@ class Context {
 exports.Context = Context;
 /**
  * Provider service context
- * @return {AppProvider}
  */
 function provideServices() {
     return (app) => __awaiter(this, void 0, void 0, function* () {
@@ -111,7 +103,6 @@ exports.provideServices = provideServices;
 class Service {
     /**
      * Service constructor
-     * @param {Context} context
      */
     constructor(context) {
         this.context = context;

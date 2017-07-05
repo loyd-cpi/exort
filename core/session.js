@@ -17,58 +17,48 @@ const misc_1 = require("./misc");
 class Session {
     /**
      * Session constructor
-     * @param {Express.Session} private express
      */
     constructor(express) {
         this.express = express;
     }
     /**
      * Regenerate session
-     * @param {(err: any) => void} callback
      */
     regenerate(callback) {
         this.express.regenerate(callback);
     }
     /**
      * Destroy session
-     * @param  {(err: any) => void} callback
-     * @return {void}
      */
     destroy(callback) {
         this.express.destroy(callback);
     }
     /**
      * Reload session
-     * @param  {(err: any) => void} callback
-     * @return {void}
      */
     reload(callback) {
         this.express.reload(callback);
     }
     /**
      * Save session
-     * @param {(err: any) => void} callback
      */
     save(callback) {
         this.express.save(callback);
     }
     /**
      * Touch session
-     * @param {(err: any) => void} callback
      */
     touch(callback) {
         this.express.touch(callback);
     }
     /**
      * Session cookie
-     * @return {Express.SessionCookie}
      */
     get cookie() {
         return this.express.cookie;
     }
     /**
      * Session id
-     * @return {any}
      */
     get id() {
         return this.express['id'];
@@ -81,9 +71,6 @@ class Session {
     }
     /**
      * Get value and remove it from session
-     * @param  {string} key
-     * @param  {any} defaultVal
-     * @return {any}
      */
     flash(key, defaultVal) {
         let val;
@@ -97,9 +84,6 @@ class Session {
     }
     /**
      * Get value from session
-     * @param  {string} key
-     * @param  {any} defaultVal
-     * @return {any}
      */
     get(key, defaultVal) {
         if (this.isFlash(key)) {
@@ -117,8 +101,6 @@ class Session {
     }
     /**
      * Remove from session
-     * @param  {string} key
-     * @return {void}
      */
     delete(key) {
         if (this.has(key)) {
@@ -130,8 +112,6 @@ class Session {
     }
     /**
      * Check if key is marked as flash
-     * @param  {string} key
-     * @return {boolean}
      */
     isFlash(key) {
         if (!Array.isArray(this.express[Session.FLASH_KEY]))
@@ -140,9 +120,6 @@ class Session {
     }
     /**
      * Save value to session
-     * @param  {string} key
-     * @param  {any} value
-     * @return {void}
      */
     set(key, value) {
         if (!this.express[Session.USERDATA_KEY]) {
@@ -152,8 +129,6 @@ class Session {
     }
     /**
      * Check if key exists in session
-     * @param  {string} key
-     * @return {boolean}
      */
     has(key) {
         if (typeof this.express[Session.USERDATA_KEY] != 'object')
@@ -162,8 +137,6 @@ class Session {
     }
     /**
      * Mark existing data as flash
-     * @param  {string} key
-     * @return {void}
      */
     markAsFlash(key) {
         if (this.has(key)) {
@@ -177,8 +150,6 @@ class Session {
     }
     /**
      * Unmark existing data as flash
-     * @param  {string} key
-     * @return {void}
      */
     unmarkAsFlash(key) {
         if (Array.isArray(this.express[Session.FLASH_KEY])) {
@@ -193,9 +164,6 @@ class Session {
     }
     /**
      * Set flash data
-     * @param  {string} key
-     * @param  {any} value
-     * @return {void}
      */
     setFlash(key, value) {
         this.set(key, value);
@@ -204,18 +172,15 @@ class Session {
 }
 /**
  * Flash key
- * @type {string}
  */
 Session.FLASH_KEY = '__$$flash';
 /**
  * Userdata key
- * @type {string}
  */
 Session.USERDATA_KEY = '__$$userdata';
 exports.Session = Session;
 /**
  * Provide session storage
- * @return {AppProvider}
  */
 function provideSessionStorage() {
     return (app) => __awaiter(this, void 0, void 0, function* () {

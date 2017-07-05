@@ -13,8 +13,6 @@ const http_1 = require("./http");
 const validation_1 = require("./validation");
 /**
  * Provide routes
- * @param  {string} routesFile
- * @return {AppProvider}
  */
 function provideRoutes(routesFile) {
     return (app) => __awaiter(this, void 0, void 0, function* () {

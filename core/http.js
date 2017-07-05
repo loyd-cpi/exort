@@ -21,8 +21,6 @@ const STATUSES = require('statuses');
 const qs = require('qs');
 /**
  * Install body parser
- * @param  {Application} app
- * @return {AppProvider}
  */
 function provideBodyParser() {
     return (app) => __awaiter(this, void 0, void 0, function* () {
@@ -86,7 +84,6 @@ exports.provideBodyParser = provideBodyParser;
 class Input extends misc_1.Store {
     /**
      * Input constructor
-     * @param {Request} private req
      */
     constructor(req) {
         super();
@@ -106,8 +103,6 @@ class Input extends misc_1.Store {
     }
     /**
      * Get input except for specified fields
-     * @param  {string[]} exception
-     * @return {KeyValuePair<any>}
      */
     except(exception) {
         let values = {};
@@ -123,8 +118,6 @@ class Input extends misc_1.Store {
     }
     /**
      * Get input only for specified fields
-     * @param  {string[]} fields
-     * @return {KeyValuePair<any>}
      */
     only(fields) {
         let values = {};
@@ -138,16 +131,12 @@ class Input extends misc_1.Store {
     }
     /**
      * Has file
-     * @param  {string} key
-     * @return {boolean}
      */
     hasFile(key) {
         return this.file(key) ? true : false;
     }
     /**
      * Get input file
-     * @param  {string} key
-     * @return {UploadedFile}
      */
     file(key) {
         if (!this.fileInput || !this.fileInput[key])
@@ -159,8 +148,6 @@ class Input extends misc_1.Store {
     }
     /**
      * Get input files
-     * @param  {string} key
-     * @return {UploadedFile[]}
      */
     files(key) {
         if (!this.fileInput || !this.fileInput[key])
@@ -178,7 +165,6 @@ exports.Input = Input;
 class UploadedFile extends filesystem_1.File {
     /**
      * UploadedFile constructor
-     * @param {formidable.File} uploaded
      */
     constructor(uploaded) {
         super({
@@ -191,18 +177,15 @@ class UploadedFile extends filesystem_1.File {
         });
         /**
          * Flag if uploaded file is already moved to another location
-         * @type {boolean}
          */
         this.moved = false;
         /**
          * Flag if uploaded file is currently in process
-         * @type {boolean}
          */
         this.processing = false;
     }
     /**
      * Get JSON Object
-     * @return {KeyValuePair<any>}
      */
     toJSON() {
         return {
@@ -222,9 +205,6 @@ class UploadedFile extends filesystem_1.File {
     }
     /**
      * Move uploaded file
-     * @param  {string} destination
-     * @param  {string} fileName
-     * @return {Promise<boolean>}
      */
     move(destination, fileName) {
         if (this.isMovedOrInProcess()) {
@@ -247,7 +227,6 @@ class UploadedFile extends filesystem_1.File {
     }
     /**
      * Delete temporary file
-     * @return {Promise<boolean>}
      */
     deleteTempFile() {
         return new Promise((resolve, reject) => {
@@ -265,9 +244,6 @@ class UploadedFile extends filesystem_1.File {
 exports.UploadedFile = UploadedFile;
 /**
  * Start HTTP Server
- * @param  {Application} app
- * @param  {AppProvider[]} providers
- * @return {Promise<Application>}
  */
 function startServer(app, providers) {
     app_1.checkAppConfig(app);
@@ -303,8 +279,6 @@ exports.startServer = startServer;
 class HttpError extends Error {
     /**
      * HttpError constructor
-     * @param {number} statusCode
-     * @param {string} message
      */
     constructor(statusCode, message) {
         super(message || STATUSES[statusCode]);

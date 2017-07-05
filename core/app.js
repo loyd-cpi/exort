@@ -17,8 +17,6 @@ const pathlib = require("path");
 class Config extends misc_1.Store {
     /**
      * Load configuration files
-     * @param  {string[]} files
-     * @return {Config}
      */
     static load(files) {
         let config = new Config();
@@ -34,9 +32,6 @@ class Config extends misc_1.Store {
 exports.Config = Config;
 /**
  * Initialize application instance and configure
- * @param  {string} rootDir
- * @param  {string[]} configFiles
- * @return {Application}
  */
 function createApplication(rootDir, configFiles) {
     let app = express();
@@ -50,9 +45,6 @@ function createApplication(rootDir, configFiles) {
 exports.createApplication = createApplication;
 /**
  * Set config object of application
- * @param  {Application} app
- * @param  {string[]} files
- * @return {void}
  */
 function configure(app, files) {
     if (typeof app.config != 'undefined') {
@@ -69,8 +61,6 @@ function configure(app, files) {
 exports.configure = configure;
 /**
  * Check if application has config object
- * @param  {Application} app
- * @return {void}
  */
 function checkAppConfig(app) {
     if (!(app.config instanceof Config)) {
@@ -80,9 +70,6 @@ function checkAppConfig(app) {
 exports.checkAppConfig = checkAppConfig;
 /**
  * Execute providers and boot the application
- * @param  {Application} app
- * @param  {AppProvider[]} providers
- * @return {Promise<void>}
  */
 function executeProviders(app, providers) {
     return __awaiter(this, void 0, void 0, function* () {

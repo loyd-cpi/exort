@@ -15,7 +15,6 @@ const pathlib = require("path");
 const misc_1 = require("./misc");
 /**
  * Install assets
- * @return {AppProvider}
  */
 function provideAssets() {
     return (app) => __awaiter(this, void 0, void 0, function* () {
@@ -38,8 +37,6 @@ function provideAssets() {
 exports.provideAssets = provideAssets;
 /**
  * Provide favicon
- * @param  {string} faviconPath
- * @return {AppProvider}
  */
 function provideFavicon(faviconPath) {
     return (app) => __awaiter(this, void 0, void 0, function* () {

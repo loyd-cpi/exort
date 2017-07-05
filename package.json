@@ -15,7 +15,8 @@
     "url": "git+https://github.com/tontonskie/exort.git"
   },
   "keywords": [
-    "expressjs"
+    "expressjs",
+    "typeorm"
   ],
   "author": "tontonskie",
   "license": "ISC",

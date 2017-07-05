@@ -18,7 +18,6 @@ const fs = require("fs");
 class File {
     /**
      * File constructor
-     * @param {FileInfo} info
      */
     constructor(info) {
         this.name = info.name;
@@ -30,18 +29,12 @@ class File {
     }
     /**
      * Guess file extension using mime type
-     * @return {string}
      */
     guessExtension() {
         return mime_1.MIME_TYPE_EXTENSIONS.get(this.type);
     }
     /**
      * Create file
-     * @param  {string} path
-     * @param  {Buffer | string} content
-     * @param  {string} mimeType
-     * @param  {string} hash
-     * @return {Promise<File>}
      */
     static create(path, content, mimeType, hash) {
         return new Promise((resolve, reject) => {
@@ -68,9 +61,6 @@ class File {
     }
     /**
      * Append content to file
-     * @param  {string} path
-     * @param  {Buffer | string} content
-     * @return {Promise<boolean>}
      */
     static append(path, content) {
         return new Promise((resolve, reject) => {
@@ -83,8 +73,6 @@ class File {
     }
     /**
      * Read directory
-     * @param  {string} path
-     * @return {Promise<string[]>}
      */
     static readDirectory(path) {
         return new Promise((resolve, reject) => {
@@ -97,8 +85,6 @@ class File {
     }
     /**
      * Get file or directory stats
-     * @param  {string} path
-     * @return {Promise<fs.Stats>}
      */
     static getStats(path) {
         return new Promise((resolve, reject) => {
@@ -111,8 +97,6 @@ class File {
     }
     /**
      * Check if file exists
-     * @param  {string} path
-     * @return {Promise<boolean>}
      */
     static exists(path) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -130,9 +114,6 @@ class File {
     }
     /**
      * Read content from file
-     * @param  {string} path
-     * @param  {{ encoding: string; flag?: string; } | { flag?: string; } | string} options
-     * @return {Promise<string>}
      */
     static read(path, options) {
         return new Promise((resolve, reject) => {
@@ -145,11 +126,6 @@ class File {
     }
     /**
      * Create file from base64 string
-     * @param  {string} base64String
-     * @param  {string} mimeType
-     * @param  {string} path
-     * @param  {string} name
-     * @return {Promise<File>}
      */
     static createFromBase64String(base64String, mimeType, path, name) {
         return __awaiter(this, void 0, void 0, function* () {

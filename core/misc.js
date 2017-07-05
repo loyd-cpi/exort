@@ -94,38 +94,30 @@ _.checksum = function (str, algorithm = 'md5', encoding = 'hex') {
 class Store {
     /**
      * Store constructor
-     * @param {KeyValuePair<any> = {}} private content
      */
     constructor(content = {}) {
         this.content = content;
     }
     /**
      * Get all
-     * @return {KeyValuePair<any>}
      */
     all() {
         return _.clone(this.content);
     }
     /**
      * Merge another Store object
-     * @param {Store} content
      */
     merge(content) {
         this.content = _.merge(this.content, content.all());
     }
     /**
      * Convert dotted notation key to brackets
-     * @param  {string} key
-     * @return {string}
      */
     convertToBrackets(key) {
         return `["${key.split('.').join('"]["')}"]`;
     }
     /**
      * Get a value from content
-     * @param  {string} key
-     * @param  {any} defaultVal
-     * @return {any}
      */
     get(key, defaultVal) {
         let val;
@@ -142,23 +134,18 @@ class Store {
     }
     /**
      * Set a value to store
-     * @param {string} key
-     * @param {any} val
      */
     set(key, val) {
         this.content[key] = val;
     }
     /**
      * Delete a value by key
-     * @param {string} key
      */
     delete(key) {
         delete this.content[key];
     }
     /**
      * Check if value exists by using a key
-     * @param  {string}  key
-     * @return {boolean}
      */
     has(key) {
         return typeof this.get(key) != 'undefined';

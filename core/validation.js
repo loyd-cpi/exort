@@ -23,8 +23,6 @@ const moment = require("moment");
 class FormValidationError extends Error {
     /**
      * FormValidationError constructor
-     * @param {KeyValuePair<FieldValidationError[]>} fields
-     * @param {string} message
      */
     constructor(fields, message) {
         super(message || 'Invalid form input');
@@ -33,8 +31,6 @@ class FormValidationError extends Error {
     }
     /**
      * Get first error message from a particular field
-     * @param  {string} fieldName
-     * @return {string | undefined}
      */
     getFirstMessage(fieldName) {
         if (typeof this.fields[fieldName] == 'undefined' || !this.fields[fieldName].length)
@@ -43,8 +39,6 @@ class FormValidationError extends Error {
     }
     /**
      * Generate combined error message
-     * @param  {string} mergeToken
-     * @return {string}
      */
     getCompiledMessage(mergeToken = '\n') {
         let message = [];
@@ -63,28 +57,22 @@ exports.FormValidationError = FormValidationError;
 class FieldValidator {
     /**
      * Rules constructor
-     * @param {FormValidator} validator
-     * @param {string} fieldName
-     * @param {string} fieldLabel
      */
     constructor(validator, fieldName, fieldLabel) {
         this.validator = validator;
         this.fieldName = fieldName;
         /**
          * Rules to apply
-         * @type {KeyValuePair<ValidationRule>}
          */
         this.rules = {};
         /**
          * Validation errors occured
-         * @type {FieldValidationError[]}
          */
         this.errors = [];
         this.fieldLabel = fieldLabel || misc_1._.lowerCase(fieldName);
     }
     /**
      * Email rule
-     * @return {this}
      */
     email(message) {
         this.rules['email'] = {
@@ -101,8 +89,6 @@ class FieldValidator {
     }
     /**
      * The field under validation must be yes, on, 1, or true. This is useful for validating "Terms of Service" acceptance.
-     * @param  {string} message
-     * @return {this}
      */
     accepted(message) {
         this.rules['accepted'] = {
@@ -119,9 +105,6 @@ class FieldValidator {
     }
     /**
      * The field under validation must be a value after a given date. The dates will be passed into moment library.
-     * @param  {moment.MomentInput} date
-     * @param  {string} message
-     * @return {this}
      */
     after(date, message) {
         if (!moment.isMoment(date)) {
@@ -142,8 +125,6 @@ class FieldValidator {
     }
     /**
      * The field under validation must be a valid date according to moment library
-     * @param  {string} message
-     * @return {this}
      */
     date(message) {
         this.rules['date'] = {
@@ -160,8 +141,6 @@ class FieldValidator {
     }
     /**
      * The field under validation must be present in the input data and not empty.
-     * @param  {string} message
-     * @return {this}
      */
     required(message) {
         this.rules['required'] = {
@@ -178,9 +157,6 @@ class FieldValidator {
     }
     /**
      * The field under validation must be a value after or equal to the given date. The dates will be passed into moment library.
-     * @param  {moment.MomentInput} date
-     * @param  {string} message
-     * @return {this}
      */
     afterOrEqual(date, message) {
         if (!moment.isMoment(date)) {
@@ -201,8 +177,6 @@ class FieldValidator {
     }
     /**
      * The field under validation must be entirely alphabetic characters.
-     * @param  {string} message
-     * @return {this}
      */
     alpha(message) {
         this.rules['alpha'] = {
@@ -219,8 +193,6 @@ class FieldValidator {
     }
     /**
      * The field under validation may have alpha-numeric characters, as well as dashes and underscores.
-     * @param  {string} message
-     * @return {this}
      */
     alphaDash(message) {
         this.rules['alphaDash'] = {
@@ -237,8 +209,6 @@ class FieldValidator {
     }
     /**
      * The field under validation must be entirely alpha-numeric characters.
-     * @param  {string} message
-     * @return {this}
      */
     alphaNum(message) {
         this.rules['alphaNum'] = {
@@ -255,8 +225,6 @@ class FieldValidator {
     }
     /**
      * The field under validation must be a JavasScript array.
-     * @param  {string} message
-     * @return {this}
      */
     array(message) {
         this.rules['array'] = {
@@ -273,9 +241,6 @@ class FieldValidator {
     }
     /**
      * The field under validation must be a value preceding the given date. The dates will be passed into moment library.
-     * @param  {moment.MomentInput} date
-     * @param  {string} message
-     * @return {this}
      */
     before(date, message) {
         if (!moment.isMoment(date)) {
@@ -296,9 +261,6 @@ class FieldValidator {
     }
     /**
      * The field under validation must be a value preceding or equal to the given date. The dates will be passed into moment library.
-     * @param  {moment.MomentInput} date
-     * @param  {string} message
-     * @return {this}
      */
     beforeOrEqual(date, message) {
         if (!moment.isMoment(date)) {
@@ -319,31 +281,24 @@ class FieldValidator {
     }
     /**
      * Add error message
-     * @param  {string} ruleName
-     * @param  {string} message
-     * @param  {KeyValuePair<string | number>} attrs
-     * @return {void}
      */
     addError(ruleName, message, attrs) {
         this.errors.push({ rule: ruleName, message: misc_1._.template(message)(attrs || {}) });
     }
     /**
      * Get errors
-     * @return {FieldValidationError[]}
      */
     getErrors() {
         return this.errors;
     }
     /**
      * Check validation errors is not empty
-     * @return {boolean}
      */
     hasErrors() {
         return this.errors.length ? true : false;
     }
     /**
      * Validate field and save errors
-     * @return {boolean}
      */
     check() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -371,28 +326,21 @@ exports.FieldValidator = FieldValidator;
 class FormValidator {
     /**
      * Validator constructor
-     * @param {Validation} context
-     * @param {KeyValuePair<any>} input
      */
     constructor(validation, input = {}) {
         this.validation = validation;
         this.input = input;
         /**
          * Map of field validators
-         * @type {KeyValuePair<FieldValidator>}
          */
         this.fields = {};
         /**
          * Map of validation errors
-         * @type {KeyValuePair<FieldValidationError[]>}
          */
         this.fieldErrors = {};
     }
     /**
      * Initiate rules for the given field name
-     * @param  {string} fieldName
-     * @param  {string} fieldLabel
-     * @return {FieldValidator}
      */
     field(fieldName, fieldLabel) {
         if (!this.fields[fieldName]) {
@@ -402,22 +350,18 @@ class FormValidator {
     }
     /**
      * Get validation service instance
-     * @return {Validation}
      */
     getValidation() {
         return this.validation;
     }
     /**
      * Get a value from input
-     * @param  {string} key
-     * @return {any}
      */
     getInput(key) {
         return this.input[key];
     }
     /**
      * Validate all fields
-     * @return {Promise<boolean>}
      */
     validate() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -435,14 +379,12 @@ class FormValidator {
     }
     /**
      * Check if form validator has errors
-     * @return {boolean}
      */
     hasErrors() {
         return Object.keys(this.fieldErrors).length > 0;
     }
     /**
      * Validate and throw error if validation fails
-     * @return {Promise<void>}
      */
     validateAndThrow() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -453,7 +395,6 @@ class FormValidator {
     }
     /**
      * Get errors
-     * @return {KeyValuePair<FieldValidationError[]>}
      */
     getErrors() {
         return this.fieldErrors;
@@ -466,17 +407,13 @@ exports.FormValidator = FormValidator;
 let Validation = class Validation extends service_1.Service {
     /**
      * Check if value given is a valid email address
-     * @param  {string} val
-     * @return {boolean}
      */
     isEmail(val) {
-        return new RegExp(`^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))` +
-            `@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$`).test(val);
+        return new RegExp(`^(([^<>()[\\]\\\.,;:\\s@\\"]+(\\.[^<>()[\\]\\\.,;:\\s@\\"]+)*)|(\\".+\\"))` +
+            `@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$`).test(val);
     }
     /**
      * Check if value is yes, 1 or true
-     * @param  {boolean | string | number} val
-     * @return {boolean}
      */
     isAccepted(val) {
         if (typeof val == 'string') {
@@ -492,16 +429,12 @@ let Validation = class Validation extends service_1.Service {
     }
     /**
      * Date validation
-     * @param  {moment.MomentInput} date
-     * @return {boolean}
      */
     isDate(date) {
         return moment(date).isValid();
     }
     /**
      * Empty check
-     * @param  {any} val
-     * @return {boolean}
      */
     isEmpty(val) {
         if (misc_1._.isNone(val)) {
@@ -512,76 +445,54 @@ let Validation = class Validation extends service_1.Service {
     }
     /**
      * After date validation
-     * @param  {moment.MomentInput} dateToCheck
-     * @param  {moment.MomentInput} afterDate
-     * @return {boolean}
      */
     isAfter(dateToCheck, afterDate) {
         return moment(dateToCheck).isAfter(afterDate);
     }
     /**
      * After or same date validation
-     * @param  {moment.MomentInput} dateToCheck
-     * @param  {moment.MomentInput} afterDate
-     * @return {boolean}
      */
     isAfterOrEqual(dateToCheck, afterDate) {
         return moment(dateToCheck).isSameOrAfter(afterDate);
     }
     /**
      * Alphabetic characters validation
-     * @param  {string} val
-     * @return {boolean}
      */
     isAlpha(val) {
         return (/^[a-zA-Z]+$/).test(val);
     }
     /**
      * Alpha dash validation
-     * @param  {string} val
-     * @return {boolean}
      */
     isAlphaDash(val) {
         return (/^[a-zA-Z0-9_\-]+$/).test(val);
     }
     /**
      * Alpha numeric validation
-     * @param  {string} val
-     * @return {boolean}
      */
     isAlphaNum(val) {
         return (/^[a-zA-Z0-9]+$/).test(val);
     }
     /**
      * Array validation
-     * @param  {any} val
-     * @return {boolean}
      */
     isArray(val) {
         return Array.isArray(val) && val instanceof Array;
     }
     /**
      * Before date validation
-     * @param  {moment.MomentInput} dateToCheck
-     * @param  {moment.MomentInput} beforeDate
-     * @return {boolean}
      */
     isBefore(dateToCheck, beforeDate) {
         return moment(dateToCheck).isBefore(beforeDate);
     }
     /**
      * Before or same date validation
-     * @param  {moment.MomentInput} dateToCheck
-     * @param  {moment.MomentInput} beforeDate
-     * @return {boolean}
      */
     isBeforeOrEqual(dateToCheck, beforeDate) {
         return moment(dateToCheck).isSameOrBefore(beforeDate);
     }
     /**
      * Create FormValidator instance
-     * @param  {KeyValuePair<any>} input
-     * @return {FormValidator}
      */
     createForm(input) {
         return new FormValidator(this, input);
@@ -589,7 +500,6 @@ let Validation = class Validation extends service_1.Service {
 };
 /**
  * Map of rule messages
- * @type {Object}
  */
 Validation.RULE_MESSAGES = {
     accepted: 'The ${label} must be accepted.',

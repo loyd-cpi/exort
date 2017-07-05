@@ -17,7 +17,6 @@ __export(require("./misc"));
 __export(require("./router"));
 __export(require("./service"));
 __export(require("./session"));
-__export(require("./sql"));
 __export(require("./validation"));
 __export(require("./view"));
 const moment = require("moment");

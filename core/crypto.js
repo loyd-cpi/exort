@@ -15,8 +15,6 @@ const crypto = require("crypto");
 let Encryptor = Encryptor_1 = class Encryptor extends service_1.Service {
     /**
      * Encrypt using app configuration
-     * @param  {string} str
-     * @return {string}
      */
     encrypt(str) {
         let conf = this.context.app.config.get('app', {});
@@ -24,8 +22,6 @@ let Encryptor = Encryptor_1 = class Encryptor extends service_1.Service {
     }
     /**
      * Decrypt using app configuration
-     * @param  {string} encryptedStr
-     * @return {string}
      */
     decrypt(encryptedStr) {
         let conf = this.context.app.config.get('app', {});
@@ -33,10 +29,6 @@ let Encryptor = Encryptor_1 = class Encryptor extends service_1.Service {
     }
     /**
      * Encrypt
-     * @param  {string} str
-     * @param  {string} password
-     * @param  {string} algo
-     * @return {string}
      */
     static encrypt(str, password, algo) {
         let cipher = crypto.createCipher(algo, password);
@@ -46,10 +38,6 @@ let Encryptor = Encryptor_1 = class Encryptor extends service_1.Service {
     }
     /**
      * Decrypt
-     * @param  {string} encryptedStr
-     * @param  {string} password
-     * @param  {string} algo
-     * @return {string}
      */
     static decrypt(encryptedStr, password, algo) {
         let decipher = crypto.createDecipher(algo, password);
@@ -69,9 +57,6 @@ var Hash;
 (function (Hash) {
     /**
      * Create a hash
-     * @param  {string} text
-     * @param  {number = 10} saltLength
-     * @return {Promise<string>}
      */
     function make(text, saltLength = 10) {
         return new Promise((resolve, reject) => {
@@ -89,9 +74,6 @@ var Hash;
     Hash.make = make;
     /**
      * Check if the hashedText is equivalent to plain text
-     * @param  {string} plainText
-     * @param  {string} hashedText
-     * @return {Promise<boolean>}
      */
     function check(plainText, hashedText) {
         return new Promise((resolve, reject) => {

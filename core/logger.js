@@ -13,7 +13,6 @@ const morgan = require("morgan");
 const misc_1 = require("./misc");
 /**
  * Provide logger
- * @return {AppProvider}
  */
 function provideLogger() {
     return (app) => __awaiter(this, void 0, void 0, function* () {

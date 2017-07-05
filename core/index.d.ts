@@ -12,7 +12,6 @@ export * from './misc';
 export * from './router';
 export * from './service';
 export * from './session';
-export * from './sql';
 export * from './validation';
 export * from './view';
 import * as moment from 'moment';

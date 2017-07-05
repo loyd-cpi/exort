@@ -2,7 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * Mime type extensions
- * @type {Map<string, string>}
  */
 exports.MIME_TYPE_EXTENSIONS = new Map([
     ['application/andrew-inset', 'ez'],

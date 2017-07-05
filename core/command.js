@@ -9,7 +9,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const app_1 = require("./app");
-const sql_1 = require("./sql");
 const yargs = require("yargs");
 /**
  * Console namespace
@@ -17,16 +16,9 @@ const yargs = require("yargs");
 var Console;
 (function (Console) {
     /**
-     * Flag that CLI.configure() is already called
-     * @type {boolean}
-     */
-    let isConfigured = false;
-    /**
      * Add command
-     * @param  {CommandOptions} options
-     * @return {void}
      */
-    function command(options) {
+    function addCommand(options) {
         yargs.command(options.command, options.desc, options.params, (argv) => {
             options.handler(argv)
                 .then(() => {
@@ -39,55 +31,23 @@ var Console;
             });
         });
     }
-    Console.command = command;
-    /**
-     * Configure command line interface
-     * @param  {Application} app
-     * @return {void}
-     */
-    function configure(app) {
-        if (isConfigured) {
-            throw new Error('CLI.configure(app) is already called');
-        }
-        app_1.checkAppConfig(app);
-        command({
-            command: 'sync:schema',
-            desc: 'Sync models and database schema',
-            params: {
-                'connection': {
-                    required: false
-                }
-            },
-            handler(argv) {
-                return __awaiter(this, void 0, void 0, function* () {
-                    yield sql_1.syncSchema(argv.connection);
-                });
-            }
-        });
-        yargs.help('help');
-        isConfigured = true;
-    }
-    Console.configure = configure;
+    Console.addCommand = addCommand;
     /**
      * Execute command base from parsed arguments
-     * @return {void}
      */
-    function execute() {
-        yargs.parse(process.argv.slice(2));
+    function execute(args) {
+        yargs.parse(args);
     }
     Console.execute = execute;
 })(Console = exports.Console || (exports.Console = {}));
 /**
  * Start CLI and you can only execute it once
- * @param  {Application} app
- * @param  {AppProvider[]} providers
- * @return {void}
  */
 function startConsole(app, providers) {
     return __awaiter(this, void 0, void 0, function* () {
+        app_1.checkAppConfig(app);
         yield app_1.executeProviders(app, providers);
-        Console.configure(app);
-        Console.execute();
+        Console.execute(process.argv.slice(2));
     });
 }
 exports.startConsole = startConsole;
