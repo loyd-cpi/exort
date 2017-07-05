@@ -35,8 +35,9 @@ export declare class Config extends Store {
 }
 /**
  * Initialize application instance and configure
- * @param rootDir
- * @param configFiles
+ * @param  {string} rootDir
+ * @param  {string[]} configFiles
+ * @return {Application}
  */
 export declare function createApplication(rootDir: string, configFiles: string[]): Application;
 /**

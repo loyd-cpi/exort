@@ -25,7 +25,7 @@ export declare class FormValidationError extends Error {
     readonly fields: KeyValuePair<FieldValidationError[]>;
     /**
      * FormValidationError constructor
-     * @param {KeyValuePair<FieldValidationError[]>} fieldErrors
+     * @param {KeyValuePair<FieldValidationError[]>} fields
      * @param {string} message
      */
     constructor(fields: KeyValuePair<FieldValidationError[]>, message?: string);

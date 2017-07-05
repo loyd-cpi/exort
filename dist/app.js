@@ -34,8 +34,9 @@ class Config extends misc_1.Store {
 exports.Config = Config;
 /**
  * Initialize application instance and configure
- * @param rootDir
- * @param configFiles
+ * @param  {string} rootDir
+ * @param  {string[]} configFiles
+ * @return {Application}
  */
 function createApplication(rootDir, configFiles) {
     let app = express();

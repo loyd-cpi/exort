@@ -153,8 +153,3 @@ export declare class HttpError extends Error {
      */
     constructor(statusCode: number, message?: string);
 }
-/**
- * Provide HTTP error handler
- * @return {AppProvider}
- */
-export declare function provideHttpErrorHandler(): AppProvider;

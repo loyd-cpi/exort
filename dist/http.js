@@ -9,7 +9,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const app_1 = require("./app");
-const validation_1 = require("./validation");
 const misc_1 = require("./misc");
 const formidable = require("formidable");
 const filesystem_1 = require("./filesystem");
@@ -319,41 +318,4 @@ class HttpError extends Error {
     }
 }
 exports.HttpError = HttpError;
-/**
- * Provide HTTP error handler
- * @return {AppProvider}
- */
-function provideHttpErrorHandler() {
-    return (app) => __awaiter(this, void 0, void 0, function* () {
-        app.use((err, req, res, next) => {
-            let details = {
-                name: err.name,
-                message: err.message,
-            };
-            if (app.config.get('app.env') != 'production') {
-                details.stack = err.stack;
-            }
-            if (err instanceof validation_1.FormValidationError) {
-                details.fields = err.fields;
-                res.status(400);
-            }
-            else if (err instanceof HttpError) {
-                res.status(err.statusCode);
-            }
-            else {
-                res.status(500);
-            }
-            if (req.accepts('json')) {
-                res.json({ error: details });
-            }
-            else if (req.accepts('html')) {
-                res.render(`errors/${res.statusCode}`, { error: details });
-            }
-            else {
-                res.send(JSON.stringify(details));
-            }
-        });
-    });
-}
-exports.provideHttpErrorHandler = provideHttpErrorHandler;
 //# sourceMappingURL=http.js.map

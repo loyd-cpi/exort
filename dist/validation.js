@@ -23,7 +23,7 @@ const moment = require("moment");
 class FormValidationError extends Error {
     /**
      * FormValidationError constructor
-     * @param {KeyValuePair<FieldValidationError[]>} fieldErrors
+     * @param {KeyValuePair<FieldValidationError[]>} fields
      * @param {string} message
      */
     constructor(fields, message) {

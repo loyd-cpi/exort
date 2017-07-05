@@ -76,7 +76,7 @@ class SqlService extends service_1.Service {
         return typeorm_1.getConnectionManager().get(name);
     }
     /**
-     * Gets repository for the service entity
+     * Gets repository for the service model
      * @param  {string} connection
      * @return {Repository<T>}
      */
@@ -91,6 +91,50 @@ class SqlService extends service_1.Service {
      */
     createQueryBuilder(alias, connection = 'default') {
         return this.getRepository(connection).createQueryBuilder(alias);
+    }
+    /**
+     * Creates a new model instance and copies all model properties from this object into a new model
+     * @param  {DeepPartial<T>} attrs
+     * @return {T}
+     */
+    createModelInstance(attrs) {
+        return this.getRepository().create(attrs || {});
+    }
+    /**
+     * Finds models that match given options.
+     * @param  {FindManyOptions<T> | DeepPartial<T>} options
+     * @return {Promise<T[]>}
+     */
+    find(options) {
+        return this.getRepository().find(options);
+    }
+    /**
+     * Finds model by given id.
+     * Optionally find options can be applied.
+     * @param  {any} id
+     * @param  {FindOneOptions<T>} options
+     * @return {Promise<T | undefined>}
+     */
+    findOneById(id, options) {
+        return this.getRepository().findOneById(id, options);
+    }
+    /**
+     * Finds first model that matches given options.
+     * @param  {FindOneOptions<T>} options
+     * @return {Promise<T | undefined>}
+     */
+    findOne(options) {
+        return this.getRepository().findOne(options);
+    }
+    /**
+     * Finds models that match given conditions.
+     * Also counts all models that match given conditions,
+     * but ignores pagination settings (from and take options).
+     * @param  {FindManyOptions<T> | DeepPartial<T>} options
+     * @return {Promise<[Entity[], number]>}
+     */
+    findAndCount(options) {
+        return this.getRepository().findAndCount(options);
     }
 }
 exports.SqlService = SqlService;
