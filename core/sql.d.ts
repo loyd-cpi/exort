@@ -4,8 +4,9 @@ import { FindManyOptions } from 'typeorm/find-options/FindManyOptions';
 import { FindOneOptions } from 'typeorm/find-options/FindOneOptions';
 import { AppProvider } from './app';
 import { DeepPartial } from 'typeorm/common/DeepPartial';
-import { Model, Service } from './service';
 import { KeyValuePair } from './misc';
+import { Service } from './service';
+import { Model } from '../orm';
 /**
  * Provide sql connection
  * @param  {string | KeyValuePair<string | string[]>} modelsDir

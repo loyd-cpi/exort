@@ -10,8 +10,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const typeorm_1 = require("typeorm");
 const app_1 = require("./app");
-const service_1 = require("./service");
 const misc_1 = require("./misc");
+const service_1 = require("./service");
 /**
  * Provide sql connection
  * @param  {string | KeyValuePair<string | string[]>} modelsDir
