@@ -9,3 +9,6 @@ npm-debug.log
 .idea
 .vscode
 clean.sh
+.editorconfig
+.gitignore
+.npmignore
