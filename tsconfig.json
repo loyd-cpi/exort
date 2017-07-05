@@ -8,11 +8,18 @@
     "experimentalDecorators": true,
     "removeComments": false,
     "strict": true,
-    "outDir": "dist",
-    "rootDir": "src",
+    "outDir": ".",
+    "rootDir": ".",
     "pretty": true,
-    "baseUrl": "src",
+    "baseUrl": ".",
     "declaration": true,
     "noUnusedLocals": true
-  }
+  },
+  "files": [
+    "typings/index.d.ts"
+  ],
+  "include": [
+    "core/**/*.ts",
+    "orm/**/*.ts"
+  ]
 }
