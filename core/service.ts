@@ -128,11 +128,6 @@ export function provideServices(): AppProvider {
 }
 
 /**
- * Model interface
- */
-export interface Model {}
-
-/**
  * Abstract Service class
  */
 export abstract class Service {
