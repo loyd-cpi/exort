@@ -3,9 +3,9 @@ import { KeyValuePair, _ } from '../core/misc';
 import { createConnection } from 'typeorm';
 
 /**
- * Provide sql connection
+ * Provide sql and nosql connection
  */
-export function provideSqlConnection(modelsDir: string | KeyValuePair<string | string[]>): AppProvider {
+export function provideConnection(modelsDir: string | KeyValuePair<string | string[]>): AppProvider {
   return async function (app: Application): Promise<void> {
     checkAppConfig(app);
 
