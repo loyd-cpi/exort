@@ -1,6 +1,6 @@
 import { AppProvider } from '../core/app';
 import { KeyValuePair } from '../core/misc';
 /**
- * Provide sql connection
+ * Provide sql and nosql connection
  */
-export declare function provideSqlConnection(modelsDir: string | KeyValuePair<string | string[]>): AppProvider;
+export declare function provideConnection(modelsDir: string | KeyValuePair<string | string[]>): AppProvider;

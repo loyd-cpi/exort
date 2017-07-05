@@ -12,9 +12,9 @@ const app_1 = require("../core/app");
 const misc_1 = require("../core/misc");
 const typeorm_1 = require("typeorm");
 /**
- * Provide sql connection
+ * Provide sql and nosql connection
  */
-function provideSqlConnection(modelsDir) {
+function provideConnection(modelsDir) {
     return function (app) {
         return __awaiter(this, void 0, void 0, function* () {
             app_1.checkAppConfig(app);
@@ -46,5 +46,5 @@ function provideSqlConnection(modelsDir) {
         });
     };
 }
-exports.provideSqlConnection = provideSqlConnection;
+exports.provideConnection = provideConnection;
 //# sourceMappingURL=connection.js.map
