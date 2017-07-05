@@ -1,6 +1,9 @@
 import { createConnection, Connection, Repository, getConnectionManager } from 'typeorm';
 import { SelectQueryBuilder } from 'typeorm/query-builder/SelectQueryBuilder';
+import { FindManyOptions } from 'typeorm/find-options/FindManyOptions';
+import { FindOneOptions } from 'typeorm/find-options/FindOneOptions';
 import { checkAppConfig, AppProvider, Application } from './app';
+import { DeepPartial } from 'typeorm/common/DeepPartial';
 import { Model, Service } from './service';
 import { KeyValuePair, _ } from './misc';
 
@@ -75,7 +78,7 @@ export abstract class SqlService<T extends Model> extends Service {
   }
 
   /**
-   * Gets repository for the service entity
+   * Gets repository for the service model
    * @param  {string} connection
    * @return {Repository<T>}
    */
@@ -91,5 +94,54 @@ export abstract class SqlService<T extends Model> extends Service {
    */
   protected createQueryBuilder(alias: string, connection: string = 'default'): SelectQueryBuilder<T> {
     return this.getRepository(connection).createQueryBuilder(alias);
+  }
+
+  /**
+   * Creates a new model instance and copies all model properties from this object into a new model
+   * @param  {DeepPartial<T>} attrs
+   * @return {T}
+   */
+  public createModelInstance(attrs?: DeepPartial<T>): T {
+    return this.getRepository().create(attrs || {});
+  }
+
+  /**
+   * Finds models that match given options.
+   * @param  {FindManyOptions<T> | DeepPartial<T>} options
+   * @return {Promise<T[]>}
+   */
+  public find(options?: DeepPartial<T> | FindManyOptions<T>): Promise<T[]> {
+    return this.getRepository().find(options as DeepPartial<T>);
+  }
+
+  /**
+   * Finds model by given id.
+   * Optionally find options can be applied.
+   * @param  {any} id
+   * @param  {FindOneOptions<T>} options
+   * @return {Promise<T | undefined>}
+   */
+  public findOneById(id: any, options?: FindOneOptions<T>): Promise<T | undefined> {
+    return this.getRepository().findOneById(id, options);
+  }
+
+  /**
+   * Finds first model that matches given options.
+   * @param  {FindOneOptions<T>} options
+   * @return {Promise<T | undefined>}
+   */
+  public findOne(options?: FindOneOptions<T>): Promise<T | undefined>  {
+    return this.getRepository().findOne(options);
+  }
+
+  /**
+   * Finds models that match given conditions.
+   * Also counts all models that match given conditions,
+   * but ignores pagination settings (from and take options).
+   * @param  {FindManyOptions<T> | DeepPartial<T>} options
+   * @return {Promise<[Entity[], number]>}
+   */
+  public findAndCount(options?: DeepPartial<T> | FindManyOptions<T>): Promise<[T[], number]> {
+    return this.getRepository().findAndCount(options as DeepPartial<T>);
   }
 }

@@ -52,8 +52,9 @@ export class Config extends Store {
 
 /**
  * Initialize application instance and configure
- * @param rootDir
- * @param configFiles
+ * @param  {string} rootDir
+ * @param  {string[]} configFiles
+ * @return {Application}
  */
 export function createApplication(rootDir: string, configFiles: string[]): Application {
   let app = express() as Application;
