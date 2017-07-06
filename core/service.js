@@ -33,6 +33,15 @@ function isInjectable(targetClass) {
 }
 exports.isInjectable = isInjectable;
 /**
+ * Bind a resolve function to solve circular dependency
+ */
+function Bind(resolver) {
+    return (target, propertyKey, parameterIndex) => {
+        Reflect.defineMetadata(`exort:bind:${parameterIndex}`, target, resolver);
+    };
+}
+exports.Bind = Bind;
+/**
  * Context class
  */
 class Context {
@@ -65,8 +74,15 @@ class Context {
             let paramTypes = Reflect.getMetadata('design:paramtypes', serviceClass);
             for (let paramIndex in paramTypes) {
                 if (misc_1._.isNone(paramTypes[paramIndex])) {
-                    throw new Error(`Empty param type for ${serviceClass.$injectParamNames[paramIndex]} in ${serviceClass.name} constructor.
-            It might be caused by circular dependency`);
+                    let resolve = Reflect.getMetadata(`exort:bind:${paramIndex}`, serviceClass);
+                    if (typeof resolve == 'function') {
+                        let resolvedClass = resolve();
+                        if (misc_1._.isNone(resolvedClass)) {
+                            throw new Error(`Empty param type for ${serviceClass.$injectParamNames[paramIndex]} in ${serviceClass.name} constructor. ` +
+                                `It might be caused by circular dependency`);
+                        }
+                        paramTypes[paramIndex] = resolvedClass;
+                    }
                 }
                 params.push(this.make(paramTypes[paramIndex]));
             }

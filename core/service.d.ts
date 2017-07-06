@@ -8,6 +8,10 @@ export declare function Injectable(): (target: Function) => void;
  */
 export declare function isInjectable(targetClass: Function): boolean;
 /**
+ * Bind a resolve function to solve circular dependency
+ */
+export declare function Bind(resolver: ServiceClassResolver): (target: Object, propertyKey: string, parameterIndex: number) => void;
+/**
  * Context class
  */
 export declare class Context {
