@@ -26,6 +26,15 @@ export function isInjectable(targetClass: Function): boolean {
 }
 
 /**
+ * Bind a resolve function to solve circular dependency
+ */
+export function Bind(resolver: ServiceClassResolver) {
+  return (target: Object, propertyKey: string, parameterIndex: number) => {
+    Reflect.defineMetadata(`exort:bind:${parameterIndex}`, target, resolver);
+  };
+}
+
+/**
  * Context class
  */
 export class Context {
@@ -63,12 +72,21 @@ export class Context {
 
       let paramTypes: ServiceClass[] = Reflect.getMetadata('design:paramtypes', serviceClass);
       for (let paramIndex in paramTypes) {
-
         if (_.isNone(paramTypes[paramIndex])) {
-          throw new Error(
-            `Empty param type for ${(serviceClass as any).$injectParamNames[paramIndex]} in ${serviceClass.name} constructor.
-            It might be caused by circular dependency`
-          );
+
+          let resolve = Reflect.getMetadata(`exort:bind:${paramIndex}`, serviceClass);
+          if (typeof resolve == 'function') {
+
+            let resolvedClass = resolve();
+            if (_.isNone(resolvedClass)) {
+              throw new Error(
+                `Empty param type for ${(serviceClass as any).$injectParamNames[paramIndex]} in ${serviceClass.name} constructor. ` +
+                `It might be caused by circular dependency`
+              );
+            }
+
+            paramTypes[paramIndex] = resolvedClass;
+          }
         }
 
         params.push(this.make(paramTypes[paramIndex]));
