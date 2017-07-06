@@ -8,9 +8,9 @@ import * as moment from 'moment';
 export interface ValidationRule {
   name: string;
   async?: boolean;
+  goWithUndefined?: boolean;
   handle(this: FieldValidator): boolean | Promise<boolean>;
-  message: string;
-  attrs: KeyValuePair<string | number>;
+  message(this: FieldValidator): { message: string, attrs: KeyValuePair<string | number> };
 }
 
 /**
@@ -96,12 +96,16 @@ export class FieldValidator {
   public email(message?: string): this {
     this.rules['email'] = {
       name: 'email',
-      handle(this) {
+      handle() {
         return this.validator.getValidation().isEmail(this.validator.getInput(this.fieldName));
       },
-      message: message || Validation.RULE_MESSAGES.email,
-      attrs: {
-        label: this.fieldLabel
+      message() {
+        return {
+          message: message || Validation.RULE_MESSAGES.email,
+          attrs: {
+            label: this.fieldLabel
+          }
+        };
       }
     };
     return this;
@@ -113,12 +117,16 @@ export class FieldValidator {
   public accepted(message?: string): this {
     this.rules['accepted'] = {
       name: 'accepted',
-      handle(this) {
+      handle() {
         return this.validator.getValidation().isAccepted(this.validator.getInput(this.fieldName));
       },
-      message: message || Validation.RULE_MESSAGES.accepted,
-      attrs: {
-        label: this.fieldLabel
+      message() {
+        return {
+          message: message || Validation.RULE_MESSAGES.accepted,
+          attrs: {
+            label: this.fieldLabel
+          }
+        };
       }
     };
     return this;
@@ -133,13 +141,17 @@ export class FieldValidator {
     }
     this.rules['after'] = {
       name: 'after',
-      handle(this) {
+      handle() {
         return this.validator.getValidation().isAfter(this.validator.getInput(this.fieldName), date);
       },
-      message: message || Validation.RULE_MESSAGES.after,
-      attrs: {
-        label: this.fieldLabel,
-        date: date.toString()
+      message() {
+        return {
+          message: message || Validation.RULE_MESSAGES.after,
+          attrs: {
+            label: this.fieldLabel,
+            date: (date as moment.Moment).toString()
+          }
+        };
       }
     };
     return this;
@@ -151,12 +163,16 @@ export class FieldValidator {
   public date(message?: string): this {
     this.rules['date'] = {
       name: 'date',
-      handle(this) {
+      handle() {
         return this.validator.getValidation().isDate(this.validator.getInput(this.fieldName));
       },
-      message: message || Validation.RULE_MESSAGES.date,
-      attrs: {
-        label: this.fieldLabel
+      message() {
+        return {
+          message: message || Validation.RULE_MESSAGES.date,
+          attrs: {
+            label: this.fieldLabel
+          }
+        };
       }
     };
     return this;
@@ -168,12 +184,17 @@ export class FieldValidator {
   public required(message?: string): this {
     this.rules['required'] = {
       name: 'required',
-      handle(this) {
+      goWithUndefined: true,
+      handle() {
         return !this.validator.getValidation().isEmpty(this.validator.getInput(this.fieldName));
       },
-      message: message || Validation.RULE_MESSAGES.required,
-      attrs: {
-        label: this.fieldLabel
+      message() {
+        return {
+          message: message || Validation.RULE_MESSAGES.required,
+          attrs: {
+            label: this.fieldLabel
+          }
+        };
       }
     };
     return this;
@@ -203,17 +224,22 @@ export class FieldValidator {
 
     this.rules['requiredIf'] = {
       name: 'requiredIf',
-      handle(this) {
+      goWithUndefined: true,
+      handle() {
         if (this.validator.getInput((otherField as any).name) === value) {
           return !this.validator.getValidation().isEmpty(this.validator.getInput(this.fieldName));
         }
         return true;
       },
-      message: message || Validation.RULE_MESSAGES.requiredIf,
-      attrs: {
-        label: this.fieldLabel,
-        other: otherField.label,
-        value: this.validator.getInput(otherField.name)
+      message() {
+        return {
+          message: message || Validation.RULE_MESSAGES.requiredIf,
+          attrs: {
+            label: this.fieldLabel,
+            other: (otherField as any).label,
+            value: this.validator.getInput((otherField as any).name)
+          }
+        };
       }
     };
     return this;
@@ -256,7 +282,8 @@ export class FieldValidator {
 
     this.rules['requiredWith'] = {
       name: 'requiredWith',
-      handle(this) {
+      goWithUndefined: true,
+      handle() {
 
         let validation = this.validator.getValidation();
         for (let otherFieldName of otherFieldNames) {
@@ -267,10 +294,14 @@ export class FieldValidator {
 
         return true;
       },
-      message: message || Validation.RULE_MESSAGES.requiredWith,
-      attrs: {
-        label: this.fieldLabel,
-        values: otherFieldLabels.join(', ')
+      message() {
+        return {
+          message: message || Validation.RULE_MESSAGES.requiredWith,
+          attrs: {
+            label: this.fieldLabel,
+            values: otherFieldLabels.join(', ')
+          }
+        };
       }
     };
     return this;
@@ -313,7 +344,8 @@ export class FieldValidator {
 
     this.rules['requiredWithAll'] = {
       name: 'requiredWithAll',
-      handle(this) {
+      goWithUndefined: true,
+      handle() {
 
         let checkFieldValue = true;
         let validation = this.validator.getValidation();
@@ -330,10 +362,14 @@ export class FieldValidator {
 
         return true;
       },
-      message: message || Validation.RULE_MESSAGES.requiredWithAll,
-      attrs: {
-        label: this.fieldLabel,
-        values: otherFieldLabels.join(', ')
+      message() {
+        return {
+          message: message || Validation.RULE_MESSAGES.requiredWithAll,
+          attrs: {
+            label: this.fieldLabel,
+            values: otherFieldLabels.join(', ')
+          }
+        };
       }
     };
     return this;
@@ -345,12 +381,16 @@ export class FieldValidator {
   public in(list: any[], message?: string): this {
     this.rules['in'] = {
       name: 'in',
-      handle(this) {
+      handle() {
         return this.validator.getValidation().isValueIn(this.validator.getInput(this.fieldName), list);
       },
-      message: message || Validation.RULE_MESSAGES.in,
-      attrs: {
-        label: this.fieldLabel
+      message() {
+        return {
+          message: message || Validation.RULE_MESSAGES.in,
+          attrs: {
+            label: this.fieldLabel
+          }
+        };
       }
     };
     return this;
@@ -362,12 +402,16 @@ export class FieldValidator {
   public notIn(list: (string | number)[], message?: string): this {
     this.rules['notIn'] = {
       name: 'notIn',
-      handle(this) {
+      handle() {
         return !this.validator.getValidation().isValueIn(this.validator.getInput(this.fieldName), list);
       },
-      message: message || Validation.RULE_MESSAGES.notIn,
-      attrs: {
-        label: this.fieldLabel
+      message() {
+        return {
+          message: message || Validation.RULE_MESSAGES.notIn,
+          attrs: {
+            label: this.fieldLabel
+          }
+        };
       }
     };
     return this;
@@ -379,12 +423,16 @@ export class FieldValidator {
   public numeric(message?: string): this {
     this.rules['numeric'] = {
       name: 'numeric',
-      handle(this) {
+      handle() {
         return this.validator.getValidation().isNumeric(this.validator.getInput(this.fieldName));
       },
-      message: message || Validation.RULE_MESSAGES.numeric,
-      attrs: {
-        label: this.fieldLabel
+      message() {
+        return {
+          message: message || Validation.RULE_MESSAGES.numeric,
+          attrs: {
+            label: this.fieldLabel
+          }
+        };
       }
     };
     return this;
@@ -399,13 +447,17 @@ export class FieldValidator {
     }
     this.rules['afterOrEqual'] = {
       name: 'afterOrEqual',
-      handle(this) {
+      handle() {
         return this.validator.getValidation().isAfterOrEqual(this.validator.getInput(this.fieldName), date);
       },
-      message: message || Validation.RULE_MESSAGES.afterOrEqual,
-      attrs: {
-        label: this.fieldLabel,
-        date: date.toString()
+      message() {
+        return {
+          message: message || Validation.RULE_MESSAGES.afterOrEqual,
+          attrs: {
+            label: this.fieldLabel,
+            date: (date as moment.Moment).toString()
+          }
+        };
       }
     };
     return this;
@@ -417,12 +469,16 @@ export class FieldValidator {
   public alpha(message?: string): this {
     this.rules['alpha'] = {
       name: 'alpha',
-      handle(this) {
+      handle() {
         return this.validator.getValidation().isAlpha(this.validator.getInput(this.fieldName));
       },
-      message: message || Validation.RULE_MESSAGES.alpha,
-      attrs: {
-        label: this.fieldLabel
+      message() {
+        return {
+          message: message || Validation.RULE_MESSAGES.alpha,
+          attrs: {
+            label: this.fieldLabel
+          }
+        };
       }
     };
     return this;
@@ -434,12 +490,16 @@ export class FieldValidator {
   public alphaDash(message?: string): this {
     this.rules['alphaDash'] = {
       name: 'alphaDash',
-      handle(this) {
+      handle() {
         return this.validator.getValidation().isAlphaDash(this.validator.getInput(this.fieldName));
       },
-      message: message || Validation.RULE_MESSAGES.alphaDash,
-      attrs: {
-        label: this.fieldLabel
+      message() {
+        return {
+          message: message || Validation.RULE_MESSAGES.alphaDash,
+          attrs: {
+            label: this.fieldLabel
+          }
+        };
       }
     };
     return this;
@@ -451,12 +511,16 @@ export class FieldValidator {
   public alphaNum(message?: string): this {
     this.rules['alphaNum'] = {
       name: 'alphaNum',
-      handle(this) {
+      handle() {
         return this.validator.getValidation().isAlphaNum(this.validator.getInput(this.fieldName));
       },
-      message: message || Validation.RULE_MESSAGES.alphaNum,
-      attrs: {
-        label: this.fieldLabel
+      message() {
+        return {
+          message: message || Validation.RULE_MESSAGES.alphaNum,
+          attrs: {
+            label: this.fieldLabel
+          }
+        };
       }
     };
     return this;
@@ -468,12 +532,16 @@ export class FieldValidator {
   public array(message?: string): this {
     this.rules['array'] = {
       name: 'array',
-      handle(this) {
+      handle() {
         return this.validator.getValidation().isArray(this.validator.getInput(this.fieldName));
       },
-      message: message || Validation.RULE_MESSAGES.array,
-      attrs: {
-        label: this.fieldLabel
+      message() {
+        return {
+          message: message || Validation.RULE_MESSAGES.array,
+          attrs: {
+            label: this.fieldLabel
+          }
+        };
       }
     };
     return this;
@@ -488,13 +556,17 @@ export class FieldValidator {
     }
     this.rules['before'] = {
       name: 'before',
-      handle(this) {
+      handle() {
         return this.validator.getValidation().isBefore(this.validator.getInput(this.fieldName), date);
       },
-      message: message || Validation.RULE_MESSAGES.before,
-      attrs: {
-        label: this.fieldLabel,
-        date: date.toString()
+      message() {
+        return {
+          message: message || Validation.RULE_MESSAGES.before,
+          attrs: {
+            label: this.fieldLabel,
+            date: (date as moment.Moment).toString()
+          }
+        };
       }
     };
     return this;
@@ -509,13 +581,17 @@ export class FieldValidator {
     }
     this.rules['beforeOrEqual'] = {
       name: 'beforeOrEqual',
-      handle(this) {
+      handle() {
         return this.validator.getValidation().isBeforeOrEqual(this.validator.getInput(this.fieldName), date);
       },
-      message: message || Validation.RULE_MESSAGES.beforeOrEqual,
-      attrs: {
-        label: this.fieldLabel,
-        date: date.toString()
+      message() {
+        return {
+          message: message || Validation.RULE_MESSAGES.beforeOrEqual,
+          attrs: {
+            label: this.fieldLabel,
+            date: (date as moment.Moment).toString()
+          }
+        };
       }
     };
     return this;
@@ -547,7 +623,12 @@ export class FieldValidator {
    */
   public async check(): Promise<boolean> {
     this.errors = [];
+    let valueIsEmpty = this.validator.getValidation().isEmpty(this.validator.getInput(this.fieldName));
     for (let rule in this.rules) {
+
+      if (valueIsEmpty && !this.rules[rule].goWithUndefined) {
+        continue;
+      }
 
       let pass = true;
       if (this.rules[rule].async) {
@@ -557,7 +638,8 @@ export class FieldValidator {
       }
 
       if (!pass) {
-        this.addError(rule, this.rules[rule].message, this.rules[rule].attrs);
+        let error = this.rules[rule].message.call(this);
+        this.addError(rule, error.message, error.attrs);
       }
     }
 
