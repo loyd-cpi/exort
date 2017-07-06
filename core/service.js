@@ -37,7 +37,7 @@ exports.isInjectable = isInjectable;
  */
 function Bind(resolver) {
     return (target, propertyKey, parameterIndex) => {
-        Reflect.defineMetadata(`exort:bind:${parameterIndex}`, target, resolver);
+        Reflect.defineMetadata(`exort:bind:${parameterIndex}`, resolver, target);
     };
 }
 exports.Bind = Bind;
@@ -75,14 +75,15 @@ class Context {
             for (let paramIndex in paramTypes) {
                 if (misc_1._.isNone(paramTypes[paramIndex])) {
                     let resolve = Reflect.getMetadata(`exort:bind:${paramIndex}`, serviceClass);
-                    if (typeof resolve == 'function') {
-                        let resolvedClass = resolve();
-                        if (misc_1._.isNone(resolvedClass)) {
-                            throw new Error(`Empty param type for ${serviceClass.$injectParamNames[paramIndex]} in ${serviceClass.name} constructor. ` +
-                                `It might be caused by circular dependency`);
-                        }
-                        paramTypes[paramIndex] = resolvedClass;
+                    if (typeof resolve != 'function') {
+                        throw new Error(`Param type of ${serviceClass.$injectParamNames[paramIndex]} in ${serviceClass.name} constructor is empty. ` +
+                            `It might be caused by circular dependency`);
                     }
+                    let resolvedClass = resolve();
+                    if (misc_1._.isNone(resolvedClass)) {
+                        throw new Error(`Binding for ${serviceClass.$injectParamNames[paramIndex]} in ${serviceClass.name} constructor returns empty. `);
+                    }
+                    paramTypes[paramIndex] = resolvedClass;
                 }
                 params.push(this.make(paramTypes[paramIndex]));
             }
