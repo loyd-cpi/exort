@@ -135,6 +135,10 @@ export declare class FieldValidator {
      */
     numeric(message?: string): this;
     /**
+     * The field under validation must be a string.
+     */
+    string(message?: string): this;
+    /**
      * The field under validation must be a value after or equal to the given date. The dates will be passed into moment library.
      */
     afterOrEqual(date: moment.MomentInput, message?: string): this;
@@ -365,6 +369,10 @@ export declare class Validation extends Service {
      * Numeric check
      */
     isNumeric(val: any): boolean;
+    /**
+     * String check
+     */
+    isString(val: any): boolean;
     /**
      * Create FormValidator instance
      */

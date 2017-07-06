@@ -366,6 +366,26 @@ class FieldValidator {
         return this;
     }
     /**
+     * The field under validation must be a string.
+     */
+    string(message) {
+        this.rules['string'] = {
+            name: 'string',
+            handle() {
+                return this.validator.getValidation().isString(this.validator.getInput(this.fieldName));
+            },
+            message() {
+                return {
+                    message: message || Validation.RULE_MESSAGES.string,
+                    attrs: {
+                        label: this.fieldLabel
+                    }
+                };
+            }
+        };
+        return this;
+    }
+    /**
      * The field under validation must be a value after or equal to the given date. The dates will be passed into moment library.
      */
     afterOrEqual(date, message) {
@@ -745,6 +765,12 @@ let Validation = class Validation extends service_1.Service {
      */
     isNumeric(val) {
         return typeof val != 'boolean' && !isNaN(Number(val));
+    }
+    /**
+     * String check
+     */
+    isString(val) {
+        return misc_1._.isString(val);
     }
     /**
      * Create FormValidator instance
