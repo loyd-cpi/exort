@@ -277,6 +277,120 @@ export class FieldValidator {
   }
 
   /**
+   * The field under validation must be present and not empty only if all of the other specified fields are present.
+   */
+  public requiredWithAll(otherFields: string, message?: string): this;
+
+  /**
+   * The field under validation must be present and not empty only if all of the other specified fields are present.
+   */
+  public requiredWithAll(otherFields: string[], message?: string): this;
+
+  /**
+   * The field under validation must be present and not empty only if all of the other specified fields are present.
+   */
+  public requiredWithAll(otherFields: { name: string, label?: string}[], message?: string): this;
+
+  /**
+   * The field under validation must be present and not empty only if all of the other specified fields are present.
+   */
+  public requiredWithAll(otherFields: ({ name: string, label?: string} | string)[] | string, message?: string): this {
+    let otherFieldNames: string[] = [];
+    let otherFieldLabels: string[] = [];
+    if (typeof otherFields == 'string') {
+      otherFields = [otherFields];
+    }
+
+    for (let field of otherFields) {
+      if (typeof field == 'string') {
+        otherFieldNames.push(field);
+        otherFieldLabels.push(fieldLabelCase(field));
+      } else {
+        otherFieldNames.push(field.name);
+        otherFieldLabels.push(field.label || fieldLabelCase(field.name));
+      }
+    }
+
+    this.rules['requiredWithAll'] = {
+      name: 'requiredWithAll',
+      handle(this) {
+
+        let checkFieldValue = true;
+        let validation = this.validator.getValidation();
+        for (let otherFieldName of otherFieldNames) {
+          if (validation.isEmpty(this.validator.getInput(otherFieldName))) {
+            checkFieldValue = false;
+            break;
+          }
+        }
+
+        if (checkFieldValue) {
+          return !validation.isEmpty(this.validator.getInput(this.fieldName));
+        }
+
+        return true;
+      },
+      message: message || Validation.RULE_MESSAGES.requiredWithAll,
+      attrs: {
+        label: this.fieldLabel,
+        values: otherFieldLabels.join(', ')
+      }
+    };
+    return this;
+  }
+
+  /**
+   * The field under validation must be included in the given list of values.
+   */
+  public in(list: any[], message?: string): this {
+    this.rules['in'] = {
+      name: 'in',
+      handle(this) {
+        return this.validator.getValidation().isValueIn(this.validator.getInput(this.fieldName), list);
+      },
+      message: message || Validation.RULE_MESSAGES.in,
+      attrs: {
+        label: this.fieldLabel
+      }
+    };
+    return this;
+  }
+
+  /**
+   * The field under validation must not be included in the given list of values.
+   */
+  public notIn(list: (string | number)[], message?: string): this {
+    this.rules['notIn'] = {
+      name: 'notIn',
+      handle(this) {
+        return !this.validator.getValidation().isValueIn(this.validator.getInput(this.fieldName), list);
+      },
+      message: message || Validation.RULE_MESSAGES.notIn,
+      attrs: {
+        label: this.fieldLabel
+      }
+    };
+    return this;
+  }
+
+  /**
+   * The field under validation must be numeric.
+   */
+  public numeric(message?: string): this {
+    this.rules['numeric'] = {
+      name: 'numeric',
+      handle(this) {
+        return this.validator.getValidation().isNumeric(this.validator.getInput(this.fieldName));
+      },
+      message: message || Validation.RULE_MESSAGES.numeric,
+      attrs: {
+        label: this.fieldLabel
+      }
+    };
+    return this;
+  }
+
+  /**
    * The field under validation must be a value after or equal to the given date. The dates will be passed into moment library.
    */
   public afterOrEqual(date: moment.MomentInput, message?: string): this {
@@ -717,6 +831,20 @@ export class Validation extends Service {
    */
   public isBeforeOrEqual(dateToCheck: moment.MomentInput, beforeDate: moment.MomentInput) {
     return moment(dateToCheck).isSameOrBefore(beforeDate);
+  }
+
+  /**
+   * In rule
+   */
+  public isValueIn(val: any, list: any[]): boolean {
+    return _.indexOf(list, val) > -1;
+  }
+
+  /**
+   * Numeric check
+   */
+  public isNumeric(val: any): boolean {
+    return typeof val != 'boolean' && !isNaN(Number(val));
   }
 
   /**
