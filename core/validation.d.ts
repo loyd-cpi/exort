@@ -105,6 +105,33 @@ export declare class FieldValidator {
         label?: string;
     }[], message?: string): this;
     /**
+     * The field under validation must be present and not empty only if all of the other specified fields are present.
+     */
+    requiredWithAll(otherFields: string, message?: string): this;
+    /**
+     * The field under validation must be present and not empty only if all of the other specified fields are present.
+     */
+    requiredWithAll(otherFields: string[], message?: string): this;
+    /**
+     * The field under validation must be present and not empty only if all of the other specified fields are present.
+     */
+    requiredWithAll(otherFields: {
+        name: string;
+        label?: string;
+    }[], message?: string): this;
+    /**
+     * The field under validation must be included in the given list of values.
+     */
+    in(list: any[], message?: string): this;
+    /**
+     * The field under validation must not be included in the given list of values.
+     */
+    notIn(list: (string | number)[], message?: string): this;
+    /**
+     * The field under validation must be numeric.
+     */
+    numeric(message?: string): this;
+    /**
      * The field under validation must be a value after or equal to the given date. The dates will be passed into moment library.
      */
     afterOrEqual(date: moment.MomentInput, message?: string): this;
@@ -327,6 +354,14 @@ export declare class Validation extends Service {
      * Before or same date validation
      */
     isBeforeOrEqual(dateToCheck: moment.MomentInput, beforeDate: moment.MomentInput): boolean;
+    /**
+     * In rule
+     */
+    isValueIn(val: any, list: any[]): boolean;
+    /**
+     * Numeric check
+     */
+    isNumeric(val: any): boolean;
     /**
      * Create FormValidator instance
      */

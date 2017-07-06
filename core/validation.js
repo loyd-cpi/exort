@@ -227,6 +227,97 @@ class FieldValidator {
         return this;
     }
     /**
+     * The field under validation must be present and not empty only if all of the other specified fields are present.
+     */
+    requiredWithAll(otherFields, message) {
+        let otherFieldNames = [];
+        let otherFieldLabels = [];
+        if (typeof otherFields == 'string') {
+            otherFields = [otherFields];
+        }
+        for (let field of otherFields) {
+            if (typeof field == 'string') {
+                otherFieldNames.push(field);
+                otherFieldLabels.push(fieldLabelCase(field));
+            }
+            else {
+                otherFieldNames.push(field.name);
+                otherFieldLabels.push(field.label || fieldLabelCase(field.name));
+            }
+        }
+        this.rules['requiredWithAll'] = {
+            name: 'requiredWithAll',
+            handle() {
+                let checkFieldValue = true;
+                let validation = this.validator.getValidation();
+                for (let otherFieldName of otherFieldNames) {
+                    if (validation.isEmpty(this.validator.getInput(otherFieldName))) {
+                        checkFieldValue = false;
+                        break;
+                    }
+                }
+                if (checkFieldValue) {
+                    return !validation.isEmpty(this.validator.getInput(this.fieldName));
+                }
+                return true;
+            },
+            message: message || Validation.RULE_MESSAGES.requiredWithAll,
+            attrs: {
+                label: this.fieldLabel,
+                values: otherFieldLabels.join(', ')
+            }
+        };
+        return this;
+    }
+    /**
+     * The field under validation must be included in the given list of values.
+     */
+    in(list, message) {
+        this.rules['in'] = {
+            name: 'in',
+            handle() {
+                return this.validator.getValidation().isValueIn(this.validator.getInput(this.fieldName), list);
+            },
+            message: message || Validation.RULE_MESSAGES.in,
+            attrs: {
+                label: this.fieldLabel
+            }
+        };
+        return this;
+    }
+    /**
+     * The field under validation must not be included in the given list of values.
+     */
+    notIn(list, message) {
+        this.rules['notIn'] = {
+            name: 'notIn',
+            handle() {
+                return !this.validator.getValidation().isValueIn(this.validator.getInput(this.fieldName), list);
+            },
+            message: message || Validation.RULE_MESSAGES.notIn,
+            attrs: {
+                label: this.fieldLabel
+            }
+        };
+        return this;
+    }
+    /**
+     * The field under validation must be numeric.
+     */
+    numeric(message) {
+        this.rules['numeric'] = {
+            name: 'numeric',
+            handle() {
+                return this.validator.getValidation().isNumeric(this.validator.getInput(this.fieldName));
+            },
+            message: message || Validation.RULE_MESSAGES.numeric,
+            attrs: {
+                label: this.fieldLabel
+            }
+        };
+        return this;
+    }
+    /**
      * The field under validation must be a value after or equal to the given date. The dates will be passed into moment library.
      */
     afterOrEqual(date, message) {
@@ -561,6 +652,18 @@ let Validation = class Validation extends service_1.Service {
      */
     isBeforeOrEqual(dateToCheck, beforeDate) {
         return moment(dateToCheck).isSameOrBefore(beforeDate);
+    }
+    /**
+     * In rule
+     */
+    isValueIn(val, list) {
+        return misc_1._.indexOf(list, val) > -1;
+    }
+    /**
+     * Numeric check
+     */
+    isNumeric(val) {
+        return typeof val != 'boolean' && !isNaN(Number(val));
     }
     /**
      * Create FormValidator instance
