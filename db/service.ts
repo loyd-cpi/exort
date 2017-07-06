@@ -6,7 +6,7 @@ import { RemoveOptions } from 'typeorm/repository/RemoveOptions';
 import { SaveOptions } from 'typeorm/repository/SaveOptions';
 import { DeepPartial } from 'typeorm/common/DeepPartial';
 import { Service } from '../core/service';
-import { Model } from '../core/model';
+import { Model } from './model';
 
 /**
  * Abstract SqlService class
