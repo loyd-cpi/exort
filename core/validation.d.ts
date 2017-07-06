@@ -7,9 +7,12 @@ import * as moment from 'moment';
 export interface ValidationRule {
     name: string;
     async?: boolean;
+    goWithUndefined?: boolean;
     handle(this: FieldValidator): boolean | Promise<boolean>;
-    message: string;
-    attrs: KeyValuePair<string | number>;
+    message(this: FieldValidator): {
+        message: string;
+        attrs: KeyValuePair<string | number>;
+    };
 }
 /**
  * FieldValidationError interface

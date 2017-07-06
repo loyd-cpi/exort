@@ -86,9 +86,13 @@ class FieldValidator {
             handle() {
                 return this.validator.getValidation().isEmail(this.validator.getInput(this.fieldName));
             },
-            message: message || Validation.RULE_MESSAGES.email,
-            attrs: {
-                label: this.fieldLabel
+            message() {
+                return {
+                    message: message || Validation.RULE_MESSAGES.email,
+                    attrs: {
+                        label: this.fieldLabel
+                    }
+                };
             }
         };
         return this;
@@ -102,9 +106,13 @@ class FieldValidator {
             handle() {
                 return this.validator.getValidation().isAccepted(this.validator.getInput(this.fieldName));
             },
-            message: message || Validation.RULE_MESSAGES.accepted,
-            attrs: {
-                label: this.fieldLabel
+            message() {
+                return {
+                    message: message || Validation.RULE_MESSAGES.accepted,
+                    attrs: {
+                        label: this.fieldLabel
+                    }
+                };
             }
         };
         return this;
@@ -121,10 +129,14 @@ class FieldValidator {
             handle() {
                 return this.validator.getValidation().isAfter(this.validator.getInput(this.fieldName), date);
             },
-            message: message || Validation.RULE_MESSAGES.after,
-            attrs: {
-                label: this.fieldLabel,
-                date: date.toString()
+            message() {
+                return {
+                    message: message || Validation.RULE_MESSAGES.after,
+                    attrs: {
+                        label: this.fieldLabel,
+                        date: date.toString()
+                    }
+                };
             }
         };
         return this;
@@ -138,9 +150,13 @@ class FieldValidator {
             handle() {
                 return this.validator.getValidation().isDate(this.validator.getInput(this.fieldName));
             },
-            message: message || Validation.RULE_MESSAGES.date,
-            attrs: {
-                label: this.fieldLabel
+            message() {
+                return {
+                    message: message || Validation.RULE_MESSAGES.date,
+                    attrs: {
+                        label: this.fieldLabel
+                    }
+                };
             }
         };
         return this;
@@ -151,12 +167,17 @@ class FieldValidator {
     required(message) {
         this.rules['required'] = {
             name: 'required',
+            goWithUndefined: true,
             handle() {
                 return !this.validator.getValidation().isEmpty(this.validator.getInput(this.fieldName));
             },
-            message: message || Validation.RULE_MESSAGES.required,
-            attrs: {
-                label: this.fieldLabel
+            message() {
+                return {
+                    message: message || Validation.RULE_MESSAGES.required,
+                    attrs: {
+                        label: this.fieldLabel
+                    }
+                };
             }
         };
         return this;
@@ -173,17 +194,22 @@ class FieldValidator {
         }
         this.rules['requiredIf'] = {
             name: 'requiredIf',
+            goWithUndefined: true,
             handle() {
                 if (this.validator.getInput(otherField.name) === value) {
                     return !this.validator.getValidation().isEmpty(this.validator.getInput(this.fieldName));
                 }
                 return true;
             },
-            message: message || Validation.RULE_MESSAGES.requiredIf,
-            attrs: {
-                label: this.fieldLabel,
-                other: otherField.label,
-                value: this.validator.getInput(otherField.name)
+            message() {
+                return {
+                    message: message || Validation.RULE_MESSAGES.requiredIf,
+                    attrs: {
+                        label: this.fieldLabel,
+                        other: otherField.label,
+                        value: this.validator.getInput(otherField.name)
+                    }
+                };
             }
         };
         return this;
@@ -209,6 +235,7 @@ class FieldValidator {
         }
         this.rules['requiredWith'] = {
             name: 'requiredWith',
+            goWithUndefined: true,
             handle() {
                 let validation = this.validator.getValidation();
                 for (let otherFieldName of otherFieldNames) {
@@ -218,10 +245,14 @@ class FieldValidator {
                 }
                 return true;
             },
-            message: message || Validation.RULE_MESSAGES.requiredWith,
-            attrs: {
-                label: this.fieldLabel,
-                values: otherFieldLabels.join(', ')
+            message() {
+                return {
+                    message: message || Validation.RULE_MESSAGES.requiredWith,
+                    attrs: {
+                        label: this.fieldLabel,
+                        values: otherFieldLabels.join(', ')
+                    }
+                };
             }
         };
         return this;
@@ -247,6 +278,7 @@ class FieldValidator {
         }
         this.rules['requiredWithAll'] = {
             name: 'requiredWithAll',
+            goWithUndefined: true,
             handle() {
                 let checkFieldValue = true;
                 let validation = this.validator.getValidation();
@@ -261,10 +293,14 @@ class FieldValidator {
                 }
                 return true;
             },
-            message: message || Validation.RULE_MESSAGES.requiredWithAll,
-            attrs: {
-                label: this.fieldLabel,
-                values: otherFieldLabels.join(', ')
+            message() {
+                return {
+                    message: message || Validation.RULE_MESSAGES.requiredWithAll,
+                    attrs: {
+                        label: this.fieldLabel,
+                        values: otherFieldLabels.join(', ')
+                    }
+                };
             }
         };
         return this;
@@ -278,9 +314,13 @@ class FieldValidator {
             handle() {
                 return this.validator.getValidation().isValueIn(this.validator.getInput(this.fieldName), list);
             },
-            message: message || Validation.RULE_MESSAGES.in,
-            attrs: {
-                label: this.fieldLabel
+            message() {
+                return {
+                    message: message || Validation.RULE_MESSAGES.in,
+                    attrs: {
+                        label: this.fieldLabel
+                    }
+                };
             }
         };
         return this;
@@ -294,9 +334,13 @@ class FieldValidator {
             handle() {
                 return !this.validator.getValidation().isValueIn(this.validator.getInput(this.fieldName), list);
             },
-            message: message || Validation.RULE_MESSAGES.notIn,
-            attrs: {
-                label: this.fieldLabel
+            message() {
+                return {
+                    message: message || Validation.RULE_MESSAGES.notIn,
+                    attrs: {
+                        label: this.fieldLabel
+                    }
+                };
             }
         };
         return this;
@@ -310,9 +354,13 @@ class FieldValidator {
             handle() {
                 return this.validator.getValidation().isNumeric(this.validator.getInput(this.fieldName));
             },
-            message: message || Validation.RULE_MESSAGES.numeric,
-            attrs: {
-                label: this.fieldLabel
+            message() {
+                return {
+                    message: message || Validation.RULE_MESSAGES.numeric,
+                    attrs: {
+                        label: this.fieldLabel
+                    }
+                };
             }
         };
         return this;
@@ -329,10 +377,14 @@ class FieldValidator {
             handle() {
                 return this.validator.getValidation().isAfterOrEqual(this.validator.getInput(this.fieldName), date);
             },
-            message: message || Validation.RULE_MESSAGES.afterOrEqual,
-            attrs: {
-                label: this.fieldLabel,
-                date: date.toString()
+            message() {
+                return {
+                    message: message || Validation.RULE_MESSAGES.afterOrEqual,
+                    attrs: {
+                        label: this.fieldLabel,
+                        date: date.toString()
+                    }
+                };
             }
         };
         return this;
@@ -346,9 +398,13 @@ class FieldValidator {
             handle() {
                 return this.validator.getValidation().isAlpha(this.validator.getInput(this.fieldName));
             },
-            message: message || Validation.RULE_MESSAGES.alpha,
-            attrs: {
-                label: this.fieldLabel
+            message() {
+                return {
+                    message: message || Validation.RULE_MESSAGES.alpha,
+                    attrs: {
+                        label: this.fieldLabel
+                    }
+                };
             }
         };
         return this;
@@ -362,9 +418,13 @@ class FieldValidator {
             handle() {
                 return this.validator.getValidation().isAlphaDash(this.validator.getInput(this.fieldName));
             },
-            message: message || Validation.RULE_MESSAGES.alphaDash,
-            attrs: {
-                label: this.fieldLabel
+            message() {
+                return {
+                    message: message || Validation.RULE_MESSAGES.alphaDash,
+                    attrs: {
+                        label: this.fieldLabel
+                    }
+                };
             }
         };
         return this;
@@ -378,9 +438,13 @@ class FieldValidator {
             handle() {
                 return this.validator.getValidation().isAlphaNum(this.validator.getInput(this.fieldName));
             },
-            message: message || Validation.RULE_MESSAGES.alphaNum,
-            attrs: {
-                label: this.fieldLabel
+            message() {
+                return {
+                    message: message || Validation.RULE_MESSAGES.alphaNum,
+                    attrs: {
+                        label: this.fieldLabel
+                    }
+                };
             }
         };
         return this;
@@ -394,9 +458,13 @@ class FieldValidator {
             handle() {
                 return this.validator.getValidation().isArray(this.validator.getInput(this.fieldName));
             },
-            message: message || Validation.RULE_MESSAGES.array,
-            attrs: {
-                label: this.fieldLabel
+            message() {
+                return {
+                    message: message || Validation.RULE_MESSAGES.array,
+                    attrs: {
+                        label: this.fieldLabel
+                    }
+                };
             }
         };
         return this;
@@ -413,10 +481,14 @@ class FieldValidator {
             handle() {
                 return this.validator.getValidation().isBefore(this.validator.getInput(this.fieldName), date);
             },
-            message: message || Validation.RULE_MESSAGES.before,
-            attrs: {
-                label: this.fieldLabel,
-                date: date.toString()
+            message() {
+                return {
+                    message: message || Validation.RULE_MESSAGES.before,
+                    attrs: {
+                        label: this.fieldLabel,
+                        date: date.toString()
+                    }
+                };
             }
         };
         return this;
@@ -433,10 +505,14 @@ class FieldValidator {
             handle() {
                 return this.validator.getValidation().isBeforeOrEqual(this.validator.getInput(this.fieldName), date);
             },
-            message: message || Validation.RULE_MESSAGES.beforeOrEqual,
-            attrs: {
-                label: this.fieldLabel,
-                date: date.toString()
+            message() {
+                return {
+                    message: message || Validation.RULE_MESSAGES.beforeOrEqual,
+                    attrs: {
+                        label: this.fieldLabel,
+                        date: date.toString()
+                    }
+                };
             }
         };
         return this;
@@ -465,7 +541,11 @@ class FieldValidator {
     check() {
         return __awaiter(this, void 0, void 0, function* () {
             this.errors = [];
+            let valueIsEmpty = this.validator.getValidation().isEmpty(this.validator.getInput(this.fieldName));
             for (let rule in this.rules) {
+                if (valueIsEmpty && !this.rules[rule].goWithUndefined) {
+                    continue;
+                }
                 let pass = true;
                 if (this.rules[rule].async) {
                     pass = yield this.rules[rule].handle.call(this);
@@ -474,7 +554,8 @@ class FieldValidator {
                     pass = this.rules[rule].handle.call(this);
                 }
                 if (!pass) {
-                    this.addError(rule, this.rules[rule].message, this.rules[rule].attrs);
+                    let error = this.rules[rule].message.call(this);
+                    this.addError(rule, error.message, error.attrs);
                 }
             }
             return this.hasErrors();
