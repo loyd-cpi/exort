@@ -189,6 +189,44 @@ class FieldValidator {
         return this;
     }
     /**
+     * The field under validation must be present and not empty only if any of the other specified fields are present.
+     */
+    requiredWith(otherFields, message) {
+        let otherFieldNames = [];
+        let otherFieldLabels = [];
+        if (typeof otherFields == 'string') {
+            otherFields = [otherFields];
+        }
+        for (let field of otherFields) {
+            if (typeof field == 'string') {
+                otherFieldNames.push(field);
+                otherFieldLabels.push(fieldLabelCase(field));
+            }
+            else {
+                otherFieldNames.push(field.name);
+                otherFieldLabels.push(field.label || fieldLabelCase(field.name));
+            }
+        }
+        this.rules['requiredWith'] = {
+            name: 'requiredWith',
+            handle() {
+                let validation = this.validator.getValidation();
+                for (let otherFieldName of otherFieldNames) {
+                    if (!validation.isEmpty(this.validator.getInput(otherFieldName))) {
+                        return !validation.isEmpty(this.validator.getInput(this.fieldName));
+                    }
+                }
+                return true;
+            },
+            message: message || Validation.RULE_MESSAGES.requiredWith,
+            attrs: {
+                label: this.fieldLabel,
+                values: otherFieldLabels.join(', ')
+            }
+        };
+        return this;
+    }
+    /**
      * The field under validation must be a value after or equal to the given date. The dates will be passed into moment library.
      */
     afterOrEqual(date, message) {

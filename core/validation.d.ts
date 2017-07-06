@@ -81,10 +81,29 @@ export declare class FieldValidator {
     /**
      * The field under validation must be present and not empty if the anotherfield field is equal to any value.
      */
+    requiredIf(otherField: string, value: any, message?: string): this;
+    /**
+     * The field under validation must be present and not empty if the anotherfield field is equal to any value.
+     */
     requiredIf(otherField: {
         name: string;
         label?: string;
-    } | string, value: any, message?: string): this;
+    }, value: any, message?: string): this;
+    /**
+     * The field under validation must be present and not empty only if any of the other specified fields are present.
+     */
+    requiredWith(otherFields: string, message?: string): this;
+    /**
+     * The field under validation must be present and not empty only if any of the other specified fields are present.
+     */
+    requiredWith(otherFields: string[], message?: string): this;
+    /**
+     * The field under validation must be present and not empty only if any of the other specified fields are present.
+     */
+    requiredWith(otherFields: {
+        name: string;
+        label?: string;
+    }[], message?: string): this;
     /**
      * The field under validation must be a value after or equal to the given date. The dates will be passed into moment library.
      */
