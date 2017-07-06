@@ -1,4 +1,5 @@
-export * from './schema';
 export * from './connection';
+export * from './model';
+export * from './schema';
 export * from './service';
 export * from 'typeorm';
