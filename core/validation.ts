@@ -22,6 +22,13 @@ export interface FieldValidationError {
 }
 
 /**
+ * Convert field name to field label
+ */
+function fieldLabelCase(fieldName: string): string {
+  return _.lowerCase(fieldName);
+}
+
+/**
  * FormValidationError class
  */
 export class FormValidationError extends Error {
@@ -80,7 +87,7 @@ export class FieldValidator {
    * Rules constructor
    */
   constructor(private validator: FormValidator, public readonly fieldName: string, fieldLabel?: string) {
-    this.fieldLabel = fieldLabel || _.lowerCase(fieldName);
+    this.fieldLabel = fieldLabel || fieldLabelCase(fieldName);
   }
 
   /**
@@ -167,6 +174,36 @@ export class FieldValidator {
       message: message || Validation.RULE_MESSAGES.required,
       attrs: {
         label: this.fieldLabel
+      }
+    };
+    return this;
+  }
+
+  /**
+   * The field under validation must be present and not empty if the anotherfield field is equal to any value.
+   */
+  public requiredIf(otherField: { name: string, label?: string } | string, value: any, message?: string): this {
+    if (typeof otherField == 'string') {
+      otherField = { name: otherField };
+    }
+
+    if (!otherField.label) {
+      otherField.label = fieldLabelCase(otherField.name);
+    }
+
+    this.rules['requiredIf'] = {
+      name: 'requiredIf',
+      handle(this) {
+        if (this.validator.getInput((otherField as any).name) === value) {
+          return !this.validator.getValidation().isEmpty(this.validator.getInput(this.fieldName));
+        }
+        return true;
+      },
+      message: message || Validation.RULE_MESSAGES.requiredIf,
+      attrs: {
+        label: this.fieldLabel,
+        other: otherField.label,
+        value: this.validator.getInput(otherField.name)
       }
     };
     return this;
@@ -497,7 +534,7 @@ export class Validation extends Service {
     present: 'The ${label} field must be present.',
     regex: 'The ${label} format is invalid.',
     required: 'The ${label} field is required.',
-    requiredIf: 'The ${label} field is required when ${other} is :value.',
+    requiredIf: 'The ${label} field is required when ${other} is ${value}.',
     requiredUnless: 'The ${label} field is required unless ${other} is in ${values}.',
     requiredWith: 'The ${label} field is required when ${values} is present.',
     requiredWithAll: 'The ${label} field is required when ${values} is present.',
