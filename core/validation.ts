@@ -182,6 +182,16 @@ export class FieldValidator {
   /**
    * The field under validation must be present and not empty if the anotherfield field is equal to any value.
    */
+  public requiredIf(otherField: string, value: any, message?: string): this;
+
+  /**
+   * The field under validation must be present and not empty if the anotherfield field is equal to any value.
+   */
+  public requiredIf(otherField: { name: string, label?: string }, value: any, message?: string): this;
+
+  /**
+   * The field under validation must be present and not empty if the anotherfield field is equal to any value.
+   */
   public requiredIf(otherField: { name: string, label?: string } | string, value: any, message?: string): this {
     if (typeof otherField == 'string') {
       otherField = { name: otherField };
@@ -204,6 +214,63 @@ export class FieldValidator {
         label: this.fieldLabel,
         other: otherField.label,
         value: this.validator.getInput(otherField.name)
+      }
+    };
+    return this;
+  }
+
+  /**
+   * The field under validation must be present and not empty only if any of the other specified fields are present.
+   */
+  public requiredWith(otherFields: string, message?: string): this;
+
+  /**
+   * The field under validation must be present and not empty only if any of the other specified fields are present.
+   */
+  public requiredWith(otherFields: string[], message?: string): this;
+
+  /**
+   * The field under validation must be present and not empty only if any of the other specified fields are present.
+   */
+  public requiredWith(otherFields: { name: string, label?: string}[], message?: string): this;
+
+  /**
+   * The field under validation must be present and not empty only if any of the other specified fields are present.
+   */
+  public requiredWith(otherFields: ({ name: string, label?: string} | string)[] | string, message?: string): this {
+    let otherFieldNames: string[] = [];
+    let otherFieldLabels: string[] = [];
+    if (typeof otherFields == 'string') {
+      otherFields = [otherFields];
+    }
+
+    for (let field of otherFields) {
+      if (typeof field == 'string') {
+        otherFieldNames.push(field);
+        otherFieldLabels.push(fieldLabelCase(field));
+      } else {
+        otherFieldNames.push(field.name);
+        otherFieldLabels.push(field.label || fieldLabelCase(field.name));
+      }
+    }
+
+    this.rules['requiredWith'] = {
+      name: 'requiredWith',
+      handle(this) {
+
+        let validation = this.validator.getValidation();
+        for (let otherFieldName of otherFieldNames) {
+          if (!validation.isEmpty(this.validator.getInput(otherFieldName))) {
+            return !validation.isEmpty(this.validator.getInput(this.fieldName));
+          }
+        }
+
+        return true;
+      },
+      message: message || Validation.RULE_MESSAGES.requiredWith,
+      attrs: {
+        label: this.fieldLabel,
+        values: otherFieldLabels.join(', ')
       }
     };
     return this;
