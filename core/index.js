@@ -14,6 +14,7 @@ __export(require("./http"));
 __export(require("./logger"));
 __export(require("./mime"));
 __export(require("./misc"));
+__export(require("./model"));
 __export(require("./router"));
 __export(require("./service"));
 __export(require("./session"));

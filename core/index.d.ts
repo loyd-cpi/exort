@@ -9,6 +9,7 @@ export * from './http';
 export * from './logger';
 export * from './mime';
 export * from './misc';
+export * from './model';
 export * from './router';
 export * from './service';
 export * from './session';
