@@ -34,7 +34,7 @@ function provideRoutes(routesFile) {
             }
             if (err instanceof validation_1.FormValidationError) {
                 details.fields = err.fields;
-                res.status(400);
+                res.status(422);
             }
             else if (err instanceof http_1.HttpError) {
                 res.status(err.statusCode);
