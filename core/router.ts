@@ -32,7 +32,7 @@ export function provideRoutes(routesFile: string): AppProvider {
 
       if (err instanceof FormValidationError) {
         details.fields = err.fields;
-        res.status(400);
+        res.status(422);
       } else if (err instanceof HttpError) {
         res.status(err.statusCode);
       } else {
