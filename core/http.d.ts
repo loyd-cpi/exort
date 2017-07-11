@@ -38,7 +38,6 @@ export declare function provideBodyParser(): AppProvider;
  * Input class
  */
 export declare class Input extends Store {
-    private req;
     /**
      * File input
      */
@@ -66,7 +65,7 @@ export declare class Input extends Store {
     /**
      * Get input files
      */
-    files(key: string): UploadedFile[] | undefined;
+    files(key: string): UploadedFile[];
 }
 /**
  * UploadedFile class

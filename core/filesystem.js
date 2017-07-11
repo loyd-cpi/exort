@@ -128,14 +128,12 @@ class File {
      * Create file from base64 string
      */
     static createFromBase64String(base64String, mimeType, path, name) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let fileBuffer = Buffer.from(base64String, 'base64');
-            let hash = misc_1._.checksum(fileBuffer, 'sha1');
-            if (!name) {
-                name = hash;
-            }
-            return yield File.create(pathlib.join(path, name), fileBuffer, mimeType, hash);
-        });
+        let fileBuffer = Buffer.from(base64String, 'base64');
+        let hash = misc_1._.checksum(fileBuffer, 'sha1');
+        if (!name) {
+            name = hash;
+        }
+        return File.create(pathlib.join(path, name), fileBuffer, mimeType, hash);
     }
 }
 exports.File = File;

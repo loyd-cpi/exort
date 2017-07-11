@@ -87,19 +87,18 @@ class Input extends misc_1.Store {
      */
     constructor(req) {
         super();
-        this.req = req;
         let content = {};
         switch (req.method) {
             case 'GET':
             case 'DELETE':
-                content = this.req.query || this.req._query;
+                content = req.query || req._query;
                 break;
             default:
-                content = this.req.body;
+                content = req.body;
                 break;
         }
         this.content = content;
-        this.fileInput = this.req._files || {};
+        this.fileInput = req._files || {};
     }
     /**
      * Get input except for specified fields
@@ -139,8 +138,6 @@ class Input extends misc_1.Store {
      * Get input file
      */
     file(key) {
-        if (!this.fileInput || !this.fileInput[key])
-            return;
         if (Array.isArray(this.fileInput[key])) {
             return this.fileInput[key][0];
         }
@@ -150,8 +147,6 @@ class Input extends misc_1.Store {
      * Get input files
      */
     files(key) {
-        if (!this.fileInput || !this.fileInput[key])
-            return;
         if (!Array.isArray(this.fileInput[key])) {
             return [this.fileInput[key]];
         }
