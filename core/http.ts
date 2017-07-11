@@ -128,20 +128,20 @@ export class Input extends Store {
   /**
    * Input constructor
    */
-  constructor(private req: Request) {
+  constructor(req: Request) {
     super();
     let content = {};
     switch (req.method) {
       case 'GET':
       case 'DELETE':
-        content = this.req.query || (this.req as any)._query;
+        content = req.query || (req as any)._query;
         break;
       default:
-        content = this.req.body;
+        content = req.body;
         break;
     }
     this.content = content;
-    this.fileInput = (this.req as any)._files || {};
+    this.fileInput = (req as any)._files || {};
   }
 
   /**
@@ -185,7 +185,6 @@ export class Input extends Store {
    * Get input file
    */
   public file(key: string): UploadedFile | undefined {
-    if (!this.fileInput || !this.fileInput[key]) return;
     if (Array.isArray(this.fileInput[key])) {
       return this.fileInput[key][0];
     }
@@ -195,8 +194,7 @@ export class Input extends Store {
   /**
    * Get input files
    */
-  public files(key: string): UploadedFile[] | undefined {
-    if (!this.fileInput || !this.fileInput[key]) return;
+  public files(key: string): UploadedFile[] {
     if (!Array.isArray(this.fileInput[key])) {
       return [this.fileInput[key]];
     }

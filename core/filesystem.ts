@@ -170,12 +170,12 @@ export class File {
   /**
    * Create file from base64 string
    */
-  public static async createFromBase64String(base64String: string, mimeType: string, path: string, name?: string): Promise<File> {
+  public static createFromBase64String(base64String: string, mimeType: string, path: string, name?: string): Promise<File> {
     let fileBuffer = Buffer.from(base64String, 'base64');
     let hash = _.checksum(fileBuffer, 'sha1');
     if (!name) {
       name = hash;
     }
-    return await File.create(pathlib.join(path, name), fileBuffer, mimeType, hash);
+    return File.create(pathlib.join(path, name), fileBuffer, mimeType, hash);
   }
 }
