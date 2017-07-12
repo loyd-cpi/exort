@@ -1006,7 +1006,7 @@ export function Validate() {
         await validator.validateAndThrow();
       }
 
-      return originalMethod.call(this, arguments);
+      return originalMethod.apply(this, arguments);
     };
   };
 }
