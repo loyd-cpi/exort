@@ -1,5 +1,5 @@
+import { KeyValuePair, Metadata, _ } from './misc';
 import { Service, Injectable } from './service';
-import { KeyValuePair, _ } from './misc';
 import * as moment from 'moment';
 
 /**
@@ -713,6 +713,13 @@ export class FormValidator {
   }
 
   /**
+   * Add input or replace if a key already exists
+   */
+  public addInput(key: string, value: any): void {
+    this.input[key] = value;
+  }
+
+  /**
    * Validate all fields
    */
   public async validate(): Promise<boolean> {
@@ -960,7 +967,71 @@ export class Validation extends Service {
   /**
    * Create FormValidator instance
    */
-  public createForm(input: KeyValuePair<any>): FormValidator {
+  public createForm(input: KeyValuePair<any> = {}): FormValidator {
     return new FormValidator(this, input);
   }
+}
+
+/**
+ * Decorator to create a validator for a class method
+ */
+export function Validate() {
+  return (target: Object, propertyKey: string, desc: PropertyDescriptor) => {
+
+    if (typeof desc.value != 'function') {
+      throw new Error(`${propertyKey} is not valid for Validate decorator. Must be a function`);
+    }
+
+    const originalMethod = desc.value;
+    const paramNames = _.getFunctionParamNames(originalMethod);
+
+    desc.value = async function (this: Service) {
+      if (arguments.length) {
+
+        const validation: Validation = (this as any).context.make(Validation);
+        const validator = validation.createForm();
+
+        let args = Array.from(arguments);
+        for (let paramIndex in args) {
+          if (!paramNames[paramIndex]) continue;
+
+          validator.addInput(paramNames[paramIndex], args[paramIndex]);
+
+          let rules: ParamRule = Metadata.get(target, `paramRules:${propertyKey}:${paramIndex}`);
+          if (typeof rules == 'function') {
+            rules(validator.field(paramNames[paramIndex], Metadata.get(target, `paramLabel:${propertyKey}:${paramIndex}`)));
+          }
+        }
+
+        await validator.validateAndThrow();
+      }
+
+      return originalMethod.call(this, arguments);
+    };
+  };
+}
+
+/**
+ * ParamRule interface
+ */
+export interface ParamRule {
+  (field: FieldValidator): void;
+}
+
+/**
+ * Decorator to add validation rules on a parameter
+ */
+export function Param(rules: string | ParamRule, label?: string) {
+  return (target: Object, propertyKey: string, parameterIndex: number) => {
+
+    let fnRules = rules;
+    if (typeof rules == 'string') {
+      fnRules = (field) => (field as any)[rules]();
+    }
+
+    Metadata.set(target, `paramRules:${propertyKey}:${parameterIndex}`, fnRules);
+    if (label) {
+      Metadata.set(target, `paramLabel:${propertyKey}:${parameterIndex}`, label);
+    }
+  };
 }

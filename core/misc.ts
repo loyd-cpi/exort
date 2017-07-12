@@ -30,9 +30,14 @@ export interface Utilities extends lodash.LoDashStatic {
   classExtends(childClass: Function, parentClass: Function): boolean;
 
   /**
-   * Get parameter names of a function
+   * Get parameter names of class constructor
    */
   getConstructorParamNames(fn: Function): string[];
+
+  /**
+   * Get parameter names of a function or string representation of a function
+   */
+  getFunctionParamNames(fn: Function | string): string[];
 
   /**
    * Require module
@@ -112,12 +117,19 @@ const FAT_ARROWS = /=>.*$/mg;
 _.getConstructorParamNames = function (fn: Function): string[] {
   let code = fn.toString();
   if (code.indexOf(' constructor(') == -1) return [];
+  return _.getFunctionParamNames(code);
+}
 
-  code = code.replace(COMMENTS, '')
+_.getFunctionParamNames = function (codeOrFn: Function | string): string[] {
+  if (typeof codeOrFn == 'function') {
+    codeOrFn = codeOrFn.toString();
+  }
+
+  codeOrFn = codeOrFn.replace(COMMENTS, '')
     .replace(FAT_ARROWS, '')
     .replace(DEFAULT_PARAMS, '');
 
-  let result = code.slice(code.indexOf('(') + 1, code.indexOf(')'))
+  let result = codeOrFn.slice(codeOrFn.indexOf('(') + 1, codeOrFn.indexOf(')'))
     .match(/([^\s,]+)/g);
 
   return result === null
@@ -220,5 +232,30 @@ export class Store {
    */
   public has(key: string): boolean {
     return typeof this.get(key) != 'undefined';
+  }
+}
+
+/**
+ * Metadata namespace
+ */
+export namespace Metadata {
+
+  /**
+   * Prefix for all metadata keys registered using Metadata.set
+   */
+  export const PREFIX = 'exort:';
+
+  /**
+   * Define metadata with auto prefix 'exort'
+   */
+  export function set(target: Object, key: string, value: any): void {
+    Reflect.defineMetadata(`${Metadata.PREFIX}${key}`, value, target);
+  }
+
+  /**
+   * Get metadata defined using Metadata.set
+   */
+  export function get(target: Object, key: string): any {
+    return Reflect.getMetadata(`${Metadata.PREFIX}${key}`, target);
   }
 }
