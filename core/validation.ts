@@ -1,4 +1,4 @@
-import { KeyValuePair, Metadata, _ } from './misc';
+import { Store, KeyValuePair, Metadata, _ } from './misc';
 import { Service, Injectable } from './service';
 import * as moment from 'moment';
 
@@ -686,7 +686,7 @@ export class FormValidator {
   /**
    * Validator constructor
    */
-  constructor(private validation: Validation, private input: KeyValuePair<any> = {}) {}
+  constructor(private validation: Validation, private input: Store) {}
 
   /**
    * Initiate rules for the given field name
@@ -709,14 +709,14 @@ export class FormValidator {
    * Get a value from input
    */
   public getInput(key: string): any {
-    return this.input[key];
+    return this.input.get(key);
   }
 
   /**
    * Add input or replace if a key already exists
    */
   public addInput(key: string, value: any): void {
-    this.input[key] = value;
+    this.input.set(key, value);
   }
 
   /**
@@ -968,7 +968,7 @@ export class Validation extends Service {
    * Create FormValidator instance
    */
   public createForm(input: KeyValuePair<any> = {}): FormValidator {
-    return new FormValidator(this, input);
+    return new FormValidator(this, new Store(input));
   }
 }
 
