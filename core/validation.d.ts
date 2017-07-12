@@ -1,4 +1,4 @@
-import { KeyValuePair } from './misc';
+import { Store, KeyValuePair } from './misc';
 import { Service } from './service';
 import * as moment from 'moment';
 /**
@@ -200,7 +200,7 @@ export declare class FormValidator {
     /**
      * Validator constructor
      */
-    constructor(validation: Validation, input?: KeyValuePair<any>);
+    constructor(validation: Validation, input: Store);
     /**
      * Initiate rules for the given field name
      */

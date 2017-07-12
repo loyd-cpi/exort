@@ -590,7 +590,7 @@ class FormValidator {
     /**
      * Validator constructor
      */
-    constructor(validation, input = {}) {
+    constructor(validation, input) {
         this.validation = validation;
         this.input = input;
         /**
@@ -621,13 +621,13 @@ class FormValidator {
      * Get a value from input
      */
     getInput(key) {
-        return this.input[key];
+        return this.input.get(key);
     }
     /**
      * Add input or replace if a key already exists
      */
     addInput(key, value) {
-        this.input[key] = value;
+        this.input.set(key, value);
     }
     /**
      * Validate all fields
@@ -782,7 +782,7 @@ let Validation = class Validation extends service_1.Service {
      * Create FormValidator instance
      */
     createForm(input = {}) {
-        return new FormValidator(this, input);
+        return new FormValidator(this, new misc_1.Store(input));
     }
 };
 /**
