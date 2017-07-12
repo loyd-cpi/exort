@@ -634,16 +634,14 @@ class FormValidator {
      */
     validate() {
         return __awaiter(this, void 0, void 0, function* () {
-            let valid = true;
             this.fieldErrors = {};
             for (let fieldName in this.fields) {
                 yield this.fields[fieldName].check();
                 if (this.fields[fieldName].hasErrors()) {
                     this.fieldErrors[fieldName] = this.fields[fieldName].getErrors();
-                    valid = false;
                 }
             }
-            return valid;
+            return !this.hasErrors();
         });
     }
     /**
