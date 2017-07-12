@@ -723,16 +723,14 @@ export class FormValidator {
    * Validate all fields
    */
   public async validate(): Promise<boolean> {
-    let valid = true;
     this.fieldErrors = {};
     for (let fieldName in this.fields) {
       await this.fields[fieldName].check();
       if (this.fields[fieldName].hasErrors()) {
         this.fieldErrors[fieldName] = this.fields[fieldName].getErrors();
-        valid = false;
       }
     }
-    return valid;
+    return !this.hasErrors();
   }
 
   /**
