@@ -895,7 +895,7 @@ function Validate() {
                     }
                     yield validator.validateAndThrow();
                 }
-                return originalMethod.call(this, arguments);
+                return originalMethod.apply(this, arguments);
             });
         };
     };
