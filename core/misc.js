@@ -52,10 +52,16 @@ _.getConstructorParamNames = function (fn) {
     let code = fn.toString();
     if (code.indexOf(' constructor(') == -1)
         return [];
-    code = code.replace(COMMENTS, '')
+    return _.getFunctionParamNames(code);
+};
+_.getFunctionParamNames = function (codeOrFn) {
+    if (typeof codeOrFn == 'function') {
+        codeOrFn = codeOrFn.toString();
+    }
+    codeOrFn = codeOrFn.replace(COMMENTS, '')
         .replace(FAT_ARROWS, '')
         .replace(DEFAULT_PARAMS, '');
-    let result = code.slice(code.indexOf('(') + 1, code.indexOf(')'))
+    let result = codeOrFn.slice(codeOrFn.indexOf('(') + 1, codeOrFn.indexOf(')'))
         .match(/([^\s,]+)/g);
     return result === null
         ? []
@@ -152,4 +158,28 @@ class Store {
     }
 }
 exports.Store = Store;
+/**
+ * Metadata namespace
+ */
+var Metadata;
+(function (Metadata) {
+    /**
+     * Prefix for all metadata keys registered using Metadata.set
+     */
+    Metadata.PREFIX = 'exort:';
+    /**
+     * Define metadata with auto prefix 'exort'
+     */
+    function set(target, key, value) {
+        Reflect.defineMetadata(`${Metadata.PREFIX}${key}`, value, target);
+    }
+    Metadata.set = set;
+    /**
+     * Get metadata defined using Metadata.set
+     */
+    function get(target, key) {
+        return Reflect.getMetadata(`${Metadata.PREFIX}${key}`, target);
+    }
+    Metadata.get = get;
+})(Metadata = exports.Metadata || (exports.Metadata = {}));
 //# sourceMappingURL=misc.js.map

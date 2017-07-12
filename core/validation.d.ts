@@ -1,5 +1,5 @@
-import { Service } from './service';
 import { KeyValuePair } from './misc';
+import { Service } from './service';
 import * as moment from 'moment';
 /**
  * Rule interface
@@ -214,6 +214,10 @@ export declare class FormValidator {
      */
     getInput(key: string): any;
     /**
+     * Add input or replace if a key already exists
+     */
+    addInput(key: string, value: any): void;
+    /**
      * Validate all fields
      */
     validate(): Promise<boolean>;
@@ -376,5 +380,19 @@ export declare class Validation extends Service {
     /**
      * Create FormValidator instance
      */
-    createForm(input: KeyValuePair<any>): FormValidator;
+    createForm(input?: KeyValuePair<any>): FormValidator;
 }
+/**
+ * Decorator to create a validator for a class method
+ */
+export declare function Validate(): (target: Object, propertyKey: string, desc: PropertyDescriptor) => void;
+/**
+ * ParamRule interface
+ */
+export interface ParamRule {
+    (field: FieldValidator): void;
+}
+/**
+ * Decorator to add validation rules on a parameter
+ */
+export declare function Param(rules: string | ParamRule, label?: string): (target: Object, propertyKey: string, parameterIndex: number) => void;

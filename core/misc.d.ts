@@ -22,9 +22,13 @@ export interface Utilities extends lodash.LoDashStatic {
      */
     classExtends(childClass: Function, parentClass: Function): boolean;
     /**
-     * Get parameter names of a function
+     * Get parameter names of class constructor
      */
     getConstructorParamNames(fn: Function): string[];
+    /**
+     * Get parameter names of a function or string representation of a function
+     */
+    getFunctionParamNames(fn: Function | string): string[];
     /**
      * Require module
      */
@@ -89,4 +93,21 @@ export declare class Store {
      * Check if value exists by using a key
      */
     has(key: string): boolean;
+}
+/**
+ * Metadata namespace
+ */
+export declare namespace Metadata {
+    /**
+     * Prefix for all metadata keys registered using Metadata.set
+     */
+    const PREFIX = "exort:";
+    /**
+     * Define metadata with auto prefix 'exort'
+     */
+    function set(target: Object, key: string, value: any): void;
+    /**
+     * Get metadata defined using Metadata.set
+     */
+    function get(target: Object, key: string): any;
 }

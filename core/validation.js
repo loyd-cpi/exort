@@ -14,8 +14,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const service_1 = require("./service");
 const misc_1 = require("./misc");
+const service_1 = require("./service");
 const moment = require("moment");
 /**
  * Convert field name to field label
@@ -624,6 +624,12 @@ class FormValidator {
         return this.input[key];
     }
     /**
+     * Add input or replace if a key already exists
+     */
+    addInput(key, value) {
+        this.input[key] = value;
+    }
+    /**
      * Validate all fields
      */
     validate() {
@@ -775,7 +781,7 @@ let Validation = class Validation extends service_1.Service {
     /**
      * Create FormValidator instance
      */
-    createForm(input) {
+    createForm(input = {}) {
         return new FormValidator(this, input);
     }
 };
@@ -862,4 +868,53 @@ Validation = __decorate([
     service_1.Injectable()
 ], Validation);
 exports.Validation = Validation;
+/**
+ * Decorator to create a validator for a class method
+ */
+function Validate() {
+    return (target, propertyKey, desc) => {
+        if (typeof desc.value != 'function') {
+            throw new Error(`${propertyKey} is not valid for Validate decorator. Must be a function`);
+        }
+        const originalMethod = desc.value;
+        const paramNames = misc_1._.getFunctionParamNames(originalMethod);
+        desc.value = function () {
+            return __awaiter(this, arguments, void 0, function* () {
+                if (arguments.length) {
+                    const validation = this.context.make(Validation);
+                    const validator = validation.createForm();
+                    let args = Array.from(arguments);
+                    for (let paramIndex in args) {
+                        if (!paramNames[paramIndex])
+                            continue;
+                        validator.addInput(paramNames[paramIndex], args[paramIndex]);
+                        let rules = misc_1.Metadata.get(target, `paramRules:${propertyKey}:${paramIndex}`);
+                        if (typeof rules == 'function') {
+                            rules(validator.field(paramNames[paramIndex], misc_1.Metadata.get(target, `paramLabel:${propertyKey}:${paramIndex}`)));
+                        }
+                    }
+                    yield validator.validateAndThrow();
+                }
+                return originalMethod.call(this, arguments);
+            });
+        };
+    };
+}
+exports.Validate = Validate;
+/**
+ * Decorator to add validation rules on a parameter
+ */
+function Param(rules, label) {
+    return (target, propertyKey, parameterIndex) => {
+        let fnRules = rules;
+        if (typeof rules == 'string') {
+            fnRules = (field) => field[rules]();
+        }
+        misc_1.Metadata.set(target, `paramRules:${propertyKey}:${parameterIndex}`, fnRules);
+        if (label) {
+            misc_1.Metadata.set(target, `paramLabel:${propertyKey}:${parameterIndex}`, label);
+        }
+    };
+}
+exports.Param = Param;
 //# sourceMappingURL=validation.js.map
