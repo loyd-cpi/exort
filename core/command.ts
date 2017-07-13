@@ -60,5 +60,6 @@ export namespace Console {
 export async function startConsole(app: Application, providers: AppProvider[]): Promise<void> {
   checkAppConfig(app);
   await executeProviders(app, providers);
+  yargs.help('help');
   Console.execute(process.argv.slice(2));
 }

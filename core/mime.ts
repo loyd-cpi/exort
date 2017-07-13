@@ -771,3 +771,11 @@ export const MIME_TYPE_EXTENSIONS: Map<string, string> = new Map([
   ['video/x-smv', 'smv'],
   ['x-conference/x-cooltalk', 'ice']
 ]);
+
+/**
+ * Mime types
+ */
+const MIME_TYPES = new Map<string, string>();
+MIME_TYPE_EXTENSIONS.forEach((val, key) => MIME_TYPES.set(val, key));
+
+export { MIME_TYPES };

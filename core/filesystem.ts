@@ -1,4 +1,4 @@
-import { MIME_TYPE_EXTENSIONS } from './mime';
+import { MIME_TYPE_EXTENSIONS, MIME_TYPES } from './mime';
 import * as pathlib from 'path';
 import { _ } from './misc';
 import * as fs from 'fs';
@@ -72,7 +72,7 @@ export class File {
   /**
    * Create file
    */
-  public static create(path: string, content: Buffer | string, mimeType: string, hash?: string): Promise<File> {
+  public static create(path: string, content: Buffer | string, mimeType?: string, hash?: string): Promise<File> {
     return new Promise<File>((resolve, reject) => {
 
       path = pathlib.resolve(path);
@@ -80,8 +80,11 @@ export class File {
         hash = _.checksum(content, 'sha1');
       }
 
-      if (!pathlib.extname(path) && mimeType && MIME_TYPE_EXTENSIONS.has(mimeType)) {
-        path = `${path}.${MIME_TYPE_EXTENSIONS.get(mimeType)}`;
+      let extname = _.trimStart(pathlib.extname(path), '.');
+      if (extname && !mimeType) {
+        mimeType = MIME_TYPES.get(extname);
+      } else if (!extname && mimeType && MIME_TYPE_EXTENSIONS.has(mimeType)) {
+        path = `${_.trimEnd(path, '.')}.${MIME_TYPE_EXTENSIONS.get(mimeType)}`;
       }
 
       fs.writeFile(path, content, err => {
@@ -92,7 +95,7 @@ export class File {
           name: pathlib.basename(path),
           path,
           hash,
-          type: mimeType,
+          type: mimeType as string,
           size: content.length,
           lastModifiedDate: new Date()
         }));

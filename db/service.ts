@@ -9,6 +9,17 @@ import { Service } from '../core/service';
 import { Model } from './model';
 
 /**
+ * Abstract SeedService class
+ */
+export abstract class SeedService extends Service {
+
+  /**
+   * Run the seed service
+   */
+  public abstract async run(): Promise<void>;
+}
+
+/**
  * Abstract SqlService class
  */
 export abstract class SqlService<T extends Model> extends Service {
