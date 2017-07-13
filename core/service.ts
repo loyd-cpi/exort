@@ -1,7 +1,7 @@
 import { checkAppConfig, Application, AppProvider } from './app';
 import { Response, Request } from './http';
+import { _, Metadata } from './misc';
 import * as express from 'express';
-import { _ } from './misc';
 
 /**
  * Decorator to make an injectable class
@@ -30,7 +30,7 @@ export function isInjectable(targetClass: Function): boolean {
  */
 export function Bind(resolver: ServiceClassResolver) {
   return (target: Object, propertyKey: string, parameterIndex: number) => {
-    Reflect.defineMetadata(`exort:bind:${parameterIndex}`, resolver, target);
+    Metadata.set(target, `bind:${parameterIndex}`, resolver);
   };
 }
 
@@ -74,7 +74,7 @@ export class Context {
       for (let paramIndex in paramTypes) {
         if (_.isNone(paramTypes[paramIndex])) {
 
-          let resolve = Reflect.getMetadata(`exort:bind:${paramIndex}`, serviceClass);
+          let resolve = Metadata.get(serviceClass, `bind:${paramIndex}`);
           if (typeof resolve != 'function') {
             throw new Error(
               `Param type of ${(serviceClass as any).$injectParamNames[paramIndex]} in ${serviceClass.name} constructor is empty. ` +
