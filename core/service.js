@@ -124,6 +124,12 @@ class Service {
     constructor(context) {
         this.context = context;
     }
+    /**
+     * Create instance of given Service class. Just like what req.make() does
+     */
+    make(serviceClass) {
+        return this.context.make(serviceClass);
+    }
 }
 exports.Service = Service;
 //# sourceMappingURL=service.js.map

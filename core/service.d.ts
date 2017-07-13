@@ -54,4 +54,8 @@ export declare abstract class Service {
      * Service constructor
      */
     constructor(context: Context);
+    /**
+     * Create instance of given Service class. Just like what req.make() does
+     */
+    protected make<U extends Service>(serviceClass: new (...args: any[]) => U): U;
 }
