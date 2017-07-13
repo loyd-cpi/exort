@@ -40,8 +40,9 @@ export default class {class} extends SeedService {
 /**
  * Provide schema commands
  */
-function provideSchemaCommands(databaseSourceDir) {
+function provideSchemaCommands(databaseSourceDir, databaseDistDir) {
     databaseSourceDir = misc_1._.trimEnd(databaseSourceDir, '/');
+    databaseDistDir = misc_1._.trimEnd(databaseDistDir, '/');
     return (app) => __awaiter(this, void 0, void 0, function* () {
         command_1.Console.addCommand({
             command: 'schema:sync',
@@ -68,7 +69,7 @@ function provideSchemaCommands(databaseSourceDir) {
             },
             handler(argv) {
                 return __awaiter(this, void 0, void 0, function* () {
-                    let seederClass = misc_1._.requireClass(`${databaseSourceDir}/seeds/${argv.class}`);
+                    let seederClass = misc_1._.requireClass(`${databaseDistDir}/seeds/${argv.class}`);
                     if (!misc_1._.classExtends(seederClass, service_1.SeedService)) {
                         throw new Error(`${seederClass.name} doesn't extend SeedService`);
                     }
