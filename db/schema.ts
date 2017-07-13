@@ -31,8 +31,9 @@ export default class {class} extends SeedService {
 /**
  * Provide schema commands
  */
-export function provideSchemaCommands(databaseSourceDir: string): AppProvider {
+export function provideSchemaCommands(databaseSourceDir: string, databaseDistDir: string): AppProvider {
   databaseSourceDir = _.trimEnd(databaseSourceDir, '/');
+  databaseDistDir = _.trimEnd(databaseDistDir, '/');
   return async (app: Application): Promise<void> => {
 
     Console.addCommand({
@@ -58,7 +59,7 @@ export function provideSchemaCommands(databaseSourceDir: string): AppProvider {
         }
       },
       async handler(argv: Argv) {
-        let seederClass = _.requireClass(`${databaseSourceDir}/seeds/${argv.class}`);
+        let seederClass = _.requireClass(`${databaseDistDir}/seeds/${argv.class}`);
         if (!_.classExtends(seederClass, SeedService)) {
           throw new Error(`${seederClass.name} doesn't extend SeedService`);
         }
