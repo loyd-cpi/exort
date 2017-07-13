@@ -3,6 +3,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const typeorm_1 = require("typeorm");
 const service_1 = require("../core/service");
 /**
+ * Abstract SeedService class
+ */
+class SeedService extends service_1.Service {
+}
+exports.SeedService = SeedService;
+/**
  * Abstract SqlService class
  */
 class SqlService extends service_1.Service {

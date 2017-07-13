@@ -42,8 +42,12 @@ class File {
             if (!hash) {
                 hash = misc_1._.checksum(content, 'sha1');
             }
-            if (!pathlib.extname(path) && mimeType && mime_1.MIME_TYPE_EXTENSIONS.has(mimeType)) {
-                path = `${path}.${mime_1.MIME_TYPE_EXTENSIONS.get(mimeType)}`;
+            let extname = misc_1._.trimStart(pathlib.extname(path), '.');
+            if (extname && !mimeType) {
+                mimeType = mime_1.MIME_TYPES.get(extname);
+            }
+            else if (!extname && mimeType && mime_1.MIME_TYPE_EXTENSIONS.has(mimeType)) {
+                path = `${misc_1._.trimEnd(path, '.')}.${mime_1.MIME_TYPE_EXTENSIONS.get(mimeType)}`;
             }
             fs.writeFile(path, content, err => {
                 if (err)

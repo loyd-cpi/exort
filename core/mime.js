@@ -773,4 +773,10 @@ exports.MIME_TYPE_EXTENSIONS = new Map([
     ['video/x-smv', 'smv'],
     ['x-conference/x-cooltalk', 'ice']
 ]);
+/**
+ * Mime types
+ */
+const MIME_TYPES = new Map();
+exports.MIME_TYPES = MIME_TYPES;
+exports.MIME_TYPE_EXTENSIONS.forEach((val, key) => MIME_TYPES.set(val, key));
 //# sourceMappingURL=mime.js.map

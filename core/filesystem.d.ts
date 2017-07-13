@@ -49,7 +49,7 @@ export declare class File {
     /**
      * Create file
      */
-    static create(path: string, content: Buffer | string, mimeType: string, hash?: string): Promise<File>;
+    static create(path: string, content: Buffer | string, mimeType?: string, hash?: string): Promise<File>;
     /**
      * Append content to file
      */

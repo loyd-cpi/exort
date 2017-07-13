@@ -47,6 +47,7 @@ function startConsole(app, providers) {
     return __awaiter(this, void 0, void 0, function* () {
         app_1.checkAppConfig(app);
         yield app_1.executeProviders(app, providers);
+        yargs.help('help');
         Console.execute(process.argv.slice(2));
     });
 }

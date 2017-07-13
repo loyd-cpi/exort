@@ -8,6 +8,15 @@ import { DeepPartial } from 'typeorm/common/DeepPartial';
 import { Service } from '../core/service';
 import { Model } from './model';
 /**
+ * Abstract SeedService class
+ */
+export declare abstract class SeedService extends Service {
+    /**
+     * Run the seed service
+     */
+    abstract run(): Promise<void>;
+}
+/**
  * Abstract SqlService class
  */
 export declare abstract class SqlService<T extends Model> extends Service {
