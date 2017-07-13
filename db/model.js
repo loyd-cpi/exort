@@ -25,14 +25,17 @@ class Model extends model_1.Model {
     /**
      * Get a JSON serializable object
      */
-    toJSON() {
-        let hiddenFields = misc_1.Metadata.get(Object.getPrototypeOf(this), 'model:hidden');
-        if (Array.isArray(hiddenFields) && hiddenFields.length) {
+    toJSON(options) {
+        let hiddenFields = misc_1.Metadata.get(Object.getPrototypeOf(this), 'model:hidden') || [];
+        if (options && Array.isArray(options.hidden) && options.hidden.length) {
+            hiddenFields = hiddenFields.concat(options.hidden);
+        }
+        if (hiddenFields.length) {
             let fields = {};
             for (let propName in this) {
-                if (hiddenFields.indexOf(propName) != -1)
-                    continue;
-                fields[propName] = this[propName];
+                if (hiddenFields.indexOf(propName) == -1) {
+                    fields[propName] = this[propName];
+                }
             }
             return fields;
         }
