@@ -886,9 +886,9 @@ function Validate() {
                         if (!paramNames[paramIndex])
                             continue;
                         validator.addInput(paramNames[paramIndex], args[paramIndex]);
-                        let rules = misc_1.Metadata.get(target, `paramRules:${propertyKey}:${paramIndex}`);
+                        let rules = misc_1.Metadata.get(target, `fieldRules:${propertyKey}:${paramIndex}`);
                         if (typeof rules == 'function') {
-                            rules(validator.field(paramNames[paramIndex], misc_1.Metadata.get(target, `paramLabel:${propertyKey}:${paramIndex}`)));
+                            rules(validator.field(paramNames[paramIndex], misc_1.Metadata.get(target, `fieldLabel:${propertyKey}:${paramIndex}`)));
                         }
                     }
                     yield validator.validateAndThrow();
@@ -902,17 +902,17 @@ exports.Validate = Validate;
 /**
  * Decorator to add validation rules on a parameter
  */
-function Param(rules, label) {
+function Field(rules, label) {
     return (target, propertyKey, parameterIndex) => {
         let fnRules = rules;
         if (typeof rules == 'string') {
             fnRules = (field) => field[rules]();
         }
-        misc_1.Metadata.set(target, `paramRules:${propertyKey}:${parameterIndex}`, fnRules);
+        misc_1.Metadata.set(target, `fieldRules:${propertyKey}:${parameterIndex}`, fnRules);
         if (label) {
-            misc_1.Metadata.set(target, `paramLabel:${propertyKey}:${parameterIndex}`, label);
+            misc_1.Metadata.set(target, `fieldLabel:${propertyKey}:${parameterIndex}`, label);
         }
     };
 }
-exports.Param = Param;
+exports.Field = Field;
 //# sourceMappingURL=validation.js.map

@@ -387,12 +387,12 @@ export declare class Validation extends Service {
  */
 export declare function Validate(): (target: Object, propertyKey: string, desc: PropertyDescriptor) => void;
 /**
- * ParamRule interface
+ * FieldRule interface
  */
-export interface ParamRule {
+export interface FieldRule {
     (field: FieldValidator): void;
 }
 /**
  * Decorator to add validation rules on a parameter
  */
-export declare function Param(rules: string | ParamRule, label?: string): (target: Object, propertyKey: string, parameterIndex: number) => void;
+export declare function Field(rules: string | FieldRule, label?: string): (target: Object, propertyKey: string, parameterIndex: number) => void;
