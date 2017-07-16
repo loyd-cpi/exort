@@ -12,7 +12,7 @@ export interface BindOptions {}
  * Bind a resolve function to solve circular dependency
  */
 export function Bind(resolver: ServiceClassResolver, options?: BindOptions) {
-  return (target: Object, propertyKey: string, desc: PropertyDescriptor) => {
+  return (target: Object, propertyKey: string) => {
 
     let serviceClass: typeof Service;
     Object.defineProperty(target, propertyKey, {
