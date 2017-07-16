@@ -658,7 +658,7 @@ exports.FormValidator = FormValidator;
 /**
  * Validator class
  */
-let Validation = class Validation extends service_1.Service {
+class Validation extends service_1.Service {
     /**
      * Check if value given is a valid email address
      */
@@ -769,7 +769,7 @@ let Validation = class Validation extends service_1.Service {
     createForm(input = {}) {
         return new FormValidator(this, new misc_1.Store(input));
     }
-};
+}
 /**
  * Map of rule messages
  */
@@ -849,9 +849,6 @@ Validation.RULE_MESSAGES = {
     uploaded: 'The ${label} failed to upload.',
     url: 'The ${label} format is invalid.',
 };
-Validation = tslib_1.__decorate([
-    service_1.Injectable()
-], Validation);
 exports.Validation = Validation;
 /**
  * Decorator to create a validator for a class method

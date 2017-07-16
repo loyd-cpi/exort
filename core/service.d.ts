@@ -1,16 +1,13 @@
 import { Application, AppProvider } from './app';
 /**
- * Decorator to make an injectable class
+ * BindOptions interface
  */
-export declare function Injectable(): (target: Function) => void;
-/**
- * Check if class is injectable
- */
-export declare function isInjectable(targetClass: Function): boolean;
+export interface BindOptions {
+}
 /**
  * Bind a resolve function to solve circular dependency
  */
-export declare function Bind(resolver: ServiceClassResolver): (target: Object, propertyKey: string, parameterIndex: number) => void;
+export declare function Bind(resolver: ServiceClassResolver, options?: BindOptions): (target: Object, propertyKey: string, desc: PropertyDescriptor) => void;
 /**
  * Context class
  */
@@ -25,7 +22,7 @@ export declare class Context {
      */
     constructor(app: Application);
     /**
-     * create instance via dependency injection and using this context
+     * Create service instance
      */
     make<U extends Service>(serviceClass: new (...args: any[]) => U): U;
 }

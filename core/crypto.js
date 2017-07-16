@@ -1,26 +1,25 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const tslib_1 = require("tslib");
 const service_1 = require("./service");
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 /**
  * Encryptor class
  */
-let Encryptor = Encryptor_1 = class Encryptor extends service_1.Service {
+class Encryptor extends service_1.Service {
     /**
      * Encrypt using app configuration
      */
     encrypt(str) {
         let conf = this.context.app.config.get('app', {});
-        return Encryptor_1.encrypt(str, conf.key, conf.cipher);
+        return Encryptor.encrypt(str, conf.key, conf.cipher);
     }
     /**
      * Decrypt using app configuration
      */
     decrypt(encryptedStr) {
         let conf = this.context.app.config.get('app', {});
-        return Encryptor_1.decrypt(encryptedStr, conf.key, conf.cipher);
+        return Encryptor.decrypt(encryptedStr, conf.key, conf.cipher);
     }
     /**
      * Encrypt
@@ -40,10 +39,7 @@ let Encryptor = Encryptor_1 = class Encryptor extends service_1.Service {
         dec += decipher.final('utf8');
         return dec;
     }
-};
-Encryptor = Encryptor_1 = tslib_1.__decorate([
-    service_1.Injectable()
-], Encryptor);
+}
 exports.Encryptor = Encryptor;
 /**
  * Hash namespace
@@ -81,5 +77,4 @@ var Hash;
     }
     Hash.check = check;
 })(Hash = exports.Hash || (exports.Hash = {}));
-var Encryptor_1;
 //# sourceMappingURL=crypto.js.map

@@ -4,33 +4,19 @@ const tslib_1 = require("tslib");
 const app_1 = require("./app");
 const misc_1 = require("./misc");
 /**
- * Decorator to make an injectable class
- */
-function Injectable() {
-    return (target) => {
-        if (typeof target != 'function') {
-            throw new Error(`${typeof target} cannot be injectable`);
-        }
-        target.$injectParamNames = misc_1._.getConstructorParamNames(target);
-    };
-}
-exports.Injectable = Injectable;
-/**
- * Check if class is injectable
- */
-function isInjectable(targetClass) {
-    if (typeof targetClass != 'function') {
-        throw new Error('Invalid target class');
-    }
-    return Array.isArray(targetClass.$injectParamNames);
-}
-exports.isInjectable = isInjectable;
-/**
  * Bind a resolve function to solve circular dependency
  */
-function Bind(resolver) {
-    return (target, propertyKey, parameterIndex) => {
-        misc_1.Metadata.set(target, `bind:${parameterIndex}`, resolver);
+function Bind(resolver, options) {
+    return (target, propertyKey, desc) => {
+        let serviceClass;
+        Object.defineProperty(target, propertyKey, {
+            get() {
+                if (!serviceClass) {
+                    serviceClass = resolver();
+                }
+                return this.context.make(serviceClass);
+            }
+        });
     };
 }
 exports.Bind = Bind;
@@ -47,44 +33,18 @@ class Context {
          * Map of resolved instances
          */
         this.resolvedInstances = new Map();
-        this.resolvedInstances.set(Context, this);
     }
     /**
-     * create instance via dependency injection and using this context
+     * Create service instance
      */
     make(serviceClass) {
         if (this.resolvedInstances.has(serviceClass)) {
             return this.resolvedInstances.get(serviceClass);
         }
-        if (!isInjectable(serviceClass)) {
-            throw new Error(`${serviceClass.name} is not an injectable class`);
-        }
         if (!misc_1._.classExtends(serviceClass, Service)) {
             throw new Error(`${serviceClass.name} is not a Service class`);
         }
-        let params = [];
-        if (Reflect.hasMetadata('design:paramtypes', serviceClass)) {
-            let paramTypes = Reflect.getMetadata('design:paramtypes', serviceClass);
-            for (let paramIndex in paramTypes) {
-                if (misc_1._.isNone(paramTypes[paramIndex])) {
-                    let resolve = misc_1.Metadata.get(serviceClass, `bind:${paramIndex}`);
-                    if (typeof resolve != 'function') {
-                        throw new Error(`Param type of ${serviceClass.$injectParamNames[paramIndex]} in ${serviceClass.name} constructor is empty. ` +
-                            `It might be caused by circular dependency`);
-                    }
-                    let resolvedClass = resolve();
-                    if (misc_1._.isNone(resolvedClass)) {
-                        throw new Error(`Binding for ${serviceClass.$injectParamNames[paramIndex]} in ${serviceClass.name} constructor returns empty. `);
-                    }
-                    paramTypes[paramIndex] = resolvedClass;
-                }
-                params.push(this.make(paramTypes[paramIndex]));
-            }
-        }
-        if (!params.length) {
-            params.push(this);
-        }
-        let instance = Reflect.construct(serviceClass, params);
+        let instance = Reflect.construct(serviceClass, [this]);
         this.resolvedInstances.set(serviceClass, instance);
         return instance;
     }
