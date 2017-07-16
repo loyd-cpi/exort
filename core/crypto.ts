@@ -1,11 +1,10 @@
-import { Service, Injectable } from './service';
+import { Service } from './service';
 import * as bcrypt from 'bcrypt';
 import * as crypto from 'crypto';
 
 /**
  * Encryptor class
  */
-@Injectable()
 export class Encryptor extends Service {
 
   /**
