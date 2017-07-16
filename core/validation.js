@@ -1,19 +1,6 @@
 "use strict";
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
+const tslib_1 = require("tslib");
 const misc_1 = require("./misc");
 const service_1 = require("./service");
 const moment = require("moment");
@@ -559,7 +546,7 @@ class FieldValidator {
      * Validate field and save errors
      */
     check() {
-        return __awaiter(this, void 0, void 0, function* () {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
             this.errors = [];
             let valueIsEmpty = this.validator.getValidation().isEmpty(this.validator.getInput(this.fieldName));
             for (let rule in this.rules) {
@@ -633,7 +620,7 @@ class FormValidator {
      * Validate all fields
      */
     validate() {
-        return __awaiter(this, void 0, void 0, function* () {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
             this.fieldErrors = {};
             for (let fieldName in this.fields) {
                 yield this.fields[fieldName].check();
@@ -654,7 +641,7 @@ class FormValidator {
      * Validate and throw error if validation fails
      */
     validateAndThrow() {
-        return __awaiter(this, void 0, void 0, function* () {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
             if (!(yield this.validate())) {
                 throw new FormValidationError(this.getErrors());
             }
@@ -862,7 +849,7 @@ Validation.RULE_MESSAGES = {
     uploaded: 'The ${label} failed to upload.',
     url: 'The ${label} format is invalid.',
 };
-Validation = __decorate([
+Validation = tslib_1.__decorate([
     service_1.Injectable()
 ], Validation);
 exports.Validation = Validation;
@@ -877,7 +864,7 @@ function Validate() {
         const originalMethod = desc.value;
         const paramNames = misc_1._.getFunctionParamNames(originalMethod);
         desc.value = function () {
-            return __awaiter(this, arguments, void 0, function* () {
+            return tslib_1.__awaiter(this, arguments, void 0, function* () {
                 if (arguments.length) {
                     const validation = this.context.make(Validation);
                     const validator = validation.createForm();

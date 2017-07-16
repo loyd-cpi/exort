@@ -1,13 +1,6 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
+const tslib_1 = require("tslib");
 const command_1 = require("../core/command");
 const typeorm_1 = require("typeorm");
 const filesystem_1 = require("../core/filesystem");
@@ -17,7 +10,7 @@ const misc_1 = require("../core/misc");
  * Sync schema of the connection
  */
 function syncSchema(connectionName) {
-    return __awaiter(this, void 0, void 0, function* () {
+    return tslib_1.__awaiter(this, void 0, void 0, function* () {
         yield typeorm_1.getConnectionManager().get(connectionName).syncSchema();
     });
 }
@@ -43,7 +36,7 @@ export class {class} extends SeedService {
 function provideSchemaCommands(databaseSourceDir, databaseDistDir) {
     databaseSourceDir = misc_1._.trimEnd(databaseSourceDir, '/');
     databaseDistDir = misc_1._.trimEnd(databaseDistDir, '/');
-    return (app) => __awaiter(this, void 0, void 0, function* () {
+    return (app) => tslib_1.__awaiter(this, void 0, void 0, function* () {
         command_1.Console.addCommand({
             command: 'schema:sync',
             desc: 'Sync models and database schema',
@@ -53,7 +46,7 @@ function provideSchemaCommands(databaseSourceDir, databaseDistDir) {
                 }
             },
             handler(argv) {
-                return __awaiter(this, void 0, void 0, function* () {
+                return tslib_1.__awaiter(this, void 0, void 0, function* () {
                     yield syncSchema(argv.connection);
                 });
             }
@@ -68,7 +61,7 @@ function provideSchemaCommands(databaseSourceDir, databaseDistDir) {
                 }
             },
             handler(argv) {
-                return __awaiter(this, void 0, void 0, function* () {
+                return tslib_1.__awaiter(this, void 0, void 0, function* () {
                     let seederClass = misc_1._.requireClass(`${databaseDistDir}/seeds/${argv.class}`);
                     if (!misc_1._.classExtends(seederClass, service_1.SeedService)) {
                         throw new Error(`${seederClass.name} doesn't extend SeedService`);
@@ -86,7 +79,7 @@ function provideSchemaCommands(databaseSourceDir, databaseDistDir) {
                 }
             },
             handler(argv) {
-                return __awaiter(this, void 0, void 0, function* () {
+                return tslib_1.__awaiter(this, void 0, void 0, function* () {
                     if (yield filesystem_1.File.exists(`${databaseSourceDir}/seeds/${argv.class}.ts`)) {
                         throw new Error(`${argv.class}.ts already exists`);
                     }

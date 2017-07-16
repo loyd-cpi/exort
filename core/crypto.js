@@ -1,11 +1,6 @@
 "use strict";
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
+const tslib_1 = require("tslib");
 const service_1 = require("./service");
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
@@ -46,7 +41,7 @@ let Encryptor = Encryptor_1 = class Encryptor extends service_1.Service {
         return dec;
     }
 };
-Encryptor = Encryptor_1 = __decorate([
+Encryptor = Encryptor_1 = tslib_1.__decorate([
     service_1.Injectable()
 ], Encryptor);
 exports.Encryptor = Encryptor;

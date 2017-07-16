@@ -1,28 +1,25 @@
 "use strict";
-function __export(m) {
-    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
-}
 Object.defineProperty(exports, "__esModule", { value: true });
+const tslib_1 = require("tslib");
 require("reflect-metadata");
-__export(require("./app"));
-__export(require("./assets"));
-__export(require("./command"));
-__export(require("./crypto"));
-__export(require("./environment"));
-__export(require("./filesystem"));
-__export(require("./http"));
-__export(require("./logger"));
-__export(require("./mime"));
-__export(require("./misc"));
-__export(require("./model"));
-__export(require("./router"));
-__export(require("./service"));
-__export(require("./session"));
-__export(require("./validation"));
-__export(require("./view"));
+tslib_1.__exportStar(require("./app"), exports);
+tslib_1.__exportStar(require("./assets"), exports);
+tslib_1.__exportStar(require("./command"), exports);
+tslib_1.__exportStar(require("./crypto"), exports);
+tslib_1.__exportStar(require("./environment"), exports);
+tslib_1.__exportStar(require("./filesystem"), exports);
+tslib_1.__exportStar(require("./http"), exports);
+tslib_1.__exportStar(require("./logger"), exports);
+tslib_1.__exportStar(require("./mime"), exports);
+tslib_1.__exportStar(require("./misc"), exports);
+tslib_1.__exportStar(require("./model"), exports);
+tslib_1.__exportStar(require("./routing"), exports);
+tslib_1.__exportStar(require("./service"), exports);
+tslib_1.__exportStar(require("./session"), exports);
+tslib_1.__exportStar(require("./validation"), exports);
+tslib_1.__exportStar(require("./view"), exports);
 const moment = require("moment");
 exports.moment = moment;
-var express_1 = require("express");
-exports.Route = express_1.Route;
-exports.Router = express_1.Router;
+const express = require("express");
+exports.express = express;
 //# sourceMappingURL=index.js.map
