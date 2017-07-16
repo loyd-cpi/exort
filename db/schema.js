@@ -16,15 +16,9 @@ function syncSchema(connectionName) {
 }
 exports.syncSchema = syncSchema;
 const SEEDER_TEMPLATE = misc_1._.trimStart(`
-import { Injectable, Context } from 'exort/core';
 import { SeedService } from 'exort/db';
 
-@Injectable()
 export class {class} extends SeedService {
-
-  constructor(context: Context) {
-    super(context);
-  }
 
   public async run(): Promise<void> {
 
