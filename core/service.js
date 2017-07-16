@@ -7,7 +7,7 @@ const misc_1 = require("./misc");
  * Bind a resolve function to solve circular dependency
  */
 function Bind(resolver, options) {
-    return (target, propertyKey, desc) => {
+    return (target, propertyKey) => {
         let serviceClass;
         Object.defineProperty(target, propertyKey, {
             get() {

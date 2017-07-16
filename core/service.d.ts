@@ -7,7 +7,7 @@ export interface BindOptions {
 /**
  * Bind a resolve function to solve circular dependency
  */
-export declare function Bind(resolver: ServiceClassResolver, options?: BindOptions): (target: Object, propertyKey: string, desc: PropertyDescriptor) => void;
+export declare function Bind(resolver: ServiceClassResolver, options?: BindOptions): (target: Object, propertyKey: string) => void;
 /**
  * Context class
  */
