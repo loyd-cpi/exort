@@ -49,3 +49,21 @@ export function provideRoutes(routesFile: string): AppProvider {
     });
   };
 }
+
+/**
+ * RouterOptions interface
+ */
+export interface RouterOptions extends express.RouterOptions {}
+
+/**
+ * Router namespace
+ */
+export namespace Router {
+
+  /**
+   * Create new instance of express.Router
+   */
+  export function create(options?: express.RouterOptions): express.Router {
+    return express.Router(options);
+  }
+}

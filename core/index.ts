@@ -11,7 +11,7 @@ export * from './logger';
 export * from './mime';
 export * from './misc';
 export * from './model';
-export * from './router';
+export * from './routing';
 export * from './service';
 export * from './session';
 export * from './validation';
@@ -20,4 +20,6 @@ export * from './view';
 import * as moment from 'moment';
 export { moment };
 
-export { Route, Router, NextFunction } from 'express';
+import * as express from 'express';
+export type NextFunction = express.NextFunction;
+export { express };

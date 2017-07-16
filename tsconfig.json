@@ -10,7 +10,8 @@
     "strict": true,
     "pretty": true,
     "declaration": true,
-    "noUnusedLocals": true
+    "noUnusedLocals": true,
+    "importHelpers": true
   },
   "files": [
     "typings/index.d.ts"

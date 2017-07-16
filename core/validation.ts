@@ -1019,6 +1019,16 @@ export interface FieldRule {
 /**
  * Decorator to add validation rules on a parameter
  */
+export function Field(rule: string, label?: string): (target: Object, propertyKey: string, parameterIndex: number) => void;
+
+/**
+ * Decorator to add validation rules on a parameter
+ */
+export function Field(rules: FieldRule, label?: string): (target: Object, propertyKey: string, parameterIndex: number) => void;
+
+/**
+ * Decorator to add validation rules on a parameter
+ */
 export function Field(rules: string | FieldRule, label?: string) {
   return (target: Object, propertyKey: string, parameterIndex: number) => {
 
