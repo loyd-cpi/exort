@@ -70,7 +70,7 @@ export abstract class Controller {
   /**
    * Controller constructor
    */
-  constructor(protected context: Context) {}
+  constructor(protected readonly context: Context) {}
 }
 
 /**
@@ -101,7 +101,7 @@ export abstract class Middleware {
   /**
    * Middleware constructor
    */
-  constructor(protected context: Context) {}
+  constructor(protected readonly context: Context) {}
 }
 
 /**
@@ -112,7 +112,7 @@ export abstract class HttpMiddleware extends Middleware {
   /**
    * HttpMiddleware constructor
    */
-  constructor(request: Request, response: Response) {
+  constructor(protected readonly request: Request, protected readonly response: Response) {
     super(request.context);
   }
 

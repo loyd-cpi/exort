@@ -14,7 +14,8 @@
     "importHelpers": true
   },
   "files": [
-    "typings/index.d.ts"
+    "typings/index.d.ts",
+    "common.ts"
   ],
   "include": [
     "core/**/*.ts",
