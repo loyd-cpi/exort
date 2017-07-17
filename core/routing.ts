@@ -244,7 +244,7 @@ export class Router {
       }
     });
 
-    (this.expressRouter as any)[method](this.prefix(path), this.middlewareHandlers.concat(middlewareHandlers));
+    (this.expressRouter as any)[method.toLowerCase()](this.prefix(path), this.middlewareHandlers.concat(middlewareHandlers));
   }
 
   /**
