@@ -99,6 +99,10 @@ export declare class Router {
      */
     constructor(options: RouterOptions, controllersDir: string, middlewareDir: string);
     /**
+     * Get express.Router
+     */
+    getExpressRouter(): express.Router;
+    /**
      * Set global for this current Router instance
      */
     middleware(handler: express.RequestHandler): void;

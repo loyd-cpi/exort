@@ -19,7 +19,9 @@ function provideRoutes(routesFile, controllersDir, middlewareDir) {
             throw new Error('Invalid routes file');
         }
         if (typeof routes.setup == 'function') {
-            routes.setup(new Router(app.config.get('router', {}), controllersDir, middlewareDir), app);
+            let router = new Router(app.config.get('router', {}), controllersDir, middlewareDir);
+            routes.setup(router, app);
+            app.use(router.getExpressRouter());
         }
         app.use((err, req, res, next) => {
             let details = {
@@ -126,6 +128,12 @@ class Router {
         this.expressRouter = express.Router(options);
         this.options.prefix = misc_1._.trim(this.options.prefix || '', '/');
         this.options.namespace = misc_1._.trim(this.options.namespace || '', '/');
+    }
+    /**
+     * Get express.Router
+     */
+    getExpressRouter() {
+        return this.expressRouter;
     }
     /**
      * Set global for this current Router instance
@@ -245,6 +253,7 @@ class Router {
             router.middleware(handler);
         }
         closure(router);
+        this.expressRouter.use(router.getExpressRouter());
     }
 }
 exports.Router = Router;
