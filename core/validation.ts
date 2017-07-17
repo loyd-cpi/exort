@@ -1,5 +1,5 @@
 import { Store, KeyValuePair, Metadata, _ } from './misc';
-import { Service, Injectable } from './service';
+import { Service } from './service';
 import * as moment from 'moment';
 
 /**
@@ -760,7 +760,6 @@ export class FormValidator {
 /**
  * Validator class
  */
-@Injectable()
 export class Validation extends Service {
 
   /**
