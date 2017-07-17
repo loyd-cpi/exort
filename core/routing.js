@@ -185,7 +185,7 @@ class Router {
                 actionRet.catch(err => next(err));
             }
         });
-        this.expressRouter[method](this.prefix(path), this.middlewareHandlers.concat(middlewareHandlers));
+        this.expressRouter[method.toLowerCase()](this.prefix(path), this.middlewareHandlers.concat(middlewareHandlers));
     }
     /**
      * Apply prefix
