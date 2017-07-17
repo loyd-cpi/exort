@@ -15,7 +15,7 @@ export interface RouterOptions extends express.RouterOptions {
  * Abstract Controller class
  */
 export declare abstract class Controller {
-    protected context: Context;
+    protected readonly context: Context;
     /**
      * Controller constructor
      */
@@ -40,7 +40,7 @@ export declare abstract class HttpController extends Controller {
  * Abstract Middleware class
  */
 export declare abstract class Middleware {
-    protected context: Context;
+    protected readonly context: Context;
     /**
      * Middleware constructor
      */
@@ -50,6 +50,8 @@ export declare abstract class Middleware {
  * HttpMiddleware class
  */
 export declare abstract class HttpMiddleware extends Middleware {
+    protected readonly request: Request;
+    protected readonly response: Response;
     /**
      * HttpMiddleware constructor
      */

@@ -1,3 +1,4 @@
+import '../common';
 export * from './connection';
 export * from './model';
 export * from './schema';

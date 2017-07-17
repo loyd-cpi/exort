@@ -1,4 +1,4 @@
-import 'reflect-metadata';
+import '../common';
 export * from './app';
 export * from './assets';
 export * from './command';

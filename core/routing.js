@@ -107,6 +107,8 @@ class HttpMiddleware extends Middleware {
      */
     constructor(request, response) {
         super(request.context);
+        this.request = request;
+        this.response = response;
     }
 }
 exports.HttpMiddleware = HttpMiddleware;

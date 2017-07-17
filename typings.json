@@ -9,6 +9,7 @@
     "morgan": "registry:dt/morgan#1.7.0+20160726064905",
     "nunjucks": "registry:dt/nunjucks#0.0.0+20160803221903",
     "serve-favicon": "registry:dt/serve-favicon#2.2.0+20161128184045",
+    "source-map-support": "registry:npm/source-map-support#0.3.0+20161006200546",
     "yargs": "registry:npm/yargs#5.0.0+20160907000723"
   },
   "globalDependencies": {
