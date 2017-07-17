@@ -21,7 +21,9 @@ export function provideRoutes(routesFile: string, controllersDir: string, middle
     }
 
     if (typeof routes.setup == 'function') {
-      routes.setup(new Router(app.config.get('router', {}), controllersDir, middlewareDir), app);
+      let router = new Router(app.config.get('router', {}), controllersDir, middlewareDir);
+      routes.setup(router, app);
+      app.use(router.getExpressRouter());
     }
 
     app.use((err: Error, req: Request, res: Response, next: express.NextFunction) => {
@@ -165,6 +167,13 @@ export class Router {
     this.expressRouter = express.Router(options);
     this.options.prefix = _.trim(this.options.prefix || '', '/');
     this.options.namespace = _.trim(this.options.namespace || '', '/');
+  }
+
+  /**
+   * Get express.Router
+   */
+  public getExpressRouter(): express.Router {
+    return this.expressRouter;
   }
 
   /**
@@ -324,5 +333,6 @@ export class Router {
     }
 
     closure(router);
+    this.expressRouter.use(router.getExpressRouter());
   }
 }
