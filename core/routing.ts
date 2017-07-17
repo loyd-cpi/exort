@@ -1,13 +1,17 @@
 import { checkAppConfig, Application, AppProvider } from './app';
-import { Request, HttpError, Response } from './http';
+import { Request, HttpError, Input, Response } from './http';
 import { FormValidationError } from './validation';
 import { Context } from './service';
 import * as express from 'express';
+import { _ } from './misc';
 
 /**
  * Provide routes
  */
-export function provideRoutes(routesFile: string): AppProvider {
+export function provideRoutes(routesFile: string, controllersDir: string, middlewareDir: string): AppProvider {
+  controllersDir = _.trimEnd(controllersDir, '/');
+  middlewareDir = _.trimEnd(middlewareDir, '/');
+
   return async (app: Application): Promise<void> => {
     checkAppConfig(app);
 
@@ -17,7 +21,7 @@ export function provideRoutes(routesFile: string): AppProvider {
     }
 
     if (typeof routes.setup == 'function') {
-      routes.setup(app);
+      routes.setup(new Router(app.config.get('router', {}), controllersDir, middlewareDir), app);
     }
 
     app.use((err: Error, req: Request, res: Response, next: express.NextFunction) => {
@@ -57,19 +61,6 @@ export function provideRoutes(routesFile: string): AppProvider {
 export interface RouterOptions extends express.RouterOptions {}
 
 /**
- * Router namespace
- */
-export namespace Router {
-
-  /**
-   * Create new instance of express.Router
-   */
-  export function create(options?: express.RouterOptions): express.Router {
-    return express.Router(options);
-  }
-}
-
-/**
  * Abstract Controller class
  */
 export abstract class Controller {
@@ -81,69 +72,257 @@ export abstract class Controller {
 }
 
 /**
- * Set flag for express to recognize exort controller
- */
-(Controller as any).$exort = true;
-
-/**
- * HttpControllerAsRouteOptions interface
- */
-export interface HttpControllerAsRouterOptions {}
-
-/**
  * Abstract HttpController class
  */
 export abstract class HttpController extends Controller {
 
   /**
-   * Express request object
+   * HttpController constructor
    */
-  protected readonly request: Request;
+  constructor(protected readonly request: Request, protected readonly response: Response) {
+    super(request.context);
+  }
 
   /**
-   * Express response object
+   * Getter for request.input
    */
-  protected readonly response: Response;
-
-  /**
-   *
-   */
-  public static asRouter(options?: HttpControllerAsRouterOptions): express.Router {
-    let router = express.Router();
-    return router;
+  protected get input(): Input {
+    return this.request.input;
   }
 }
 
 /**
- * RouteOptions interface
+ * Abstract Middleware class
  */
-export interface RouteOptions {}
+export abstract class Middleware {
+
+  /**
+   * Middleware constructor
+   */
+  constructor(protected context: Context) {}
+}
 
 /**
- * Route decorator for HttpController instance methods
+ * HttpMiddleware class
  */
-export function Route(method: string, options?: RouteOptions): (target: Object, key: string, desc: PropertyDescriptor) => void;
+export abstract class HttpMiddleware extends Middleware {
 
-/**
- * Route decorator for HttpController instance methods
- */
-export function Route(method: string, path?: string): (target: Object, key: string, desc: PropertyDescriptor) => void;
-
-/**
- * Route decorator for HttpController instance methods
- */
-export function Route(method: string, path?: string, options?: RouteOptions): (target: Object, key: string, desc: PropertyDescriptor) => void;
-
-/**
- * Route decorator for HttpController instance methods
- */
-export function Route(method: string, path?: string | RouteOptions, options?: RouteOptions) {
-  if (typeof path == 'object') {
-    options = path;
-    path = '/';
+  /**
+   * HttpMiddleware constructor
+   */
+  constructor(request: Request, response: Response) {
+    super(request.context);
   }
 
-  return (target: Object, propertyKey: string, desc: PropertyDescriptor) => {
+  /**
+   * Abstract handle method
+   */
+  public abstract async handle(next: express.NextFunction): Promise<void>;
+}
 
-  };
+/**
+ * RouterOptions interfaces
+ */
+export interface RouterOptions extends express.RouterOptions {
+  prefix?: string;
+  namespace?: string;
+}
+
+/**
+ * RouteGroupOptions interface
+ */
+export interface RouteGroupOptions {
+  prefix?: string;
+  namespace?: string;
+}
+
+/**
+ * RouteGroupClosure interface
+ */
+export interface RouteGroupClosure {
+  (router: Router): void;
+}
+
+/**
+ * Router class
+ */
+export class Router {
+
+  /**
+   * Express router instance
+   */
+  private expressRouter: express.Router;
+
+  /**
+   *
+   */
+  private middlewareHandlers: express.RequestHandler[] = [];
+
+  /**
+   * Router constructor
+   */
+  constructor(private options: RouterOptions, private controllersDir: string, private middlewareDir: string) {
+    this.expressRouter = express.Router(options);
+    this.options.prefix = _.trim(this.options.prefix || '', '/');
+    this.options.namespace = _.trim(this.options.namespace || '', '/');
+  }
+
+  /**
+   * Set global for this current Router instance
+   */
+  public middleware(handler: express.RequestHandler): void;
+
+  /**
+   * Set global for this current Router instance
+   */
+  public middleware(className: string): void;
+
+  /**
+   * Set global for this current Router instance
+   */
+  public middleware(classNameOrHandler: string | express.RequestHandler) {
+    if (typeof classNameOrHandler == 'string') {
+      classNameOrHandler = this.findMiddleware(classNameOrHandler);
+    }
+    this.middlewareHandlers.push(classNameOrHandler);
+  }
+
+  /**
+   * Resolve and return middleware instance
+   */
+  private findMiddleware(className: string) {
+    const middlewareClass = _.requireClass(`${this.middlewareDir}/${className}`);
+    if (!_.classExtends(middlewareClass, HttpMiddleware)) {
+      throw new Error(`${className} doesn't extend HttpMiddleware`)
+    }
+
+    return (request: Request, response: Response, next: express.NextFunction) => {
+      let middlewareInstance = Reflect.construct(middlewareClass, [request, response]);
+      let handleRet = middlewareInstance.handle(next);
+      if (handleRet instanceof Promise) {
+        handleRet.catch(err => next(err));
+      }
+    };
+  }
+
+  /**
+   * Set route using custom method
+   */
+  public route(method: string, path: string, controller: string, middleware?: (string | express.RequestHandler)[]) {
+    const [controllerName, actionName] = controller.split('@');
+    const controllerClass = _.requireClass(`${this.controllersDir}${this.namespace(controllerName)}`);
+
+    if (!_.classExtends(controllerClass, HttpController)) {
+      throw new Error(`${controllerName} doesn't extend HttpController`);
+    }
+
+    const middlewareHandlers: express.RequestHandler[] = [];
+    if (Array.isArray(middleware)) {
+      for (let mware of middleware) {
+        if (typeof mware == 'string') {
+          mware = this.findMiddleware(mware);
+        }
+        middlewareHandlers.push(mware);
+      }
+    }
+
+    middlewareHandlers.push((request: Request, response: Response, next: express.NextFunction) => {
+
+      let controller = Reflect.construct(controllerClass, [request, response]);
+      let actionRet = controller[actionName]();
+      if (actionRet instanceof Promise) {
+        actionRet.catch(err => next(err));
+      }
+    });
+
+    (this.expressRouter as any)[method](this.prefix(path), this.middlewareHandlers.concat(middlewareHandlers));
+  }
+
+  /**
+   * Apply prefix
+   */
+  private prefix(path: string) {
+    path = `/${_.trim(path, '/')}`;
+    if (this.options.prefix) {
+      return `/${this.options.prefix}${path}`;
+    }
+    return path;
+  }
+
+  /**
+   * Apply namespace
+   */
+  private namespace(path: string) {
+    path = `/${_.trim(path, '/')}`;
+    if (this.options.namespace) {
+      path = `/${this.options.namespace}${path}`;
+    }
+    return path;
+  }
+
+  /**
+   * Set GET route method
+   */
+  public get(path: string, controller: string, middleware?: string[]) {
+    this.route('GET', path, controller, middleware);
+  }
+
+  /**
+   * Set POST route method
+   */
+  public post(path: string, controller: string, middleware?: string[]) {
+    this.route('POST', path, controller, middleware);
+  }
+
+  /**
+   * Set PUT route method
+   */
+  public put(path: string, controller: string, middleware?: string[]) {
+    this.route('PUT', path, controller, middleware);
+  }
+
+  /**
+   * Set DELETE route method
+   */
+  public delete(path: string, controller: string, middleware?: string[]) {
+    this.route('DELETE', path, controller, middleware);
+  }
+
+  /**
+   * Create route group
+   */
+  public group(closure: RouteGroupClosure): void;
+
+  /**
+   * Create route group
+   */
+  public group(options: RouteGroupOptions, closure: RouteGroupClosure): void;
+
+  /**
+   * Create route group
+   */
+  public group(options: RouteGroupOptions | RouteGroupClosure, closure?: RouteGroupClosure) {
+    if (typeof options == 'function') {
+      closure = options;
+      options = {};
+    }
+
+    if (typeof closure != 'function') return;
+
+    let mergedOptions = _.merge({}, this.options, options);
+    if (options.prefix) {
+      mergedOptions.prefix = this.prefix(options.prefix);
+    }
+
+    if (options.namespace) {
+      mergedOptions.namespace = this.namespace(options.namespace);
+    }
+
+    let router = new Router(mergedOptions, this.controllersDir, this.middlewareDir);
+    for (let handler of this.middlewareHandlers) {
+      router.middleware(handler);
+    }
+
+    closure(router);
+  }
 }
