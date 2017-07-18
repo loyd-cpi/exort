@@ -12,7 +12,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/tontonskie/exort.git"
+    "url": "git+https://github.com/exort-team/exort.git"
   },
   "keywords": [
     "expressjs",
@@ -21,9 +21,9 @@
   "author": "tontonskie",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/tontonskie/exort/issues"
+    "url": "https://github.com/exort-team/exort/issues"
   },
-  "homepage": "https://github.com/tontonskie/exort#readme",
+  "homepage": "https://github.com/exort-team/exort#readme",
   "dependencies": {
     "bcrypt": "^1.0.2",
     "bytes": "^2.5.0",
