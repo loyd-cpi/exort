@@ -1,5 +1,5 @@
-import { _, Metadata, KeyValuePair } from '../core/misc';
 import { Model as BaseModel } from '../core/model';
+import { _, Metadata } from '../core/misc';
 
 /**
  * Decorator to exclude fields in toJSON
