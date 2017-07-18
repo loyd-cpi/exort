@@ -1,4 +1,4 @@
-import { Metadata, KeyValuePair } from '../core/misc';
+import { _, Metadata, KeyValuePair } from '../core/misc';
 import { Model as BaseModel } from '../core/model';
 
 /**
@@ -20,6 +20,9 @@ export function Hidden() {
   };
 }
 
+/**
+ * ModelToJsonOptions interface
+ */
 export interface ModelToJsonOptions {
   hidden?: string[];
 }
@@ -33,21 +36,20 @@ export class Model extends BaseModel {
    * Get a JSON serializable object
    */
   toJSON(options?: ModelToJsonOptions) {
+    let fields = _.clone(this);
     let hiddenFields: string[] = Metadata.get(Object.getPrototypeOf(this), 'model:hidden') || [];
     if (options && Array.isArray(options.hidden) && options.hidden.length) {
       hiddenFields = hiddenFields.concat(options.hidden);
     }
 
     if (hiddenFields.length) {
-      let fields: KeyValuePair<any> = {};
-      for (let propName in this) {
-        if (hiddenFields.indexOf(propName) == -1) {
-          fields[propName] = this[propName];
+      for (let propName in fields) {
+        if (hiddenFields.indexOf(propName) != -1) {
+          delete fields[propName];
         }
       }
-      return fields;
     }
 
-    return this;
+    return fields;
   }
 }
