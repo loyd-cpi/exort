@@ -129,8 +129,12 @@ class SqlService extends service_1.Service {
                 const newContext = this.context.newInstance();
                 newContext.store.set(SqlService.STORE_TRANS_KEY, transaction);
                 const startingService = newContext.make(this.constructor);
-                result = yield closure.call(startingService);
-                newContext.store.delete(SqlService.STORE_TRANS_KEY);
+                try {
+                    result = yield closure.call(startingService);
+                }
+                finally {
+                    newContext.store.delete(SqlService.STORE_TRANS_KEY);
+                }
             }));
             return result;
         });
