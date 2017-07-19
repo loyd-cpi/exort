@@ -1,6 +1,6 @@
+import { Connection, EntityManager, Repository } from 'typeorm';
 import { SelectQueryBuilder } from 'typeorm/query-builder/SelectQueryBuilder';
 import { FindManyOptions } from 'typeorm/find-options/FindManyOptions';
-import { Connection, Repository } from 'typeorm';
 import { FindOneOptions } from 'typeorm/find-options/FindOneOptions';
 import { RemoveOptions } from 'typeorm/repository/RemoveOptions';
 import { SaveOptions } from 'typeorm/repository/SaveOptions';
@@ -21,6 +21,10 @@ export declare abstract class SeedService extends Service {
  */
 export declare abstract class SqlService<T extends Model> extends Service {
     /**
+     * Transaction key in context store
+     */
+    private static STORE_TRANS_KEY;
+    /**
      * Model class
      */
     protected modelClass: new () => T;
@@ -30,6 +34,10 @@ export declare abstract class SqlService<T extends Model> extends Service {
      * Throws exception if connection with the given name was not found.
      */
     protected getConnection(name?: string): Connection;
+    /**
+     * Get transaction connection
+     */
+    protected getTransaction(): EntityManager | undefined;
     /**
      * Gets repository for the service model
      */
@@ -104,4 +112,8 @@ export declare abstract class SqlService<T extends Model> extends Service {
      * Updates entity partially. Entity will be found by a given id.
      */
     updateById(id: any, partialEntity: DeepPartial<T>, options?: SaveOptions): Promise<void>;
+    /**
+     * Make the closure run with transaction object
+     */
+    protected transaction<U>(closure: (this: this) => Promise<U>, connection?: string): Promise<U | undefined>;
 }

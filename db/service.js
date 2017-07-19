@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const tslib_1 = require("tslib");
 const typeorm_1 = require("typeorm");
 const service_1 = require("../core/service");
 /**
@@ -17,19 +18,29 @@ class SqlService extends service_1.Service {
      * If connection name is not given then it will get a default connection.
      * Throws exception if connection with the given name was not found.
      */
-    getConnection(name = 'default') {
+    getConnection(name) {
         return typeorm_1.getConnectionManager().get(name);
+    }
+    /**
+     * Get transaction connection
+     */
+    getTransaction() {
+        return this.context.store.get(SqlService.STORE_TRANS_KEY);
     }
     /**
      * Gets repository for the service model
      */
-    getRepository(connection = 'default') {
+    getRepository(connection) {
+        let transaction = this.getTransaction();
+        if (transaction && (!connection || transaction.connection.name == connection)) {
+            return transaction.getRepository(this.modelClass);
+        }
         return this.getConnection(connection).getRepository(this.modelClass);
     }
     /**
      * Creates a new query builder that can be used to build a sql query
      */
-    createQueryBuilder(alias, connection = 'default') {
+    createQueryBuilder(alias, connection) {
         return this.getRepository(connection).createQueryBuilder(alias);
     }
     /**
@@ -108,6 +119,26 @@ class SqlService extends service_1.Service {
     updateById(id, partialEntity, options) {
         return this.getRepository().updateById(id, partialEntity, options);
     }
+    /**
+     * Make the closure run with transaction object
+     */
+    transaction(closure, connection) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            let result;
+            yield this.getConnection(connection).transaction((transaction) => tslib_1.__awaiter(this, void 0, void 0, function* () {
+                const newContext = this.context.newInstance();
+                newContext.store.set(SqlService.STORE_TRANS_KEY, transaction);
+                const startingService = newContext.make(this.constructor);
+                result = yield closure.call(startingService);
+                newContext.store.delete(SqlService.STORE_TRANS_KEY);
+            }));
+            return result;
+        });
+    }
 }
+/**
+ * Transaction key in context store
+ */
+SqlService.STORE_TRANS_KEY = '$exort:transaction';
 exports.SqlService = SqlService;
 //# sourceMappingURL=service.js.map

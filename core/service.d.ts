@@ -1,4 +1,5 @@
 import { Application, AppProvider } from './app';
+import { Store } from './misc';
 /**
  * BindOptions interface
  */
@@ -14,6 +15,10 @@ export declare function Bind(resolver: ServiceClassResolver, options?: BindOptio
 export declare class Context {
     readonly app: Application;
     /**
+     * Store instance
+     */
+    readonly store: Store;
+    /**
      * Map of resolved instances
      */
     private resolvedInstances;
@@ -25,6 +30,10 @@ export declare class Context {
      * Create service instance
      */
     make<U extends Service>(serviceClass: new (...args: any[]) => U): U;
+    /**
+     * Create new instance with app instance
+     */
+    newInstance(): Context;
 }
 /**
  * ServiceClass interface

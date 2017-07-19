@@ -30,6 +30,10 @@ class Context {
     constructor(app) {
         this.app = app;
         /**
+         * Store instance
+         */
+        this.store = new misc_1.Store();
+        /**
          * Map of resolved instances
          */
         this.resolvedInstances = new Map();
@@ -47,6 +51,12 @@ class Context {
         let instance = Reflect.construct(serviceClass, [this]);
         this.resolvedInstances.set(serviceClass, instance);
         return instance;
+    }
+    /**
+     * Create new instance with app instance
+     */
+    newInstance() {
+        return Reflect.construct(this.constructor, [this.app]);
     }
 }
 exports.Context = Context;
