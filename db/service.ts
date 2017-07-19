@@ -1,6 +1,6 @@
+import { Connection, EntityManager, Repository, getConnectionManager } from 'typeorm';
 import { SelectQueryBuilder } from 'typeorm/query-builder/SelectQueryBuilder';
 import { FindManyOptions } from 'typeorm/find-options/FindManyOptions';
-import { Connection, Repository, getConnectionManager } from 'typeorm';
 import { FindOneOptions } from 'typeorm/find-options/FindOneOptions';
 import { RemoveOptions } from 'typeorm/repository/RemoveOptions';
 import { SaveOptions } from 'typeorm/repository/SaveOptions';
@@ -25,6 +25,11 @@ export abstract class SeedService extends Service {
 export abstract class SqlService<T extends Model> extends Service {
 
   /**
+   * Transaction key in context store
+   */
+  private static STORE_TRANS_KEY: string = '$exort:transaction';
+
+  /**
    * Model class
    */
   protected modelClass: new() => T;
@@ -34,21 +39,32 @@ export abstract class SqlService<T extends Model> extends Service {
    * If connection name is not given then it will get a default connection.
    * Throws exception if connection with the given name was not found.
    */
-  protected getConnection(name: string = 'default'): Connection {
+  protected getConnection(name?: string): Connection {
     return getConnectionManager().get(name);
+  }
+
+  /**
+   * Get transaction connection
+   */
+  protected getTransaction(): EntityManager | undefined {
+    return this.context.store.get(SqlService.STORE_TRANS_KEY);
   }
 
   /**
    * Gets repository for the service model
    */
-  protected getRepository(connection: string = 'default'): Repository<T> {
+  protected getRepository(connection?: string): Repository<T> {
+    let transaction = this.getTransaction();
+    if (transaction && (!connection || transaction.connection.name == connection)) {
+      return transaction.getRepository(this.modelClass);
+    }
     return this.getConnection(connection).getRepository(this.modelClass);
   }
 
   /**
    * Creates a new query builder that can be used to build a sql query
    */
-  protected createQueryBuilder(alias: string, connection: string = 'default'): SelectQueryBuilder<T> {
+  protected createQueryBuilder(alias: string, connection?: string): SelectQueryBuilder<T> {
     return this.getRepository(connection).createQueryBuilder(alias);
   }
 
@@ -170,5 +186,24 @@ export abstract class SqlService<T extends Model> extends Service {
    */
   public updateById(id: any, partialEntity: DeepPartial<T>, options?: SaveOptions): Promise<void> {
     return this.getRepository().updateById(id, partialEntity, options);
+  }
+
+  /**
+   * Make the closure run with transaction object
+   */
+  protected async transaction<U>(closure: (this: this) => Promise<U>, connection?: string): Promise<U | undefined> {
+    let result;
+    await this.getConnection(connection).transaction(async (transaction: EntityManager) => {
+
+      const newContext = this.context.newInstance();
+      newContext.store.set(SqlService.STORE_TRANS_KEY, transaction);
+
+      const startingService = newContext.make<this>((this as any).constructor);
+      result = await closure.call(startingService);
+
+      newContext.store.delete(SqlService.STORE_TRANS_KEY);
+    });
+
+    return result;
   }
 }

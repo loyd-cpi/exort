@@ -1,7 +1,7 @@
 import { checkAppConfig, Application, AppProvider } from './app';
 import { Response, Request } from './http';
 import * as express from 'express';
-import { _ } from './misc';
+import { _, Store } from './misc';
 
 /**
  * BindOptions interface
@@ -33,6 +33,11 @@ export function Bind(resolver: ServiceClassResolver, options?: BindOptions) {
 export class Context {
 
   /**
+   * Store instance
+   */
+  public readonly store: Store = new Store();
+
+  /**
    * Map of resolved instances
    */
   private resolvedInstances: Map<Function, any> = new Map<Function, any>();
@@ -57,6 +62,13 @@ export class Context {
     let instance = Reflect.construct(serviceClass, [this]);
     this.resolvedInstances.set(serviceClass, instance);
     return instance;
+  }
+
+  /**
+   * Create new instance with app instance
+   */
+  public newInstance(): Context {
+    return Reflect.construct(this.constructor, [this.app]);
   }
 }
 
