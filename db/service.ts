@@ -199,9 +199,11 @@ export abstract class SqlService<T extends Model> extends Service {
       newContext.store.set(SqlService.STORE_TRANS_KEY, transaction);
 
       const startingService = newContext.make<this>((this as any).constructor);
-      result = await closure.call(startingService);
-
-      newContext.store.delete(SqlService.STORE_TRANS_KEY);
+      try {
+        result = await closure.call(startingService);
+      } finally {
+        newContext.store.delete(SqlService.STORE_TRANS_KEY);
+      }
     });
 
     return result;
