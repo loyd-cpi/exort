@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const tslib_1 = require("tslib");
-const command_1 = require("../core/command");
+const command_1 = require("../console/command");
 const typeorm_1 = require("typeorm");
 const filesystem_1 = require("../core/filesystem");
 const service_1 = require("./service");

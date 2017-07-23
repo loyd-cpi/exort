@@ -1,8 +1,8 @@
-import { AppProvider, Application } from './app';
-import { Service, Context } from './service';
-import { KeyValuePair, Store } from './misc';
+import { AppProvider, Application } from '../core/app';
+import { Service, Context } from '../core/service';
+import { KeyValuePair, Store } from '../core/misc';
 import * as formidable from 'formidable';
-import { File } from './filesystem';
+import { File } from '../core/filesystem';
 import { Session } from './session';
 import * as express from 'express';
 /**
@@ -12,15 +12,15 @@ export interface Request extends express.Request {
     /**
      * Contains parsed request body
      */
-    body: KeyValuePair<string>;
+    readonly body: KeyValuePair<string>;
     /**
      * Session object
      */
-    session: Session;
+    readonly session: Session;
     /**
      * Input object that contains parsed body and query string
      */
-    input: Input;
+    readonly input: Input;
     /**
      * Make an instance of service
      */
@@ -29,6 +29,10 @@ export interface Request extends express.Request {
      * Context instance
      */
     readonly context: Context;
+    /**
+     * Application instance
+     */
+    readonly app: Application;
 }
 /**
  * Install body parser
@@ -118,4 +122,45 @@ export declare class HttpError extends Error {
      * HttpError constructor
      */
     constructor(statusCode: number, message?: string);
+}
+/**
+ * Abstract HttpHandler class
+ */
+export declare abstract class HttpHandler<Vars, Params> {
+    protected readonly request: Request;
+    protected readonly response: Response;
+    /**
+     * Context instance
+     */
+    protected readonly context: Context;
+    /**
+     * Request input instance
+     */
+    protected readonly input: Input;
+    /**
+     * Express response locals object
+     */
+    protected readonly vars: Vars;
+    /**
+     * Express request params object
+     */
+    protected readonly params: Params;
+    /**
+     * HttpHandler constructor
+     */
+    constructor(request: Request, response: Response);
+}
+/**
+ * HttpMiddleware class
+ */
+export declare abstract class HttpMiddleware<Vars, Params> extends HttpHandler<Vars, Params> {
+    /**
+     * Abstract handle method
+     */
+    abstract handle(next: express.NextFunction): Promise<void>;
+}
+/**
+ * Abstract HttpController class
+ */
+export declare abstract class HttpController<Vars, Params> extends HttpHandler<Vars, Params> {
 }

@@ -1,10 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const tslib_1 = require("tslib");
-const app_1 = require("./app");
-const misc_1 = require("./misc");
+const app_1 = require("../core/app");
+const misc_1 = require("../core/misc");
 const formidable = require("formidable");
-const filesystem_1 = require("./filesystem");
+const filesystem_1 = require("../core/filesystem");
 const pathlib = require("path");
 const bytes = require("bytes");
 const http = require("http");
@@ -48,11 +48,11 @@ function provideBodyParser() {
                     for (let key in files) {
                         if (Array.isArray(files[key])) {
                             req._files[key] = [];
-                            req._files[key].forEach((file) => {
+                            for (let file of files[key]) {
                                 let uploaded = new UploadedFile(file);
                                 totalUploadSize += uploaded.size;
                                 req._files[key].push(uploaded);
-                            });
+                            }
                         }
                         else {
                             let uploaded = new UploadedFile(files[key]);
@@ -141,7 +141,7 @@ class Input extends misc_1.Store {
      */
     files(key) {
         if (!Array.isArray(this.fileInput[key])) {
-            return [this.fileInput[key]];
+            return this.fileInput[key] ? [this.fileInput[key]] : [];
         }
         return this.fileInput[key];
     }
@@ -280,4 +280,33 @@ class HttpError extends Error {
     }
 }
 exports.HttpError = HttpError;
+/**
+ * Abstract HttpHandler class
+ */
+class HttpHandler {
+    /**
+     * HttpHandler constructor
+     */
+    constructor(request, response) {
+        this.request = request;
+        this.response = response;
+        this.context = request.context;
+        this.input = request.input;
+        this.vars = response.locals;
+        this.params = request.params;
+    }
+}
+exports.HttpHandler = HttpHandler;
+/**
+ * HttpMiddleware class
+ */
+class HttpMiddleware extends HttpHandler {
+}
+exports.HttpMiddleware = HttpMiddleware;
+/**
+ * Abstract HttpController class
+ */
+class HttpController extends HttpHandler {
+}
+exports.HttpController = HttpController;
 //# sourceMappingURL=http.js.map

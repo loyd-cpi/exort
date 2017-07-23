@@ -1,11 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const tslib_1 = require("tslib");
-const app_1 = require("./app");
 const http_1 = require("./http");
-const validation_1 = require("./validation");
+const app_1 = require("../core/app");
+const validation_1 = require("../core/validation");
 const express = require("express");
-const misc_1 = require("./misc");
+const misc_1 = require("../core/misc");
 /**
  * Provide routes
  */
@@ -55,64 +55,6 @@ function provideRoutes(routesFile, controllersDir, middlewareDir) {
 }
 exports.provideRoutes = provideRoutes;
 /**
- * Abstract Controller class
- */
-class Controller {
-    /**
-     * Controller constructor
-     */
-    constructor(context) {
-        this.context = context;
-    }
-}
-exports.Controller = Controller;
-/**
- * Abstract HttpController class
- */
-class HttpController extends Controller {
-    /**
-     * HttpController constructor
-     */
-    constructor(request, response) {
-        super(request.context);
-        this.request = request;
-        this.response = response;
-    }
-    /**
-     * Getter for request.input
-     */
-    get input() {
-        return this.request.input;
-    }
-}
-exports.HttpController = HttpController;
-/**
- * Abstract Middleware class
- */
-class Middleware {
-    /**
-     * Middleware constructor
-     */
-    constructor(context) {
-        this.context = context;
-    }
-}
-exports.Middleware = Middleware;
-/**
- * HttpMiddleware class
- */
-class HttpMiddleware extends Middleware {
-    /**
-     * HttpMiddleware constructor
-     */
-    constructor(request, response) {
-        super(request.context);
-        this.request = request;
-        this.response = response;
-    }
-}
-exports.HttpMiddleware = HttpMiddleware;
-/**
  * Router class
  */
 class Router {
@@ -151,7 +93,7 @@ class Router {
      */
     findMiddleware(className) {
         const middlewareClass = misc_1._.requireClass(`${this.middlewareDir}/${className}`);
-        if (!misc_1._.classExtends(middlewareClass, HttpMiddleware)) {
+        if (!misc_1._.classExtends(middlewareClass, http_1.HttpMiddleware)) {
             throw new Error(`${className} doesn't extend HttpMiddleware`);
         }
         return (request, response, next) => {
@@ -168,7 +110,7 @@ class Router {
     route(method, path, controller, middleware) {
         const [controllerName, actionName] = controller.split('@');
         const controllerClass = misc_1._.requireClass(`${this.controllersDir}${this.namespace(controllerName)}`);
-        if (!misc_1._.classExtends(controllerClass, HttpController)) {
+        if (!misc_1._.classExtends(controllerClass, http_1.HttpController)) {
             throw new Error(`${controllerName} doesn't extend HttpController`);
         }
         const middlewareHandlers = [];
@@ -259,4 +201,4 @@ class Router {
     }
 }
 exports.Router = Router;
-//# sourceMappingURL=routing.js.map
+//# sourceMappingURL=router.js.map

@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const tslib_1 = require("tslib");
-const app_1 = require("./app");
+const app_1 = require("../core/app");
 const expressSession = require("express-session");
-const misc_1 = require("./misc");
+const misc_1 = require("../core/misc");
 /**
  * Session class
  */

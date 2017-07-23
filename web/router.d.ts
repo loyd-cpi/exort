@@ -1,6 +1,4 @@
-import { AppProvider } from './app';
-import { Request, Input, Response } from './http';
-import { Context } from './service';
+import { AppProvider } from '../core/app';
 import * as express from 'express';
 /**
  * Provide routes
@@ -10,56 +8,6 @@ export declare function provideRoutes(routesFile: string, controllersDir: string
  * RouterOptions interface
  */
 export interface RouterOptions extends express.RouterOptions {
-}
-/**
- * Abstract Controller class
- */
-export declare abstract class Controller {
-    protected readonly context: Context;
-    /**
-     * Controller constructor
-     */
-    constructor(context: Context);
-}
-/**
- * Abstract HttpController class
- */
-export declare abstract class HttpController extends Controller {
-    protected readonly request: Request;
-    protected readonly response: Response;
-    /**
-     * HttpController constructor
-     */
-    constructor(request: Request, response: Response);
-    /**
-     * Getter for request.input
-     */
-    protected readonly input: Input;
-}
-/**
- * Abstract Middleware class
- */
-export declare abstract class Middleware {
-    protected readonly context: Context;
-    /**
-     * Middleware constructor
-     */
-    constructor(context: Context);
-}
-/**
- * HttpMiddleware class
- */
-export declare abstract class HttpMiddleware extends Middleware {
-    protected readonly request: Request;
-    protected readonly response: Response;
-    /**
-     * HttpMiddleware constructor
-     */
-    constructor(request: Request, response: Response);
-    /**
-     * Abstract handle method
-     */
-    abstract handle(next: express.NextFunction): Promise<void>;
 }
 /**
  * RouterOptions interfaces

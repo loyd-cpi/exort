@@ -65,3 +65,12 @@ export declare abstract class Service {
      */
     protected make<U extends Service>(serviceClass: new (...args: any[]) => U): U;
 }
+/**
+ * ServiceError class
+ */
+export declare class ServiceError extends Error {
+    /**
+     * ServiceError constructor
+     */
+    constructor(message: string);
+}

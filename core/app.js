@@ -3,7 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const tslib_1 = require("tslib");
 const express = require("express");
 const misc_1 = require("./misc");
-const pathlib = require("path");
 /**
  * Config class
  */
@@ -15,8 +14,10 @@ class Config extends misc_1.Store {
         let config = new Config();
         for (let file of files) {
             let content = require(file);
-            if (!misc_1._.isNone(content.default)) {
-                config.set(pathlib.basename(file), content.default);
+            if (!misc_1._.isNone(content) && typeof content == 'object') {
+                for (let key in content) {
+                    config.set(key, content[key]);
+                }
             }
         }
         return config;
@@ -32,6 +33,9 @@ function createApplication(rootDir, configFiles) {
         throw new Error('app.dir is already set. There must be conflict with express');
     }
     app.dir = misc_1._.trimEnd(rootDir, '/');
+    if (typeof configFiles == 'string') {
+        configFiles = [configFiles];
+    }
     configure(app, configFiles);
     return app;
 }

@@ -95,4 +95,16 @@ class Service {
     }
 }
 exports.Service = Service;
+/**
+ * ServiceError class
+ */
+class ServiceError extends Error {
+    /**
+     * ServiceError constructor
+     */
+    constructor(message) {
+        super(message);
+    }
+}
+exports.ServiceError = ServiceError;
 //# sourceMappingURL=service.js.map

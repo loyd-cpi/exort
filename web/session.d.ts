@@ -1,4 +1,4 @@
-import { AppProvider } from './app';
+import { AppProvider } from '../core/app';
 /**
  * Session class
  */

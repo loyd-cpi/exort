@@ -4,6 +4,7 @@ const tslib_1 = require("tslib");
 const app_1 = require("../core/app");
 const misc_1 = require("../core/misc");
 const typeorm_1 = require("typeorm");
+const model_1 = require("./model");
 /**
  * Provide sql and nosql connection
  */
@@ -31,7 +32,11 @@ function provideConnection(modelsDir) {
                 for (let dir of dirs) {
                     let indexModule = require(dir);
                     if (!misc_1._.isNone(indexModule) && typeof indexModule == 'object') {
-                        conn.entities = conn.entities.concat(Object.values(indexModule));
+                        for (let modelClassName in indexModule) {
+                            if (misc_1._.classExtends(indexModule[modelClassName], model_1.Model)) {
+                                conn.entities.push(indexModule[modelClassName]);
+                            }
+                        }
                     }
                 }
                 yield typeorm_1.createConnection(conn);

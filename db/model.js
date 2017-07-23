@@ -26,7 +26,7 @@ class Model extends model_1.Model {
      * Get a JSON serializable object
      */
     toJSON(options) {
-        let fields = misc_1._.clone(this);
+        let fields = misc_1._.toPlainObject(this);
         let hiddenFields = misc_1.Metadata.get(Object.getPrototypeOf(this), 'model:hidden') || [];
         if (options && Array.isArray(options.hidden) && options.hidden.length) {
             hiddenFields = hiddenFields.concat(options.hidden);
