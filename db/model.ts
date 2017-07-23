@@ -1,5 +1,5 @@
-import { Model as BaseModel } from '../core/model';
-import { _, Metadata } from '../core/misc';
+import { Model as BaseModel, ModelToJsonOptions as BaseModelToJsonOptions } from '../core/model';
+import { _, KeyValuePair, Metadata } from '../core/misc';
 
 /**
  * Decorator to exclude fields in toJSON
@@ -23,9 +23,7 @@ export function Hidden() {
 /**
  * ModelToJsonOptions interface
  */
-export interface ModelToJsonOptions {
-  hidden?: string[];
-}
+export interface ModelToJsonOptions extends BaseModelToJsonOptions {}
 
 /**
  * DB Model class
@@ -35,8 +33,8 @@ export class Model extends BaseModel {
   /**
    * Get a JSON serializable object
    */
-  toJSON(options?: ModelToJsonOptions) {
-    let fields = _.clone(this);
+  public toJSON(options?: ModelToJsonOptions): KeyValuePair<any> {
+    let fields: KeyValuePair<any> = _.toPlainObject(this);
     let hiddenFields: string[] = Metadata.get(Object.getPrototypeOf(this), 'model:hidden') || [];
     if (options && Array.isArray(options.hidden) && options.hidden.length) {
       hiddenFields = hiddenFields.concat(options.hidden);

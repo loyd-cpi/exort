@@ -1,7 +1,6 @@
 import { Context } from './service';
 import * as express from 'express';
 import { Store, _ } from './misc';
-import * as pathlib from 'path';
 
 /**
  * Application interface
@@ -36,11 +35,16 @@ export class Config extends Store {
   public static load(files: string[]): Config {
     let config = new Config();
     for (let file of files) {
+
       let content = require(file);
-      if (!_.isNone(content.default)) {
-        config.set(pathlib.basename(file), content.default);
+      if (!_.isNone(content) && typeof content == 'object') {
+
+        for (let key in content) {
+          config.set(key, content[key]);
+        }
       }
     }
+
     return config;
   }
 }
@@ -48,12 +52,27 @@ export class Config extends Store {
 /**
  * Initialize application instance and configure
  */
-export function createApplication(rootDir: string, configFiles: string[]): Application {
+export function createApplication(rootDir: string, configFile: string): Application;
+
+/**
+ * Initialize application instance and configure
+ */
+export function createApplication(rootDir: string, configFiles: string[]): Application;
+
+/**
+ * Initialize application instance and configure
+ */
+export function createApplication(rootDir: string, configFiles: string | string[]): Application {
   let app = express() as Application;
   if (typeof app.dir != 'undefined') {
     throw new Error('app.dir is already set. There must be conflict with express');
   }
+
   (app as any).dir = _.trimEnd(rootDir, '/');
+  if (typeof configFiles == 'string') {
+    configFiles = [configFiles];
+  }
+
   configure(app, configFiles);
   return app;
 }

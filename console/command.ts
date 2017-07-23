@@ -1,5 +1,5 @@
-import { checkAppConfig, executeProviders, Application, AppProvider } from './app';
-import { KeyValuePair } from './misc';
+import { checkAppConfig, executeProviders, Application, AppProvider } from '../core/app';
+import { KeyValuePair } from '../core/misc';
 import * as yargs from 'yargs';
 
 /**

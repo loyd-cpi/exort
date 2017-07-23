@@ -1,6 +1,7 @@
 import { checkAppConfig, AppProvider, Application } from '../core/app';
 import { KeyValuePair, _ } from '../core/misc';
 import { createConnection } from 'typeorm';
+import { Model } from './model';
 
 /**
  * Provide sql and nosql connection
@@ -28,9 +29,15 @@ export function provideConnection(modelsDir: string | KeyValuePair<string | stri
       }
 
       for (let dir of dirs) {
+
         let indexModule = require(dir);
         if (!_.isNone(indexModule) && typeof indexModule == 'object') {
-          conn.entities = conn.entities.concat((Object as any).values(indexModule));
+
+          for (let modelClassName in indexModule) {
+            if (_.classExtends(indexModule[modelClassName], Model)) {
+              conn.entities.push(indexModule[modelClassName]);
+            }
+          }
         }
       }
 

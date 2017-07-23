@@ -1,5 +1,5 @@
 import { checkAppConfig, Application, AppProvider } from './app';
-import { Response, Request } from './http';
+import { Response, Request } from '../web/http';
 import * as express from 'express';
 import { _, Store } from './misc';
 
@@ -121,5 +121,18 @@ export abstract class Service {
    */
   protected make<U extends Service>(serviceClass: new(...args: any[]) => U): U {
     return this.context.make(serviceClass);
+  }
+}
+
+/**
+ * ServiceError class
+ */
+export class ServiceError extends Error {
+
+  /**
+   * ServiceError constructor
+   */
+  constructor(message: string) {
+    super(message);
   }
 }

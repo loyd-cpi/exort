@@ -1,5 +1,5 @@
 import { AppProvider, Application } from '../core/app';
-import { Console, Argv } from '../core/command';
+import { Console, Argv } from '../console/command';
 import { getConnectionManager } from 'typeorm';
 import { File } from '../core/filesystem';
 import { SeedService } from './service';

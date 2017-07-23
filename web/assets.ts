@@ -1,8 +1,8 @@
-import { checkAppConfig, Application, AppProvider } from './app';
+import { checkAppConfig, Application, AppProvider } from '../core/app';
 import * as favicon from 'serve-favicon';
 import * as express from 'express';
+import { _ } from '../core/misc';
 import * as pathlib from 'path';
-import { _ } from './misc';
 
 /**
  * Install assets

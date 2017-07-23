@@ -1,9 +1,8 @@
-import { checkAppConfig, Application, AppProvider } from './app';
-import { Request, HttpError, Input, Response } from './http';
-import { FormValidationError } from './validation';
-import { Context } from './service';
+import { Request, HttpMiddleware, HttpController, Response, HttpError } from './http';
+import { checkAppConfig, Application, AppProvider } from '../core/app';
+import { FormValidationError } from '../core/validation';
 import * as express from 'express';
-import { _ } from './misc';
+import { _ } from '../core/misc';
 
 /**
  * Provide routes
@@ -61,66 +60,6 @@ export function provideRoutes(routesFile: string, controllersDir: string, middle
  * RouterOptions interface
  */
 export interface RouterOptions extends express.RouterOptions {}
-
-/**
- * Abstract Controller class
- */
-export abstract class Controller {
-
-  /**
-   * Controller constructor
-   */
-  constructor(protected readonly context: Context) {}
-}
-
-/**
- * Abstract HttpController class
- */
-export abstract class HttpController extends Controller {
-
-  /**
-   * HttpController constructor
-   */
-  constructor(protected readonly request: Request, protected readonly response: Response) {
-    super(request.context);
-  }
-
-  /**
-   * Getter for request.input
-   */
-  protected get input(): Input {
-    return this.request.input;
-  }
-}
-
-/**
- * Abstract Middleware class
- */
-export abstract class Middleware {
-
-  /**
-   * Middleware constructor
-   */
-  constructor(protected readonly context: Context) {}
-}
-
-/**
- * HttpMiddleware class
- */
-export abstract class HttpMiddleware extends Middleware {
-
-  /**
-   * HttpMiddleware constructor
-   */
-  constructor(protected readonly request: Request, protected readonly response: Response) {
-    super(request.context);
-  }
-
-  /**
-   * Abstract handle method
-   */
-  public abstract async handle(next: express.NextFunction): Promise<void>;
-}
 
 /**
  * RouterOptions interfaces

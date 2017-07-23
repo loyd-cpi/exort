@@ -1,8 +1,8 @@
-import { checkAppConfig, executeProviders, AppProvider, Application } from './app';
-import { Service, Context } from './service';
-import { KeyValuePair, Store } from './misc';
+import { checkAppConfig, executeProviders, AppProvider, Application } from '../core/app';
+import { Service, Context } from '../core/service';
+import { KeyValuePair, Store } from '../core/misc';
 import * as formidable from 'formidable';
-import { File } from './filesystem';
+import { File } from '../core/filesystem';
 import { Session } from './session';
 import * as express from 'express';
 import * as pathlib from 'path';
@@ -22,17 +22,17 @@ export interface Request extends express.Request {
   /**
    * Contains parsed request body
    */
-  body: KeyValuePair<string>;
+  readonly body: KeyValuePair<string>;
 
   /**
    * Session object
    */
-  session: Session;
+  readonly session: Session;
 
   /**
    * Input object that contains parsed body and query string
    */
-  input: Input;
+  readonly input: Input;
 
   /**
    * Make an instance of service
@@ -43,6 +43,11 @@ export interface Request extends express.Request {
    * Context instance
    */
   readonly context: Context;
+
+  /**
+   * Application instance
+   */
+  readonly app: Application;
 }
 
 /**
@@ -67,7 +72,7 @@ export function provideBodyParser(): AppProvider {
 
     app.use((req: Request, res: express.Response, next: Function) => {
 
-      req.body = {};
+      (req as any).body = {};
       (req as any)._files = {};
 
       let form = new formidable.IncomingForm();
@@ -81,7 +86,7 @@ export function provideBodyParser(): AppProvider {
         if (err) return next(err);
 
         if (fields) {
-          req.body = qs.parse(fields);
+          (req as any).body = qs.parse(fields);
         }
 
         let totalUploadSize = 0;
@@ -90,11 +95,11 @@ export function provideBodyParser(): AppProvider {
             if (Array.isArray(files[key])) {
 
               (req as any)._files[key] = [];
-              (req as any)._files[key].forEach((file: formidable.File) => {
+              for (let file of files[key] as any) {
                 let uploaded = new UploadedFile(file);
                 totalUploadSize += uploaded.size;
                 (req as any)._files[key].push(uploaded);
-              });
+              }
 
             } else {
               let uploaded = new UploadedFile(files[key]);
@@ -108,7 +113,7 @@ export function provideBodyParser(): AppProvider {
           return next(new Error('Reached upload max size'));
         }
 
-        req.input = new Input(req);
+        (req as any).input = new Input(req);
         next();
       });
     });
@@ -196,7 +201,7 @@ export class Input extends Store {
    */
   public files(key: string): UploadedFile[] {
     if (!Array.isArray(this.fileInput[key])) {
-      return [this.fileInput[key]];
+      return this.fileInput[key] ? [this.fileInput[key]] : [];
     }
     return this.fileInput[key];
   }
@@ -358,3 +363,55 @@ export class HttpError extends Error {
     }
   }
 }
+
+/**
+ * Abstract HttpHandler class
+ */
+export abstract class HttpHandler<Vars, Params> {
+
+  /**
+   * Context instance
+   */
+  protected readonly context: Context;
+
+  /**
+   * Request input instance
+   */
+  protected readonly input: Input;
+
+  /**
+   * Express response locals object
+   */
+  protected readonly vars: Vars;
+
+  /**
+   * Express request params object
+   */
+  protected readonly params: Params;
+
+  /**
+   * HttpHandler constructor
+   */
+  constructor(protected readonly request: Request, protected readonly response: Response) {
+    this.context = request.context;
+    this.input = request.input;
+    this.vars = response.locals;
+    this.params = request.params as any;
+  }
+}
+
+/**
+ * HttpMiddleware class
+ */
+export abstract class HttpMiddleware<Vars, Params> extends HttpHandler<Vars, Params> {
+
+  /**
+   * Abstract handle method
+   */
+  public abstract async handle(next: express.NextFunction): Promise<void>;
+}
+
+/**
+ * Abstract HttpController class
+ */
+export abstract class HttpController<Vars, Params> extends HttpHandler<Vars, Params> {}

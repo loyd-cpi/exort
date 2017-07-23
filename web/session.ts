@@ -1,8 +1,8 @@
-import { checkAppConfig, Application, AppProvider } from './app';
+import { checkAppConfig, Application, AppProvider } from '../core/app';
 import * as expressSession from 'express-session';
 import * as express from 'express';
 import { Request } from './http';
-import { _ } from './misc';
+import { _ } from '../core/misc';
 
 /**
  * Session class
@@ -222,7 +222,7 @@ export function provideSessionStorage(): AppProvider {
       sessionFn(request, response, err => {
 
         if (err) return next(err);
-        request.session = new Session(request.session);
+        (request as any).session = new Session(request.session);
         next();
       });
     });

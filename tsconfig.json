@@ -19,6 +19,8 @@
   ],
   "include": [
     "core/**/*.ts",
-    "db/**/*.ts"
+    "db/**/*.ts",
+    "web/**/*.ts",
+    "console/**/*.ts"
   ]
 }
