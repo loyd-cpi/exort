@@ -16,5 +16,5 @@ export declare class Model extends BaseModel {
     /**
      * Get a JSON serializable object
      */
-    toJSON(options?: ModelToJsonOptions): KeyValuePair<any>;
+    toJSON(options?: ModelToJsonOptions): KeyValuePair;
 }

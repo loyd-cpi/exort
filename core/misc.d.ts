@@ -2,7 +2,7 @@ import * as lodash from 'lodash';
 /**
  * Standard object interface
  */
-export interface KeyValuePair<T> {
+export interface KeyValuePair<T = any> {
     [key: string]: T;
 }
 /**
@@ -60,15 +60,15 @@ export { _ };
  * Store class
  */
 export declare class Store {
-    protected content: KeyValuePair<any>;
+    protected content: KeyValuePair;
     /**
      * Store constructor
      */
-    constructor(content?: KeyValuePair<any>);
+    constructor(content?: KeyValuePair);
     /**
      * Get all
      */
-    all(): KeyValuePair<any>;
+    all(): KeyValuePair;
     /**
      * Merge another Store object
      */

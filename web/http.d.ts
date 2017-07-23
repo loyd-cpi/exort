@@ -53,11 +53,11 @@ export declare class Input extends Store {
     /**
      * Get input except for specified fields
      */
-    except(exception: string[]): KeyValuePair<any>;
+    except(exception: string[]): KeyValuePair;
     /**
      * Get input only for specified fields
      */
-    only(fields: string[]): KeyValuePair<any>;
+    only(fields: string[]): KeyValuePair;
     /**
      * Has file
      */
@@ -90,7 +90,7 @@ export declare class UploadedFile extends File {
     /**
      * Get JSON Object
      */
-    toJSON(): KeyValuePair<any>;
+    toJSON(): KeyValuePair;
     /**
      * Check availability of file for processing
      */
@@ -147,7 +147,7 @@ export declare abstract class HttpHandler {
     /**
      * Express response locals object
      */
-    protected readonly vars: KeyValuePair<any>;
+    protected readonly vars: KeyValuePair;
     /**
      * Express request params object
      */

@@ -380,7 +380,7 @@ export declare class Validation extends Service {
     /**
      * Create FormValidator instance
      */
-    createForm(input?: KeyValuePair<any>): FormValidator;
+    createForm(input?: KeyValuePair): FormValidator;
 }
 /**
  * Decorator to create a validator for a class method
