@@ -124,9 +124,16 @@ export declare class HttpError extends Error {
     constructor(statusCode: number, message?: string);
 }
 /**
+ * HttpRequestParams interface
+ */
+export interface HttpRequestParams {
+    [param: string]: string;
+    [captureGroup: number]: string;
+}
+/**
  * Abstract HttpHandler class
  */
-export declare abstract class HttpHandler<Vars, Params> {
+export declare abstract class HttpHandler {
     protected readonly request: Request;
     protected readonly response: Response;
     /**
@@ -140,11 +147,11 @@ export declare abstract class HttpHandler<Vars, Params> {
     /**
      * Express response locals object
      */
-    protected readonly vars: Vars;
+    protected readonly vars: KeyValuePair<any>;
     /**
      * Express request params object
      */
-    protected readonly params: Params;
+    protected readonly params: HttpRequestParams;
     /**
      * HttpHandler constructor
      */
@@ -153,7 +160,7 @@ export declare abstract class HttpHandler<Vars, Params> {
 /**
  * HttpMiddleware class
  */
-export declare abstract class HttpMiddleware<Vars, Params> extends HttpHandler<Vars, Params> {
+export declare abstract class HttpMiddleware extends HttpHandler {
     /**
      * Abstract handle method
      */
@@ -162,5 +169,5 @@ export declare abstract class HttpMiddleware<Vars, Params> extends HttpHandler<V
 /**
  * Abstract HttpController class
  */
-export declare abstract class HttpController<Vars, Params> extends HttpHandler<Vars, Params> {
+export declare abstract class HttpController extends HttpHandler {
 }
