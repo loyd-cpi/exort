@@ -33,8 +33,8 @@ export class Model extends BaseModel {
   /**
    * Get a JSON serializable object
    */
-  public toJSON(options?: ModelToJsonOptions): KeyValuePair<any> {
-    let fields: KeyValuePair<any> = _.toPlainObject(this);
+  public toJSON(options?: ModelToJsonOptions): KeyValuePair {
+    let fields: KeyValuePair = _.toPlainObject(this);
     let hiddenFields: string[] = Metadata.get(Object.getPrototypeOf(this), 'model:hidden') || [];
     if (options && Array.isArray(options.hidden) && options.hidden.length) {
       hiddenFields = hiddenFields.concat(options.hidden);

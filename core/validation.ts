@@ -964,7 +964,7 @@ export class Validation extends Service {
   /**
    * Create FormValidator instance
    */
-  public createForm(input: KeyValuePair<any> = {}): FormValidator {
+  public createForm(input: KeyValuePair = {}): FormValidator {
     return new FormValidator(this, new Store(input));
   }
 }

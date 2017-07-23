@@ -128,7 +128,7 @@ export class Input extends Store {
   /**
    * File input
    */
-  private fileInput: KeyValuePair<any>;
+  private fileInput: KeyValuePair;
 
   /**
    * Input constructor
@@ -152,7 +152,7 @@ export class Input extends Store {
   /**
    * Get input except for specified fields
    */
-  public except(exception: string[]): KeyValuePair<any> {
+  public except(exception: string[]): KeyValuePair {
     let values: KeyValuePair<string> = {};
     let allInput = this.all();
     if (typeof allInput == 'object') {
@@ -168,7 +168,7 @@ export class Input extends Store {
   /**
    * Get input only for specified fields
    */
-  public only(fields: string[]): KeyValuePair<any> {
+  public only(fields: string[]): KeyValuePair {
     let values: KeyValuePair<string> = {};
     for (let field of fields) {
       let value = this.get(field);
@@ -239,7 +239,7 @@ export class UploadedFile extends File {
   /**
    * Get JSON Object
    */
-  public toJSON(): KeyValuePair<any> {
+  public toJSON(): KeyValuePair {
     return {
       name: this.name,
       path: this.path,
@@ -390,7 +390,7 @@ export abstract class HttpHandler {
   /**
    * Express response locals object
    */
-  protected readonly vars: KeyValuePair<any>;
+  protected readonly vars: KeyValuePair;
 
   /**
    * Express request params object

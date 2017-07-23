@@ -15,5 +15,5 @@ export abstract class Model {
   /**
    * Abstract toJSON method
    */
-  public abstract toJSON(options?: ModelToJsonOptions): KeyValuePair<any>;
+  public abstract toJSON(options?: ModelToJsonOptions): KeyValuePair;
 }

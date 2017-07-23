@@ -5,7 +5,7 @@ import * as pathlib from 'path';
 /**
  * Standard object interface
  */
-export interface KeyValuePair<T> {
+export interface KeyValuePair<T = any> {
   [key: string]: T;
 }
 
@@ -175,12 +175,12 @@ export class Store {
   /**
    * Store constructor
    */
-  constructor(protected content: KeyValuePair<any> = {}) {}
+  constructor(protected content: KeyValuePair = {}) {}
 
   /**
    * Get all
    */
-  public all(): KeyValuePair<any> {
+  public all(): KeyValuePair {
     return _.clone(this.content);
   }
 
