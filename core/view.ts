@@ -49,16 +49,18 @@ export interface ViewConfig extends nunjucks.ConfigureOptions {}
 /**
  * Set express application view engine
  */
-export function provideViewEngine(viewsDir: string): AppProvider {
+export function provideViewEngine(viewsDir?: string): AppProvider {
   return async (app: Application): Promise<void> => {
     checkAppConfig(app);
+
+    viewsDir = viewsDir || `${app.rootDir}/views`;
 
     let env = new nunjucks.Environment(new TemplateLoader(viewsDir) as any, app.config.get('view'));
     app.set('views', viewsDir);
     app.engine('html', (filePath: string, options: KeyValuePair<string>, callback: Function) => {
 
       let viewPathObj = pathlib.parse(filePath);
-      let viewFilePath = pathlib.join(viewPathObj.dir.replace(viewsDir, ''), viewPathObj.name);
+      let viewFilePath = pathlib.join(viewPathObj.dir.replace(viewsDir as string, ''), viewPathObj.name);
       env.render(viewFilePath, options, (err, res: string) => {
 
         if (err) return callback(err);

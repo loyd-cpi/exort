@@ -6,8 +6,13 @@ import * as fs from 'fs';
 /**
  * Load environment file and setup namespace
  */
-export function setupEnvironmentAndNamespace(directory: string): void {
-  directory = _.trimEnd(directory, '/');
+export function setupEnvironmentAndNamespace(directory?: string): void {
+  if (directory) {
+    directory = _.trimEnd(directory, '/');
+  } else {
+    directory = process.cwd();
+  }
+
   dotenv.config({ path: `${directory}/.env`, silent: true });
 
   try {

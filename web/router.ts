@@ -1,20 +1,29 @@
-import { Request, HttpMiddleware, HttpController, Response, HttpError } from './http';
 import { checkAppConfig, Application, AppProvider } from '../core/app';
-import { FormValidationError } from '../core/validation';
+import { HttpMiddleware, HttpController } from './handler';
+import { Request, Response } from './http';
 import * as express from 'express';
 import { _ } from '../core/misc';
 
 /**
  * Provide routes
  */
-export function provideRoutes(routesFile: string, controllersDir: string, middlewareDir: string): AppProvider {
-  controllersDir = _.trimEnd(controllersDir, '/');
-  middlewareDir = _.trimEnd(middlewareDir, '/');
-
+export function provideRoutes(routesModule?: string, controllersDir?: string, middlewareDir?: string): AppProvider {
   return async (app: Application): Promise<void> => {
     checkAppConfig(app);
 
-    let routes = require(routesFile);
+    if (controllersDir) {
+      controllersDir = _.trimEnd(controllersDir, '/');
+    } else {
+      controllersDir = `${app.bootDir}/controllers`;
+    }
+
+    if (middlewareDir) {
+      middlewareDir = _.trimEnd(middlewareDir, '/');
+    } else {
+      middlewareDir = `${app.bootDir}/middleware`;
+    }
+
+    let routes = require(routesModule || `${app.bootDir}/routes`);
     if (typeof routes != 'object') {
       throw new Error('Invalid routes file');
     }
@@ -25,34 +34,34 @@ export function provideRoutes(routesFile: string, controllersDir: string, middle
       app.use(router.getExpressRouter());
     }
 
-    app.use((err: Error, req: Request, res: Response, next: express.NextFunction) => {
+    // app.use((err: Error, req: Request, res: Response, next: express.NextFunction) => {
 
-      let details: any = {
-        name: err.name,
-        message: err.message,
-      };
+    //   let details: any = {
+    //     name: err.name,
+    //     message: err.message,
+    //   };
 
-      if (app.config.get('app.env') != 'production') {
-        details.stack = err.stack;
-      }
+    //   if (app.config.get('app.env') != 'production') {
+    //     details.stack = err.stack;
+    //   }
 
-      if (err instanceof FormValidationError) {
-        details.fields = err.fields;
-        res.status(422);
-      } else if (err instanceof HttpError) {
-        res.status(err.statusCode);
-      } else {
-        res.status(500);
-      }
+    //   if (err instanceof FormValidationError) {
+    //     details.fields = err.fields;
+    //     res.status(422);
+    //   } else if (err instanceof HttpError) {
+    //     res.status(err.statusCode);
+    //   } else {
+    //     res.status(500);
+    //   }
 
-      if (req.accepts('json')) {
-        res.json({ error: details });
-      } else if (req.accepts('html')) {
-        res.render(`errors/${res.statusCode}`, { error: details });
-      } else {
-        res.send(JSON.stringify(details));
-      }
-    });
+    //   if (req.accepts('json')) {
+    //     res.json({ error: details });
+    //   } else if (req.accepts('html')) {
+    //     res.render(`errors/${res.statusCode}`, { error: details });
+    //   } else {
+    //     res.send(JSON.stringify(details));
+    //   }
+    // });
   };
 }
 
@@ -116,21 +125,21 @@ export class Router {
   }
 
   /**
-   * Set global for this current Router instance
+   * Set global route middleware for this current Router instance
    */
   public middleware(handler: express.RequestHandler): void;
 
   /**
-   * Set global for this current Router instance
+   * Set global route middleware for this current Router instance
    */
   public middleware(className: string): void;
 
   /**
-   * Set global for this current Router instance
+   * Set global route middleware for this current Router instance
    */
   public middleware(classNameOrHandler: string | express.RequestHandler) {
     if (typeof classNameOrHandler == 'string') {
-      classNameOrHandler = this.findMiddleware(classNameOrHandler);
+      classNameOrHandler = this.findRouteMiddleware(classNameOrHandler);
     }
     this.middlewareHandlers.push(classNameOrHandler);
   }
@@ -138,7 +147,7 @@ export class Router {
   /**
    * Resolve and return middleware instance
    */
-  private findMiddleware(className: string) {
+  private findRouteMiddleware(className: string) {
     const middlewareClass = _.requireClass(`${this.middlewareDir}/${className}`);
     if (!_.classExtends(middlewareClass, HttpMiddleware)) {
       throw new Error(`${className} doesn't extend HttpMiddleware`)
@@ -168,7 +177,7 @@ export class Router {
     if (Array.isArray(middleware)) {
       for (let mware of middleware) {
         if (typeof mware == 'string') {
-          mware = this.findMiddleware(mware);
+          mware = this.findRouteMiddleware(mware);
         }
         middlewareHandlers.push(mware);
       }

@@ -1,6 +1,8 @@
 import '../common';
 
 export * from './assets';
+export * from './error';
+export * from './handler';
 export * from './http';
 export * from './router';
 export * from './session';

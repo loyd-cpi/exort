@@ -3,6 +3,7 @@ import '../common';
 export * from './app';
 export * from './crypto';
 export * from './environment';
+export * from './error';
 export * from './filesystem';
 export * from './logger';
 export * from './mime';

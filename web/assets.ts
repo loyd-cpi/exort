@@ -36,6 +36,11 @@ export function provideAssets(): AppProvider {
 export function provideFavicon(faviconPath: string): AppProvider {
   return async (app: Application): Promise<void> => {
     checkAppConfig(app);
+
+    if (!pathlib.isAbsolute(faviconPath)) {
+      faviconPath = pathlib.join(app.rootDir, faviconPath);
+    }
+
     app.use(favicon(faviconPath, app.config.get('assets.favicon')));
   };
 }

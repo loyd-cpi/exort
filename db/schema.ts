@@ -1,4 +1,4 @@
-import { AppProvider, Application } from '../core/app';
+import { AppProvider, Application, checkAppConfig } from '../core/app';
 import { Console, Argv } from '../console/command';
 import { getConnectionManager } from 'typeorm';
 import { File } from '../core/filesystem';
@@ -25,10 +25,21 @@ export class {class} extends SeedService {
 /**
  * Provide schema commands
  */
-export function provideSchemaCommands(databaseSourceDir: string, databaseDistDir: string): AppProvider {
-  databaseSourceDir = _.trimEnd(databaseSourceDir, '/');
-  databaseDistDir = _.trimEnd(databaseDistDir, '/');
+export function provideSchemaCommands(databaseSourceDir?: string, databaseDistDir?: string): AppProvider {
   return async (app: Application): Promise<void> => {
+    checkAppConfig(app);
+
+    if (databaseSourceDir) {
+      databaseSourceDir = _.trimEnd(databaseSourceDir, '/');
+    } else {
+      databaseSourceDir = `${app.rootDir}/src/server/database`;
+    }
+
+    if (databaseDistDir) {
+      databaseDistDir = _.trimEnd(databaseDistDir, '/');
+    } else {
+      databaseDistDir = `${app.dir}/database`;
+    }
 
     Console.addCommand({
       command: 'schema:sync',

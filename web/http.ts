@@ -11,7 +11,6 @@ import * as http from 'http';
 import * as os from 'os';
 import * as fs from 'fs';
 
-const STATUSES = require('statuses');
 const qs = require('qs');
 
 /**
@@ -64,7 +63,7 @@ export function provideBodyParser(): AppProvider {
     requestConf.tmpUploadDir = requestConf.tmpUploadDir || os.tmpdir();
 
     if (!pathlib.isAbsolute(requestConf.tmpUploadDir)) {
-      requestConf.tmpUploadDir = pathlib.join(app.dir, requestConf.tmpUploadDir);
+      requestConf.tmpUploadDir = pathlib.join(app.rootDir, requestConf.tmpUploadDir);
     }
 
     let postMaxSize = bytes.parse(requestConf.postMaxSize);
@@ -344,82 +343,3 @@ export function startServer(app: Application, providers: AppProvider[]): Promise
       .catch(err => reject(err));
   });
 }
-
-/**
- * HttpError class
- */
-export class HttpError extends Error {
-
-  /**
-   * HttpError constructor
-   */
-  constructor(public statusCode: number, message?: string) {
-    super(message || STATUSES[statusCode]);
-    if (statusCode < 400) {
-      throw new Error('HttpError only accepts status codes greater than 400');
-    }
-    if (!STATUSES[statusCode]) {
-      throw new Error('HttpError invalid status code');
-    }
-  }
-}
-
-/**
- * HttpRequestParams interface
- */
-export interface HttpRequestParams {
-  [param: string]: string;
-  [captureGroup: number]: string;
-}
-
-/**
- * Abstract HttpHandler class
- */
-export abstract class HttpHandler {
-
-  /**
-   * Context instance
-   */
-  protected readonly context: Context;
-
-  /**
-   * Request input instance
-   */
-  protected readonly input: Input;
-
-  /**
-   * Express response locals object
-   */
-  protected readonly vars: KeyValuePair;
-
-  /**
-   * Express request params object
-   */
-  protected readonly params: HttpRequestParams;
-
-  /**
-   * HttpHandler constructor
-   */
-  constructor(protected readonly request: Request, protected readonly response: Response) {
-    this.context = request.context;
-    this.input = request.input;
-    this.vars = response.locals;
-    this.params = request.params;
-  }
-}
-
-/**
- * HttpMiddleware class
- */
-export abstract class HttpMiddleware extends HttpHandler {
-
-  /**
-   * Abstract handle method
-   */
-  public abstract async handle(next: express.NextFunction): Promise<void>;
-}
-
-/**
- * Abstract HttpController class
- */
-export abstract class HttpController extends HttpHandler {}

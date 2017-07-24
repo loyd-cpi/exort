@@ -1,6 +1,7 @@
 import { Context } from './service';
 import * as express from 'express';
 import { Store, _ } from './misc';
+import * as pathlib from 'path';
 
 /**
  * Application interface
@@ -13,9 +14,19 @@ export interface Application extends express.Server {
   readonly config: Config;
 
   /**
-   * Application root directory
+   * Application directory which contains models and services directory
    */
   readonly dir: string;
+
+  /**
+   * Root or the current working directory
+   */
+  readonly rootDir: string;
+
+  /**
+   * Boot directory ex. http folder or console folder
+   */
+  readonly bootDir: string;
 
   /**
    * Single instance of context.
@@ -52,24 +63,37 @@ export class Config extends Store {
 /**
  * Initialize application instance and configure
  */
-export function createApplication(rootDir: string, configFile: string): Application;
+export function createApplication(bootDir: string, configFile?: string): Application;
 
 /**
  * Initialize application instance and configure
  */
-export function createApplication(rootDir: string, configFiles: string[]): Application;
+export function createApplication(bootDir: string, configFiles?: string[]): Application;
 
 /**
  * Initialize application instance and configure
  */
-export function createApplication(rootDir: string, configFiles: string | string[]): Application {
+export function createApplication(bootDir: string, configFiles?: string | string[]): Application {
   let app = express() as Application;
-  if (typeof app.dir != 'undefined') {
-    throw new Error('app.dir is already set. There must be conflict with express');
+  if (typeof app.rootDir != 'undefined') {
+    throw new Error('app.rootDir is already set. There might be conflict with express');
   }
 
-  (app as any).dir = _.trimEnd(rootDir, '/');
-  if (typeof configFiles == 'string') {
+  if (typeof app.bootDir != 'undefined') {
+    throw new Error('app.bootDir is already set. There might be conflict with express');
+  }
+
+  if (typeof app.dir != 'undefined') {
+    throw new Error('app.dir is already set. There might be conflict with express');
+  }
+
+  (app as any).rootDir = process.cwd();
+  (app as any).bootDir = _.trimEnd(bootDir, '/');
+  (app as any).dir = pathlib.dirname(app.bootDir);
+
+  if (typeof configFiles == 'undefined') {
+    configFiles = [`${app.dir}/config`];
+  } else if (typeof configFiles == 'string') {
     configFiles = [configFiles];
   }
 

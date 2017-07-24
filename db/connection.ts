@@ -6,9 +6,21 @@ import { Model } from './model';
 /**
  * Provide sql and nosql connection
  */
-export function provideConnection(modelsDir: string | KeyValuePair<string | string[]>): AppProvider {
-  return async function (app: Application): Promise<void> {
+export function provideConnection(modelsDir?: string): AppProvider;
+
+/**
+ * Provide sql and nosql connection
+ */
+export function provideConnection(modelsDir?: KeyValuePair<string | string[]>): AppProvider;
+
+/**
+ * Provide sql and nosql connection
+ */
+export function provideConnection(modelsDir?: string | KeyValuePair<string | string[]>): AppProvider {
+  return async (app: Application): Promise<void> => {
     checkAppConfig(app);
+
+    modelsDir = modelsDir || `${app.dir}/models`;
 
     let dbConf = app.config.get('db');
     for (let connectionName of dbConf.auto) {
