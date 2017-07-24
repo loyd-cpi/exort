@@ -10,7 +10,6 @@ const bytes = require("bytes");
 const http = require("http");
 const os = require("os");
 const fs = require("fs");
-const STATUSES = require('statuses');
 const qs = require('qs');
 /**
  * Install body parser
@@ -24,7 +23,7 @@ function provideBodyParser() {
         requestConf.uploadMaxSize = requestConf.uploadMaxSize || '5MB';
         requestConf.tmpUploadDir = requestConf.tmpUploadDir || os.tmpdir();
         if (!pathlib.isAbsolute(requestConf.tmpUploadDir)) {
-            requestConf.tmpUploadDir = pathlib.join(app.dir, requestConf.tmpUploadDir);
+            requestConf.tmpUploadDir = pathlib.join(app.rootDir, requestConf.tmpUploadDir);
         }
         let postMaxSize = bytes.parse(requestConf.postMaxSize);
         let uploadMaxSize = bytes.parse(requestConf.uploadMaxSize);
@@ -261,52 +260,4 @@ function startServer(app, providers) {
     });
 }
 exports.startServer = startServer;
-/**
- * HttpError class
- */
-class HttpError extends Error {
-    /**
-     * HttpError constructor
-     */
-    constructor(statusCode, message) {
-        super(message || STATUSES[statusCode]);
-        this.statusCode = statusCode;
-        if (statusCode < 400) {
-            throw new Error('HttpError only accepts status codes greater than 400');
-        }
-        if (!STATUSES[statusCode]) {
-            throw new Error('HttpError invalid status code');
-        }
-    }
-}
-exports.HttpError = HttpError;
-/**
- * Abstract HttpHandler class
- */
-class HttpHandler {
-    /**
-     * HttpHandler constructor
-     */
-    constructor(request, response) {
-        this.request = request;
-        this.response = response;
-        this.context = request.context;
-        this.input = request.input;
-        this.vars = response.locals;
-        this.params = request.params;
-    }
-}
-exports.HttpHandler = HttpHandler;
-/**
- * HttpMiddleware class
- */
-class HttpMiddleware extends HttpHandler {
-}
-exports.HttpMiddleware = HttpMiddleware;
-/**
- * Abstract HttpController class
- */
-class HttpController extends HttpHandler {
-}
-exports.HttpController = HttpController;
 //# sourceMappingURL=http.js.map

@@ -1,20 +1,29 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const tslib_1 = require("tslib");
-const http_1 = require("./http");
 const app_1 = require("../core/app");
-const validation_1 = require("../core/validation");
+const handler_1 = require("./handler");
 const express = require("express");
 const misc_1 = require("../core/misc");
 /**
  * Provide routes
  */
-function provideRoutes(routesFile, controllersDir, middlewareDir) {
-    controllersDir = misc_1._.trimEnd(controllersDir, '/');
-    middlewareDir = misc_1._.trimEnd(middlewareDir, '/');
+function provideRoutes(routesModule, controllersDir, middlewareDir) {
     return (app) => tslib_1.__awaiter(this, void 0, void 0, function* () {
         app_1.checkAppConfig(app);
-        let routes = require(routesFile);
+        if (controllersDir) {
+            controllersDir = misc_1._.trimEnd(controllersDir, '/');
+        }
+        else {
+            controllersDir = `${app.bootDir}/controllers`;
+        }
+        if (middlewareDir) {
+            middlewareDir = misc_1._.trimEnd(middlewareDir, '/');
+        }
+        else {
+            middlewareDir = `${app.bootDir}/middleware`;
+        }
+        let routes = require(routesModule || `${app.bootDir}/routes`);
         if (typeof routes != 'object') {
             throw new Error('Invalid routes file');
         }
@@ -23,34 +32,30 @@ function provideRoutes(routesFile, controllersDir, middlewareDir) {
             routes.setup(router, app);
             app.use(router.getExpressRouter());
         }
-        app.use((err, req, res, next) => {
-            let details = {
-                name: err.name,
-                message: err.message,
-            };
-            if (app.config.get('app.env') != 'production') {
-                details.stack = err.stack;
-            }
-            if (err instanceof validation_1.FormValidationError) {
-                details.fields = err.fields;
-                res.status(422);
-            }
-            else if (err instanceof http_1.HttpError) {
-                res.status(err.statusCode);
-            }
-            else {
-                res.status(500);
-            }
-            if (req.accepts('json')) {
-                res.json({ error: details });
-            }
-            else if (req.accepts('html')) {
-                res.render(`errors/${res.statusCode}`, { error: details });
-            }
-            else {
-                res.send(JSON.stringify(details));
-            }
-        });
+        // app.use((err: Error, req: Request, res: Response, next: express.NextFunction) => {
+        //   let details: any = {
+        //     name: err.name,
+        //     message: err.message,
+        //   };
+        //   if (app.config.get('app.env') != 'production') {
+        //     details.stack = err.stack;
+        //   }
+        //   if (err instanceof FormValidationError) {
+        //     details.fields = err.fields;
+        //     res.status(422);
+        //   } else if (err instanceof HttpError) {
+        //     res.status(err.statusCode);
+        //   } else {
+        //     res.status(500);
+        //   }
+        //   if (req.accepts('json')) {
+        //     res.json({ error: details });
+        //   } else if (req.accepts('html')) {
+        //     res.render(`errors/${res.statusCode}`, { error: details });
+        //   } else {
+        //     res.send(JSON.stringify(details));
+        //   }
+        // });
     });
 }
 exports.provideRoutes = provideRoutes;
@@ -80,20 +85,20 @@ class Router {
         return this.expressRouter;
     }
     /**
-     * Set global for this current Router instance
+     * Set global route middleware for this current Router instance
      */
     middleware(classNameOrHandler) {
         if (typeof classNameOrHandler == 'string') {
-            classNameOrHandler = this.findMiddleware(classNameOrHandler);
+            classNameOrHandler = this.findRouteMiddleware(classNameOrHandler);
         }
         this.middlewareHandlers.push(classNameOrHandler);
     }
     /**
      * Resolve and return middleware instance
      */
-    findMiddleware(className) {
+    findRouteMiddleware(className) {
         const middlewareClass = misc_1._.requireClass(`${this.middlewareDir}/${className}`);
-        if (!misc_1._.classExtends(middlewareClass, http_1.HttpMiddleware)) {
+        if (!misc_1._.classExtends(middlewareClass, handler_1.HttpMiddleware)) {
             throw new Error(`${className} doesn't extend HttpMiddleware`);
         }
         return (request, response, next) => {
@@ -110,14 +115,14 @@ class Router {
     route(method, path, controller, middleware) {
         const [controllerName, actionName] = controller.split('@');
         const controllerClass = misc_1._.requireClass(`${this.controllersDir}${this.namespace(controllerName)}`);
-        if (!misc_1._.classExtends(controllerClass, http_1.HttpController)) {
+        if (!misc_1._.classExtends(controllerClass, handler_1.HttpController)) {
             throw new Error(`${controllerName} doesn't extend HttpController`);
         }
         const middlewareHandlers = [];
         if (Array.isArray(middleware)) {
             for (let mware of middleware) {
                 if (typeof mware == 'string') {
-                    mware = this.findMiddleware(mware);
+                    mware = this.findRouteMiddleware(mware);
                 }
                 middlewareHandlers.push(mware);
             }

@@ -6,4 +6,4 @@ export declare function syncSchema(connectionName?: string): Promise<void>;
 /**
  * Provide schema commands
  */
-export declare function provideSchemaCommands(databaseSourceDir: string, databaseDistDir: string): AppProvider;
+export declare function provideSchemaCommands(databaseSourceDir?: string, databaseDistDir?: string): AppProvider;

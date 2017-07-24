@@ -44,6 +44,7 @@ exports.TemplateLoader = TemplateLoader;
 function provideViewEngine(viewsDir) {
     return (app) => tslib_1.__awaiter(this, void 0, void 0, function* () {
         app_1.checkAppConfig(app);
+        viewsDir = viewsDir || `${app.rootDir}/views`;
         let env = new nunjucks.Environment(new TemplateLoader(viewsDir), app.config.get('view'));
         app.set('views', viewsDir);
         app.engine('html', (filePath, options, callback) => {

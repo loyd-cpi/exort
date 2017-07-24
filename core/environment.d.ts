@@ -1,7 +1,7 @@
 /**
  * Load environment file and setup namespace
  */
-export declare function setupEnvironmentAndNamespace(directory: string): void;
+export declare function setupEnvironmentAndNamespace(directory?: string): void;
 /**
  * Get environment value
  */

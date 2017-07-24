@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const tslib_1 = require("tslib");
+const app_1 = require("../core/app");
 const command_1 = require("../console/command");
 const typeorm_1 = require("typeorm");
 const filesystem_1 = require("../core/filesystem");
@@ -28,9 +29,20 @@ export class {class} extends SeedService {
  * Provide schema commands
  */
 function provideSchemaCommands(databaseSourceDir, databaseDistDir) {
-    databaseSourceDir = misc_1._.trimEnd(databaseSourceDir, '/');
-    databaseDistDir = misc_1._.trimEnd(databaseDistDir, '/');
     return (app) => tslib_1.__awaiter(this, void 0, void 0, function* () {
+        app_1.checkAppConfig(app);
+        if (databaseSourceDir) {
+            databaseSourceDir = misc_1._.trimEnd(databaseSourceDir, '/');
+        }
+        else {
+            databaseSourceDir = `${app.rootDir}/src/server/database`;
+        }
+        if (databaseDistDir) {
+            databaseDistDir = misc_1._.trimEnd(databaseDistDir, '/');
+        }
+        else {
+            databaseDistDir = `${app.dir}/database`;
+        }
         command_1.Console.addCommand({
             command: 'schema:sync',
             desc: 'Sync models and database schema',

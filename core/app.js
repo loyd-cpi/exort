@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const tslib_1 = require("tslib");
 const express = require("express");
 const misc_1 = require("./misc");
+const pathlib = require("path");
 /**
  * Config class
  */
@@ -27,13 +28,24 @@ exports.Config = Config;
 /**
  * Initialize application instance and configure
  */
-function createApplication(rootDir, configFiles) {
+function createApplication(bootDir, configFiles) {
     let app = express();
-    if (typeof app.dir != 'undefined') {
-        throw new Error('app.dir is already set. There must be conflict with express');
+    if (typeof app.rootDir != 'undefined') {
+        throw new Error('app.rootDir is already set. There might be conflict with express');
     }
-    app.dir = misc_1._.trimEnd(rootDir, '/');
-    if (typeof configFiles == 'string') {
+    if (typeof app.bootDir != 'undefined') {
+        throw new Error('app.bootDir is already set. There might be conflict with express');
+    }
+    if (typeof app.dir != 'undefined') {
+        throw new Error('app.dir is already set. There might be conflict with express');
+    }
+    app.rootDir = process.cwd();
+    app.bootDir = misc_1._.trimEnd(bootDir, '/');
+    app.dir = pathlib.dirname(app.bootDir);
+    if (typeof configFiles == 'undefined') {
+        configFiles = [`${app.dir}/config`];
+    }
+    else if (typeof configFiles == 'string') {
         configFiles = [configFiles];
     }
     configure(app, configFiles);

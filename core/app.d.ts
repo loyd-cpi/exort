@@ -10,9 +10,17 @@ export interface Application extends express.Server {
      */
     readonly config: Config;
     /**
-     * Application root directory
+     * Application directory which contains models and services directory
      */
     readonly dir: string;
+    /**
+     * Root or the current working directory
+     */
+    readonly rootDir: string;
+    /**
+     * Boot directory ex. http folder or console folder
+     */
+    readonly bootDir: string;
     /**
      * Single instance of context.
      * Don't use this to create service instance per request
@@ -31,11 +39,11 @@ export declare class Config extends Store {
 /**
  * Initialize application instance and configure
  */
-export declare function createApplication(rootDir: string, configFile: string): Application;
+export declare function createApplication(bootDir: string, configFile?: string): Application;
 /**
  * Initialize application instance and configure
  */
-export declare function createApplication(rootDir: string, configFiles: string[]): Application;
+export declare function createApplication(bootDir: string, configFiles?: string[]): Application;
 /**
  * Set config object of application
  */

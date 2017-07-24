@@ -34,6 +34,9 @@ exports.provideAssets = provideAssets;
 function provideFavicon(faviconPath) {
     return (app) => tslib_1.__awaiter(this, void 0, void 0, function* () {
         app_1.checkAppConfig(app);
+        if (!pathlib.isAbsolute(faviconPath)) {
+            faviconPath = pathlib.join(app.rootDir, faviconPath);
+        }
         app.use(favicon(faviconPath, app.config.get('assets.favicon')));
     });
 }

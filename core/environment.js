@@ -8,7 +8,12 @@ const fs = require("fs");
  * Load environment file and setup namespace
  */
 function setupEnvironmentAndNamespace(directory) {
-    directory = misc_1._.trimEnd(directory, '/');
+    if (directory) {
+        directory = misc_1._.trimEnd(directory, '/');
+    }
+    else {
+        directory = process.cwd();
+    }
     dotenv.config({ path: `${directory}/.env`, silent: true });
     try {
         fs.mkdirSync(`${directory}/node_modules`);

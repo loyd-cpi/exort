@@ -26,4 +26,4 @@ export interface ViewConfig extends nunjucks.ConfigureOptions {
 /**
  * Set express application view engine
  */
-export declare function provideViewEngine(viewsDir: string): AppProvider;
+export declare function provideViewEngine(viewsDir?: string): AppProvider;

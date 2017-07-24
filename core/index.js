@@ -5,6 +5,7 @@ require("../common");
 tslib_1.__exportStar(require("./app"), exports);
 tslib_1.__exportStar(require("./crypto"), exports);
 tslib_1.__exportStar(require("./environment"), exports);
+tslib_1.__exportStar(require("./error"), exports);
 tslib_1.__exportStar(require("./filesystem"), exports);
 tslib_1.__exportStar(require("./logger"), exports);
 tslib_1.__exportStar(require("./mime"), exports);

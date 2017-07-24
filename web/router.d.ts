@@ -3,7 +3,7 @@ import * as express from 'express';
 /**
  * Provide routes
  */
-export declare function provideRoutes(routesFile: string, controllersDir: string, middlewareDir: string): AppProvider;
+export declare function provideRoutes(routesModule?: string, controllersDir?: string, middlewareDir?: string): AppProvider;
 /**
  * RouterOptions interface
  */
@@ -53,17 +53,17 @@ export declare class Router {
      */
     getExpressRouter(): express.Router;
     /**
-     * Set global for this current Router instance
+     * Set global route middleware for this current Router instance
      */
     middleware(handler: express.RequestHandler): void;
     /**
-     * Set global for this current Router instance
+     * Set global route middleware for this current Router instance
      */
     middleware(className: string): void;
     /**
      * Resolve and return middleware instance
      */
-    private findMiddleware(className);
+    private findRouteMiddleware(className);
     /**
      * Set route using custom method
      */
