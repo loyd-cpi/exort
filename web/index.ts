@@ -1,5 +1,6 @@
 import '../common';
 
+export * from './app';
 export * from './assets';
 export * from './error';
 export * from './handler';

@@ -1,6 +1,7 @@
 import { checkAppConfig, Application, AppProvider } from '../core/app';
 import { HttpMiddleware, HttpController } from './handler';
 import { Request, Response } from './http';
+import { Error } from '../core/error';
 import * as express from 'express';
 import { _ } from '../core/misc';
 
@@ -33,35 +34,6 @@ export function provideRoutes(routesModule?: string, controllersDir?: string, mi
       routes.setup(router, app);
       app.use(router.getExpressRouter());
     }
-
-    // app.use((err: Error, req: Request, res: Response, next: express.NextFunction) => {
-
-    //   let details: any = {
-    //     name: err.name,
-    //     message: err.message,
-    //   };
-
-    //   if (app.config.get('app.env') != 'production') {
-    //     details.stack = err.stack;
-    //   }
-
-    //   if (err instanceof FormValidationError) {
-    //     details.fields = err.fields;
-    //     res.status(422);
-    //   } else if (err instanceof HttpError) {
-    //     res.status(err.statusCode);
-    //   } else {
-    //     res.status(500);
-    //   }
-
-    //   if (req.accepts('json')) {
-    //     res.json({ error: details });
-    //   } else if (req.accepts('html')) {
-    //     res.render(`errors/${res.statusCode}`, { error: details });
-    //   } else {
-    //     res.send(JSON.stringify(details));
-    //   }
-    // });
   };
 }
 

@@ -2,6 +2,7 @@ import { checkAppConfig, Application, AppProvider } from './app';
 import { Response, Request } from '../web/http';
 import * as express from 'express';
 import { _, Store } from './misc';
+import { Error } from './error';
 
 /**
  * BindOptions interface

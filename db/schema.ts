@@ -1,8 +1,9 @@
 import { AppProvider, Application, checkAppConfig } from '../core/app';
-import { Console, Argv } from '../console/command';
+import { Console, Arguments } from '../console/command';
 import { getConnectionManager } from 'typeorm';
 import { File } from '../core/filesystem';
 import { SeedService } from './service';
+import { Error } from '../core/error';
 import { _ } from '../core/misc';
 
 /**
@@ -49,7 +50,7 @@ export function provideSchemaCommands(databaseSourceDir?: string, databaseDistDi
           required: false
         }
       },
-      async handler(argv: Argv) {
+      async handler(argv: Arguments) {
         await syncSchema(argv.connection);
       }
     });
@@ -63,7 +64,7 @@ export function provideSchemaCommands(databaseSourceDir?: string, databaseDistDi
           default: 'DefaultSeeder'
         }
       },
-      async handler(argv: Argv) {
+      async handler(argv: Arguments) {
         let seederClass = _.requireClass(`${databaseDistDir}/seeds/${argv.class}`);
         if (!_.classExtends(seederClass, SeedService)) {
           throw new Error(`${seederClass.name} doesn't extend SeedService`);
@@ -80,7 +81,7 @@ export function provideSchemaCommands(databaseSourceDir?: string, databaseDistDi
           required: true
         }
       },
-      async handler(argv: Argv) {
+      async handler(argv: Arguments) {
         if (await File.exists(`${databaseSourceDir}/seeds/${argv.class}.ts`)) {
           throw new Error(`${argv.class}.ts already exists`);
         }

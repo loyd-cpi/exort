@@ -9,3 +9,4 @@ npm-debug.log
 *.tgz
 .idea
 package-lock.json
+*.sublime-workspace

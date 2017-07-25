@@ -1,6 +1,7 @@
 import { Store, KeyValuePair, Metadata, _ } from './misc';
 import { Service } from './service';
 import * as moment from 'moment';
+import { Error } from './error';
 
 /**
  * Rule interface
@@ -38,7 +39,6 @@ export class FormValidationError extends Error {
    */
   constructor(public readonly fields: KeyValuePair<FieldValidationError[]>, message?: string) {
     super(message || 'Invalid form input');
-    this.name = this.constructor.name;
   }
 
   /**
@@ -60,6 +60,15 @@ export class FormValidationError extends Error {
       }
     }
     return message.join(mergeToken);
+  }
+
+  /**
+   * toJSON method
+   */
+  public toJSON() {
+    let jsonObj = super.toJSON();
+    jsonObj.fields = this.fields;
+    return jsonObj;
   }
 }
 

@@ -2,11 +2,12 @@ import { Context } from './service';
 import * as express from 'express';
 import { Store, _ } from './misc';
 import * as pathlib from 'path';
+import { Error } from './error';
 
 /**
  * Application interface
  */
-export interface Application extends express.Server {
+export interface Application extends express.Express {
 
   /**
    * Config instance
@@ -134,10 +135,31 @@ export interface AppProvider {
 }
 
 /**
- * Execute providers and boot the application
+ * Execute providers
  */
-export async function executeProviders(app: Application, providers: AppProvider[]): Promise<void> {
-  for (let provider of providers) {
+export async function boot(app: Application): Promise<void> {
+  checkAppConfig(app);
+
+  const BootstrapClass = _.requireClass(`${app.bootDir}/Bootstrap`) as new(app: Application) => AppBootstrap;
+  const bootstrap = new BootstrapClass(app);
+
+  for (let provider of bootstrap.provide()) {
     await provider(app);
   }
+}
+
+/**
+ * Abstract AppBootstrap class
+ */
+export abstract class AppBootstrap {
+
+  /**
+   * AppBootstrap constructor
+   */
+  constructor(protected readonly app: Application) {}
+
+  /**
+   * Abstract provide method
+   */
+  public abstract provide(): AppProvider[];
 }

@@ -1,5 +1,5 @@
+import { ErrorHandler, Error } from '../core/error';
 import { Input, Request, Response } from './http';
-import { ErrorHandler } from '../core/error';
 import { KeyValuePair } from '../core/misc';
 import { Context } from '../core/service';
 import * as express from 'express';
@@ -77,9 +77,7 @@ export abstract class HttpErrorHandler extends ErrorHandler {
   }
 
   /**
-   * Render error
+   * Abstract render method
    */
-  public async render(error: Error, request: Request, response: Response): Promise<void> {
-
-  }
+  public abstract async render(error: Error, request: Request, response: Response): Promise<void>;
 }

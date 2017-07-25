@@ -13,7 +13,7 @@ export function setupEnvironmentAndNamespace(directory?: string): void {
     directory = process.cwd();
   }
 
-  dotenv.config({ path: `${directory}/.env`, silent: true });
+  dotenv.config({ path: `${directory}/.env` });
 
   try {
     fs.mkdirSync(`${directory}/node_modules`);

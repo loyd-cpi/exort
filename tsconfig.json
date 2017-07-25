@@ -12,15 +12,5 @@
     "declaration": true,
     "noUnusedLocals": true,
     "importHelpers": true
-  },
-  "files": [
-    "typings/index.d.ts",
-    "common.ts"
-  ],
-  "include": [
-    "core/**/*.ts",
-    "db/**/*.ts",
-    "web/**/*.ts",
-    "console/**/*.ts"
-  ]
+  }
 }

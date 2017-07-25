@@ -1,8 +1,10 @@
-import { checkAppConfig, executeProviders, AppProvider, Application } from '../core/app';
+import { checkAppConfig, boot, AppProvider, Application } from '../core/app';
 import { Service, Context } from '../core/service';
 import { KeyValuePair, Store } from '../core/misc';
-import * as formidable from 'formidable';
+import { provideHttpErrorHandler } from './error';
 import { File } from '../core/filesystem';
+import * as formidable from 'formidable';
+import { Error } from '../core/error';
 import { Session } from './session';
 import * as express from 'express';
 import * as pathlib from 'path';
@@ -311,7 +313,7 @@ export interface Response extends express.Response {}
 /**
  * Start HTTP Server
  */
-export function startServer(app: Application, providers: AppProvider[]): Promise<Application> {
+export function startServer(app: Application): Promise<Application> {
   checkAppConfig(app);
 
   app.disable('x-powered-by');
@@ -326,20 +328,20 @@ export function startServer(app: Application, providers: AppProvider[]): Promise
   });
 
   return new Promise<Application>((resolve, reject) => {
-    executeProviders(app, providers)
-      .then(() => {
+    boot(app).then(() => {
 
-        let server = http.createServer(app);
-        server.on('error', err => reject(err));
-        server.on('listening', () => {
-          let addr = server.address();
-          let bind = typeof addr == 'string' ? `pipe ${addr}` : `port ${addr.port}`;
-          console.log(`Listening on ${bind}`);
-          resolve(app);
-        });
+      provideHttpErrorHandler()(app);
 
-        server.listen(app.config.get('app.port'));
-      })
-      .catch(err => reject(err));
+      const server = http.createServer(app);
+      server.on('error', err => reject(err));
+      server.on('listening', () => {
+        let addr = server.address();
+        let bind = typeof addr == 'string' ? `pipe ${addr}` : `port ${addr.port}`;
+        console.log(`Listening on ${bind}`);
+        resolve(app);
+      });
+
+      server.listen(app.config.get('app.port'));
+    }).catch(err => reject(err));
   });
 }

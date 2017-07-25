@@ -13,3 +13,5 @@ clean.sh
 .gitignore
 .npmignore
 tsconfig.json
+*.sublime-project
+*.sublime-workspace

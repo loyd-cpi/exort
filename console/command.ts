@@ -1,17 +1,23 @@
-import { checkAppConfig, executeProviders, Application, AppProvider } from '../core/app';
-import { KeyValuePair } from '../core/misc';
+import { checkAppConfig, boot, Application } from '../core/app';
 import * as yargs from 'yargs';
 
 /**
  * Argv interface
  */
-export interface Argv extends yargs.Argv {}
+export interface Arguments extends yargs.Arguments {}
 
 /**
  * CommandHandler interface
  */
 export interface CommandHandler {
-  (argv: Argv): Promise<void>;
+  (argv: Arguments): Promise<void>;
+}
+
+/**
+ * CommandParams interface
+ */
+export interface CommandParams {
+  [optionName: string]: yargs.Options;
 }
 
 /**
@@ -20,7 +26,7 @@ export interface CommandHandler {
 export interface CommandOptions {
   command: string;
   desc: string;
-  params: KeyValuePair<yargs.Options>;
+  params: CommandParams;
   handler: CommandHandler;
 }
 
@@ -33,7 +39,7 @@ export namespace Console {
    * Add command
    */
   export function addCommand(options: CommandOptions): void {
-    yargs.command(options.command, options.desc, options.params, (argv: yargs.Argv) => {
+    yargs.command(options.command, options.desc, options.params, (argv: Arguments) => {
       options.handler(argv)
         .then(() => {
           console.log(`\n\n${options.command} done`);
@@ -57,9 +63,9 @@ export namespace Console {
 /**
  * Start CLI and you can only execute it once
  */
-export async function startConsole(app: Application, providers: AppProvider[]): Promise<void> {
+export async function startConsole(app: Application): Promise<void> {
   checkAppConfig(app);
-  await executeProviders(app, providers);
+  await boot(app);
   yargs.help('help');
   Console.execute(process.argv.slice(2));
 }
