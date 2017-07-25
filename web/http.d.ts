@@ -1,8 +1,8 @@
 import { AppProvider, Application } from '../core/app';
 import { Service, Context } from '../core/service';
 import { KeyValuePair, Store } from '../core/misc';
-import * as formidable from 'formidable';
 import { File } from '../core/filesystem';
+import * as formidable from 'formidable';
 import { Session } from './session';
 import * as express from 'express';
 /**
@@ -112,4 +112,4 @@ export interface Response extends express.Response {
 /**
  * Start HTTP Server
  */
-export declare function startServer(app: Application, providers: AppProvider[]): Promise<Application>;
+export declare function startServer(app: Application): Promise<Application>;

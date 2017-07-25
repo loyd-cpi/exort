@@ -4,6 +4,7 @@ const tslib_1 = require("tslib");
 const misc_1 = require("./misc");
 const service_1 = require("./service");
 const moment = require("moment");
+const error_1 = require("./error");
 /**
  * Convert field name to field label
  */
@@ -13,14 +14,13 @@ function fieldLabelCase(fieldName) {
 /**
  * FormValidationError class
  */
-class FormValidationError extends Error {
+class FormValidationError extends error_1.Error {
     /**
      * FormValidationError constructor
      */
     constructor(fields, message) {
         super(message || 'Invalid form input');
         this.fields = fields;
-        this.name = this.constructor.name;
     }
     /**
      * Get first error message from a particular field
@@ -41,6 +41,14 @@ class FormValidationError extends Error {
             }
         }
         return message.join(mergeToken);
+    }
+    /**
+     * toJSON method
+     */
+    toJSON() {
+        let jsonObj = super.toJSON();
+        jsonObj.fields = this.fields;
+        return jsonObj;
     }
 }
 exports.FormValidationError = FormValidationError;
@@ -856,7 +864,7 @@ exports.Validation = Validation;
 function Validate() {
     return (target, propertyKey, desc) => {
         if (typeof desc.value != 'function') {
-            throw new Error(`${propertyKey} is not valid for Validate decorator. Must be a function`);
+            throw new error_1.Error(`${propertyKey} is not valid for Validate decorator. Must be a function`);
         }
         const originalMethod = desc.value;
         const paramNames = misc_1._.getFunctionParamNames(originalMethod);

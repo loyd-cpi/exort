@@ -1,3 +1,4 @@
+/// <reference types="nunjucks" />
 import { AppProvider } from './app';
 import * as nunjucks from 'nunjucks';
 /**

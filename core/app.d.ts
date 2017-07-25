@@ -4,7 +4,7 @@ import { Store } from './misc';
 /**
  * Application interface
  */
-export interface Application extends express.Server {
+export interface Application extends express.Express {
     /**
      * Config instance
      */
@@ -59,6 +59,20 @@ export interface AppProvider {
     (app: Application): Promise<void>;
 }
 /**
- * Execute providers and boot the application
+ * Execute providers
  */
-export declare function executeProviders(app: Application, providers: AppProvider[]): Promise<void>;
+export declare function boot(app: Application): Promise<void>;
+/**
+ * Abstract AppBootstrap class
+ */
+export declare abstract class AppBootstrap {
+    protected readonly app: Application;
+    /**
+     * AppBootstrap constructor
+     */
+    constructor(app: Application);
+    /**
+     * Abstract provide method
+     */
+    abstract provide(): AppProvider[];
+}

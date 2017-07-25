@@ -3,8 +3,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const tslib_1 = require("tslib");
 const app_1 = require("../core/app");
 const misc_1 = require("../core/misc");
-const formidable = require("formidable");
+const error_1 = require("./error");
 const filesystem_1 = require("../core/filesystem");
+const formidable = require("formidable");
+const error_2 = require("../core/error");
 const pathlib = require("path");
 const bytes = require("bytes");
 const http = require("http");
@@ -61,7 +63,7 @@ function provideBodyParser() {
                     }
                 }
                 if (totalUploadSize > uploadMaxSize) {
-                    return next(new Error('Reached upload max size'));
+                    return next(new error_2.Error('Reached upload max size'));
                 }
                 req.input = new Input(req);
                 next();
@@ -195,7 +197,7 @@ class UploadedFile extends filesystem_1.File {
      */
     move(destination, fileName) {
         if (this.isMovedOrInProcess()) {
-            throw new Error('File is already moved or in process');
+            throw new error_2.Error('File is already moved or in process');
         }
         this.processing = true;
         destination = pathlib.join(destination, fileName || this.name);
@@ -232,7 +234,7 @@ exports.UploadedFile = UploadedFile;
 /**
  * Start HTTP Server
  */
-function startServer(app, providers) {
+function startServer(app) {
     app_1.checkAppConfig(app);
     app.disable('x-powered-by');
     app.disable('strict routing');
@@ -244,9 +246,9 @@ function startServer(app, providers) {
         next();
     });
     return new Promise((resolve, reject) => {
-        app_1.executeProviders(app, providers)
-            .then(() => {
-            let server = http.createServer(app);
+        app_1.boot(app).then(() => {
+            error_1.provideHttpErrorHandler()(app);
+            const server = http.createServer(app);
             server.on('error', err => reject(err));
             server.on('listening', () => {
                 let addr = server.address();
@@ -255,8 +257,7 @@ function startServer(app, providers) {
                 resolve(app);
             });
             server.listen(app.config.get('app.port'));
-        })
-            .catch(err => reject(err));
+        }).catch(err => reject(err));
     });
 }
 exports.startServer = startServer;

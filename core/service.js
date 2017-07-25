@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const tslib_1 = require("tslib");
 const app_1 = require("./app");
 const misc_1 = require("./misc");
+const error_1 = require("./error");
 /**
  * Bind a resolve function to solve circular dependency
  */
@@ -46,7 +47,7 @@ class Context {
             return this.resolvedInstances.get(serviceClass);
         }
         if (!misc_1._.classExtends(serviceClass, Service)) {
-            throw new Error(`${serviceClass.name} is not a Service class`);
+            throw new error_1.Error(`${serviceClass.name} is not a Service class`);
         }
         let instance = Reflect.construct(serviceClass, [this]);
         this.resolvedInstances.set(serviceClass, instance);
@@ -98,7 +99,7 @@ exports.Service = Service;
 /**
  * ServiceError class
  */
-class ServiceError extends Error {
+class ServiceError extends error_1.Error {
     /**
      * ServiceError constructor
      */

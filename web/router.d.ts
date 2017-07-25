@@ -1,3 +1,4 @@
+/// <reference types="express" />
 import { AppProvider } from '../core/app';
 import * as express from 'express';
 /**

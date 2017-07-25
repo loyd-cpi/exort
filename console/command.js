@@ -36,10 +36,10 @@ var Console;
 /**
  * Start CLI and you can only execute it once
  */
-function startConsole(app, providers) {
+function startConsole(app) {
     return tslib_1.__awaiter(this, void 0, void 0, function* () {
         app_1.checkAppConfig(app);
-        yield app_1.executeProviders(app, providers);
+        yield app_1.boot(app);
         yargs.help('help');
         Console.execute(process.argv.slice(2));
     });

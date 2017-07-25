@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const tslib_1 = require("tslib");
 const app_1 = require("../core/app");
 const handler_1 = require("./handler");
+const error_1 = require("../core/error");
 const express = require("express");
 const misc_1 = require("../core/misc");
 /**
@@ -25,37 +26,13 @@ function provideRoutes(routesModule, controllersDir, middlewareDir) {
         }
         let routes = require(routesModule || `${app.bootDir}/routes`);
         if (typeof routes != 'object') {
-            throw new Error('Invalid routes file');
+            throw new error_1.Error('Invalid routes file');
         }
         if (typeof routes.setup == 'function') {
             let router = new Router(app.config.get('router', {}), controllersDir, middlewareDir);
             routes.setup(router, app);
             app.use(router.getExpressRouter());
         }
-        // app.use((err: Error, req: Request, res: Response, next: express.NextFunction) => {
-        //   let details: any = {
-        //     name: err.name,
-        //     message: err.message,
-        //   };
-        //   if (app.config.get('app.env') != 'production') {
-        //     details.stack = err.stack;
-        //   }
-        //   if (err instanceof FormValidationError) {
-        //     details.fields = err.fields;
-        //     res.status(422);
-        //   } else if (err instanceof HttpError) {
-        //     res.status(err.statusCode);
-        //   } else {
-        //     res.status(500);
-        //   }
-        //   if (req.accepts('json')) {
-        //     res.json({ error: details });
-        //   } else if (req.accepts('html')) {
-        //     res.render(`errors/${res.statusCode}`, { error: details });
-        //   } else {
-        //     res.send(JSON.stringify(details));
-        //   }
-        // });
     });
 }
 exports.provideRoutes = provideRoutes;
@@ -99,7 +76,7 @@ class Router {
     findRouteMiddleware(className) {
         const middlewareClass = misc_1._.requireClass(`${this.middlewareDir}/${className}`);
         if (!misc_1._.classExtends(middlewareClass, handler_1.HttpMiddleware)) {
-            throw new Error(`${className} doesn't extend HttpMiddleware`);
+            throw new error_1.Error(`${className} doesn't extend HttpMiddleware`);
         }
         return (request, response, next) => {
             let middlewareInstance = Reflect.construct(middlewareClass, [request, response]);
@@ -116,7 +93,7 @@ class Router {
         const [controllerName, actionName] = controller.split('@');
         const controllerClass = misc_1._.requireClass(`${this.controllersDir}${this.namespace(controllerName)}`);
         if (!misc_1._.classExtends(controllerClass, handler_1.HttpController)) {
-            throw new Error(`${controllerName} doesn't extend HttpController`);
+            throw new error_1.Error(`${controllerName} doesn't extend HttpController`);
         }
         const middlewareHandlers = [];
         if (Array.isArray(middleware)) {

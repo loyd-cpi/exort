@@ -4,6 +4,7 @@ const tslib_1 = require("tslib");
 const express = require("express");
 const misc_1 = require("./misc");
 const pathlib = require("path");
+const error_1 = require("./error");
 /**
  * Config class
  */
@@ -31,13 +32,13 @@ exports.Config = Config;
 function createApplication(bootDir, configFiles) {
     let app = express();
     if (typeof app.rootDir != 'undefined') {
-        throw new Error('app.rootDir is already set. There might be conflict with express');
+        throw new error_1.Error('app.rootDir is already set. There might be conflict with express');
     }
     if (typeof app.bootDir != 'undefined') {
-        throw new Error('app.bootDir is already set. There might be conflict with express');
+        throw new error_1.Error('app.bootDir is already set. There might be conflict with express');
     }
     if (typeof app.dir != 'undefined') {
-        throw new Error('app.dir is already set. There might be conflict with express');
+        throw new error_1.Error('app.dir is already set. There might be conflict with express');
     }
     app.rootDir = process.cwd();
     app.bootDir = misc_1._.trimEnd(bootDir, '/');
@@ -58,10 +59,10 @@ exports.createApplication = createApplication;
 function configure(app, files) {
     if (typeof app.config != 'undefined') {
         if (app.config instanceof Config) {
-            throw new Error('configure(app) is already called');
+            throw new error_1.Error('configure(app) is already called');
         }
         else {
-            throw new Error('app.config already exists. there must be conflict with express');
+            throw new error_1.Error('app.config already exists. there must be conflict with express');
         }
     }
     let config = app.config = Config.load(files);
@@ -73,19 +74,34 @@ exports.configure = configure;
  */
 function checkAppConfig(app) {
     if (!(app.config instanceof Config)) {
-        throw new Error('Should call configure(app) first');
+        throw new error_1.Error('Should call configure(app) first');
     }
 }
 exports.checkAppConfig = checkAppConfig;
 /**
- * Execute providers and boot the application
+ * Execute providers
  */
-function executeProviders(app, providers) {
+function boot(app) {
     return tslib_1.__awaiter(this, void 0, void 0, function* () {
-        for (let provider of providers) {
+        checkAppConfig(app);
+        const BootstrapClass = misc_1._.requireClass(`${app.bootDir}/Bootstrap`);
+        const bootstrap = new BootstrapClass(app);
+        for (let provider of bootstrap.provide()) {
             yield provider(app);
         }
     });
 }
-exports.executeProviders = executeProviders;
+exports.boot = boot;
+/**
+ * Abstract AppBootstrap class
+ */
+class AppBootstrap {
+    /**
+     * AppBootstrap constructor
+     */
+    constructor(app) {
+        this.app = app;
+    }
+}
+exports.AppBootstrap = AppBootstrap;
 //# sourceMappingURL=app.js.map

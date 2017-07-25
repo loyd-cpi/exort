@@ -4,6 +4,7 @@ const tslib_1 = require("tslib");
 const lodash = require("lodash");
 const crypto = require("crypto");
 const pathlib = require("path");
+const error_1 = require("./error");
 const _ = lodash;
 exports._ = _;
 _.replaceAll = function (str, search, replace) {
@@ -27,14 +28,14 @@ _.require = function (filePath) {
 _.requireClass = function (path) {
     let exportedModule = require(path);
     if (typeof exportedModule != 'object') {
-        throw new Error(`exports from ${path} must be an object`);
+        throw new error_1.Error(`exports from ${path} must be an object`);
     }
     let classToExport = pathlib.basename(path, '.js');
     if (typeof exportedModule[classToExport] != 'function') {
-        throw new Error(`${classToExport} doesn't exists in ${path}`);
+        throw new error_1.Error(`${classToExport} doesn't exists in ${path}`);
     }
     if (exportedModule[classToExport].prototype.constructor.name != classToExport) {
-        throw new Error(`Class name must be the same with the filename in: ${path}`);
+        throw new error_1.Error(`Class name must be the same with the filename in: ${path}`);
     }
     return exportedModule[classToExport];
 };

@@ -1,3 +1,4 @@
+/// <reference types="express-session" />
 import { AppProvider } from '../core/app';
 /**
  * Session class

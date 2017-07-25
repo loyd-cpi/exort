@@ -1,6 +1,7 @@
 import { Store, KeyValuePair } from './misc';
 import { Service } from './service';
 import * as moment from 'moment';
+import { Error } from './error';
 /**
  * Rule interface
  */
@@ -38,6 +39,10 @@ export declare class FormValidationError extends Error {
      * Generate combined error message
      */
     getCompiledMessage(mergeToken?: string): string;
+    /**
+     * toJSON method
+     */
+    toJSON(): KeyValuePair<any>;
 }
 /**
  * Rules class

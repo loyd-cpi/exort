@@ -1,3 +1,5 @@
+import { AppProvider } from '../core/app';
+import { Error } from '../core/error';
 /**
  * HttpError class
  */
@@ -13,6 +15,10 @@ export declare class HttpError extends Error {
  */
 export declare class HttpNotFoundError extends HttpError {
     /**
+     * Status code used
+     */
+    static STATUS_CODE: number;
+    /**
      * HttpNotFoundError constructor
      */
     constructor(message?: string);
@@ -21,6 +27,10 @@ export declare class HttpNotFoundError extends HttpError {
  * HttpBadRequestError class
  */
 export declare class HttpBadRequestError extends HttpError {
+    /**
+     * Status code used
+     */
+    static STATUS_CODE: number;
     /**
      * HttpBadRequestError constructor
      */
@@ -31,6 +41,10 @@ export declare class HttpBadRequestError extends HttpError {
  */
 export declare class HttpEntityError extends HttpError {
     /**
+     * Status code used
+     */
+    static STATUS_CODE: number;
+    /**
      * HttpEntityError constructor
      */
     constructor(message?: string);
@@ -40,7 +54,15 @@ export declare class HttpEntityError extends HttpError {
  */
 export declare class HttpServerError extends HttpError {
     /**
+     * Status code used
+     */
+    static STATUS_CODE: number;
+    /**
      * HttpServerError constructor
      */
     constructor(message?: string);
 }
+/**
+ * Provide HttpErrorHandler
+ */
+export declare function provideHttpErrorHandler(errorHandlerPath?: string): AppProvider;

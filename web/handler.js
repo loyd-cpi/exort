@@ -42,13 +42,6 @@ class HttpErrorHandler extends error_1.ErrorHandler {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
         });
     }
-    /**
-     * Render error
-     */
-    render(error, request, response) {
-        return tslib_1.__awaiter(this, void 0, void 0, function* () {
-        });
-    }
 }
 exports.HttpErrorHandler = HttpErrorHandler;
 //# sourceMappingURL=handler.js.map

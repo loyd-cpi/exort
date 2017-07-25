@@ -6,6 +6,7 @@ const command_1 = require("../console/command");
 const typeorm_1 = require("typeorm");
 const filesystem_1 = require("../core/filesystem");
 const service_1 = require("./service");
+const error_1 = require("../core/error");
 const misc_1 = require("../core/misc");
 /**
  * Sync schema of the connection
@@ -70,7 +71,7 @@ function provideSchemaCommands(databaseSourceDir, databaseDistDir) {
                 return tslib_1.__awaiter(this, void 0, void 0, function* () {
                     let seederClass = misc_1._.requireClass(`${databaseDistDir}/seeds/${argv.class}`);
                     if (!misc_1._.classExtends(seederClass, service_1.SeedService)) {
-                        throw new Error(`${seederClass.name} doesn't extend SeedService`);
+                        throw new error_1.Error(`${seederClass.name} doesn't extend SeedService`);
                     }
                     yield app.context.make(seederClass).run();
                 });
@@ -87,7 +88,7 @@ function provideSchemaCommands(databaseSourceDir, databaseDistDir) {
             handler(argv) {
                 return tslib_1.__awaiter(this, void 0, void 0, function* () {
                     if (yield filesystem_1.File.exists(`${databaseSourceDir}/seeds/${argv.class}.ts`)) {
-                        throw new Error(`${argv.class}.ts already exists`);
+                        throw new error_1.Error(`${argv.class}.ts already exists`);
                     }
                     yield filesystem_1.File.create(`${databaseSourceDir}/seeds/${argv.class}.ts`, SEEDER_TEMPLATE.replace('{class}', argv.class), 'text/plain');
                 });
