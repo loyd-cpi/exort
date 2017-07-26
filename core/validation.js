@@ -879,8 +879,10 @@ function Validate() {
                             continue;
                         validator.addInput(paramNames[paramIndex], args[paramIndex]);
                         let rules = misc_1.Metadata.get(target, `fieldRules:${propertyKey}:${paramIndex}`);
-                        if (typeof rules == 'function') {
-                            rules(validator.field(paramNames[paramIndex], misc_1.Metadata.get(target, `fieldLabel:${propertyKey}:${paramIndex}`)));
+                        if (Array.isArray(rules)) {
+                            for (let rule of rules) {
+                                rule(validator.field(paramNames[paramIndex], misc_1.Metadata.get(target, `fieldLabel:${propertyKey}:${paramIndex}`)));
+                            }
                         }
                     }
                     yield validator.validateAndThrow();
@@ -896,11 +898,17 @@ exports.Validate = Validate;
  */
 function Field(rules, label) {
     return (target, propertyKey, parameterIndex) => {
-        let fnRules = rules;
-        if (typeof rules == 'string') {
-            fnRules = (field) => field[rules]();
+        if (typeof rules == 'string' || typeof rules == 'function') {
+            rules = [rules];
         }
-        misc_1.Metadata.set(target, `fieldRules:${propertyKey}:${parameterIndex}`, fnRules);
+        rules = rules.map(rule => {
+            let fnRule = rule;
+            if (typeof rule == 'string') {
+                fnRule = (field) => field[rule]();
+            }
+            return fnRule;
+        });
+        misc_1.Metadata.set(target, `fieldRules:${propertyKey}:${parameterIndex}`, rules);
         if (label) {
             misc_1.Metadata.set(target, `fieldLabel:${propertyKey}:${parameterIndex}`, label);
         }
