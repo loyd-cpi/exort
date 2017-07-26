@@ -1003,9 +1003,11 @@ export function Validate() {
 
           validator.addInput(paramNames[paramIndex], args[paramIndex]);
 
-          let rules: FieldRule = Metadata.get(target, `fieldRules:${propertyKey}:${paramIndex}`);
-          if (typeof rules == 'function') {
-            rules(validator.field(paramNames[paramIndex], Metadata.get(target, `fieldLabel:${propertyKey}:${paramIndex}`)));
+          let rules: FieldRule[] = Metadata.get(target, `fieldRules:${propertyKey}:${paramIndex}`);
+          if (Array.isArray(rules)) {
+            for (let rule of rules) {
+              rule(validator.field(paramNames[paramIndex], Metadata.get(target, `fieldLabel:${propertyKey}:${paramIndex}`)));
+            }
           }
         }
 
@@ -1027,6 +1029,11 @@ export interface FieldRule {
 /**
  * Decorator to add validation rules on a parameter
  */
+export function Field(rules: (string | FieldRule)[], label?: string): (target: Object, propertyKey: string, parameterIndex: number) => void;
+
+/**
+ * Decorator to add validation rules on a parameter
+ */
 export function Field(rule: string, label?: string): (target: Object, propertyKey: string, parameterIndex: number) => void;
 
 /**
@@ -1037,15 +1044,22 @@ export function Field(rules: FieldRule, label?: string): (target: Object, proper
 /**
  * Decorator to add validation rules on a parameter
  */
-export function Field(rules: string | FieldRule, label?: string) {
+export function Field(rules: string | FieldRule | (string | FieldRule)[], label?: string) {
   return (target: Object, propertyKey: string, parameterIndex: number) => {
 
-    let fnRules = rules;
-    if (typeof rules == 'string') {
-      fnRules = (field) => (field as any)[rules]();
+    if (typeof rules == 'string' || typeof rules == 'function') {
+      rules = [rules];
     }
 
-    Metadata.set(target, `fieldRules:${propertyKey}:${parameterIndex}`, fnRules);
+    rules = rules.map(rule => {
+      let fnRule = rule;
+      if (typeof rule == 'string') {
+        fnRule = (field) => (field as any)[rule]();
+      }
+      return fnRule;
+    });
+
+    Metadata.set(target, `fieldRules:${propertyKey}:${parameterIndex}`, rules);
     if (label) {
       Metadata.set(target, `fieldLabel:${propertyKey}:${parameterIndex}`, label);
     }
