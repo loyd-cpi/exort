@@ -329,12 +329,12 @@ export class FieldValidator {
   /**
    * The field under validation must be present and not empty only if all of the other specified fields are present.
    */
-  public requiredWithAll(otherFields: { name: string, label?: string}[], message?: string): this;
+  public requiredWithAll(otherFields: { name: string, label?: string }[], message?: string): this;
 
   /**
    * The field under validation must be present and not empty only if all of the other specified fields are present.
    */
-  public requiredWithAll(otherFields: ({ name: string, label?: string} | string)[] | string, message?: string): this {
+  public requiredWithAll(otherFields: ({ name: string, label?: string } | string)[] | string, message?: string): this {
     let otherFieldNames: string[] = [];
     let otherFieldLabels: string[] = [];
     if (typeof otherFields == 'string') {

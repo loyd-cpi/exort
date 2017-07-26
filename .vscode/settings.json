@@ -7,12 +7,12 @@
     "**/.hg": true,
     "**/CVS": true,
     "**/.DS_Store": true,
-    "typings": true,
-    "node_modules": true,
+    "**/*.sublime-workspace": true,
     "**/*.d.ts": true,
     "**/*.js": true,
     "**/*.map": true,
-    "**/*.tgz": true
+    "**/*.tgz": true,
+    "node_modules": true
   },
   "editor.rulers": [150],
   "files.eol": "\n",

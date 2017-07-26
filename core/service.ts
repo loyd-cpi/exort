@@ -113,9 +113,16 @@ export function provideServices(): AppProvider {
 export abstract class Service {
 
   /**
+   * Application instance
+   */
+  protected readonly app: Application;
+
+  /**
    * Service constructor
    */
-  constructor(protected readonly context: Context) {}
+  constructor(protected readonly context: Context) {
+    this.app = context.app;
+  }
 
   /**
    * Create instance of given Service class. Just like what req.make() does
