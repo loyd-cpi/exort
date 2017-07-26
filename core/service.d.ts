@@ -58,6 +58,10 @@ export declare function provideServices(): AppProvider;
 export declare abstract class Service {
     protected readonly context: Context;
     /**
+     * Application instance
+     */
+    protected readonly app: Application;
+    /**
      * Service constructor
      */
     constructor(context: Context);

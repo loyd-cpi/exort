@@ -87,6 +87,7 @@ class Service {
      */
     constructor(context) {
         this.context = context;
+        this.app = context.app;
     }
     /**
      * Create instance of given Service class. Just like what req.make() does
