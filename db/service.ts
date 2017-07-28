@@ -1,5 +1,6 @@
 import { Connection, EntityManager, Repository, getConnectionManager } from 'typeorm';
 import { SelectQueryBuilder } from 'typeorm/query-builder/SelectQueryBuilder';
+import { QueryPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { FindManyOptions } from 'typeorm/find-options/FindManyOptions';
 import { FindOneOptions } from 'typeorm/find-options/FindOneOptions';
 import { RemoveOptions } from 'typeorm/repository/RemoveOptions';
@@ -186,6 +187,23 @@ export abstract class SqlService<T extends Model> extends Service {
    */
   public updateById(id: any, partialEntity: DeepPartial<T>, options?: SaveOptions): Promise<void> {
     return this.getRepository().updateById(id, partialEntity, options);
+  }
+
+  /**
+   * Executes insert query and returns raw database results.
+   */
+  public insert(value: QueryPartialEntity<T>): Promise<any>;
+
+  /**
+   * Executes insert query and returns raw database results.
+   */
+  public insert(values: QueryPartialEntity<T>[]): Promise<any>;
+
+  /**
+   * Executes insert query and returns raw database results.
+   */
+  public insert(values: QueryPartialEntity<T> | QueryPartialEntity<T>[]) {
+    return this.createQueryBuilder(this.modelClass.name).insert().into(this.modelClass).values(values as QueryPartialEntity<T>[]).execute();
   }
 
   /**
