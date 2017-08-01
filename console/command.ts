@@ -1,4 +1,5 @@
 import { checkAppConfig, boot, Application } from '../core/app';
+import { ConsoleApplication } from './app';
 import * as yargs from 'yargs';
 
 /**
@@ -63,9 +64,10 @@ export namespace Console {
 /**
  * Start CLI and you can only execute it once
  */
-export async function startConsole(app: Application): Promise<void> {
+export async function startConsole(app: Application): Promise<ConsoleApplication> {
   checkAppConfig(app);
   await boot(app);
   yargs.help('help');
   Console.execute(process.argv.slice(2));
+  return app as ConsoleApplication;
 }

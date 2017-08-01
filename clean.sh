@@ -10,6 +10,9 @@ find web -type f -name '*.d.ts' -delete
 find console -type f -name '*.js' -delete
 find console -type f -name '*.js.map' -delete
 find console -type f -name '*.d.ts' -delete
+find test -type f -name '*.js' -delete
+find test -type f -name '*.js.map' -delete
+find test -type f -name '*.d.ts' -delete
 rm -f common.js
 rm -f common.js.map
 rm -f common.d.ts

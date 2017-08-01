@@ -34,6 +34,11 @@ export interface Application extends express.Express {
    * Don't use this to create service instance per request
    */
   readonly context: Context;
+
+  /**
+   * Determine if the application instance is for testing
+   */
+  readonly testMode: boolean;
 }
 
 /**
@@ -75,7 +80,7 @@ export function createApplication(bootDir: string, configFiles?: string[]): Appl
  * Initialize application instance and configure
  */
 export function createApplication(bootDir: string, configFiles?: string | string[]): Application {
-  let app = express() as Application;
+  const app = express() as Application;
   if (typeof app.rootDir != 'undefined') {
     throw new Error('app.rootDir is already set. There might be conflict with express');
   }
@@ -88,8 +93,9 @@ export function createApplication(bootDir: string, configFiles?: string | string
     throw new Error('app.dir is already set. There might be conflict with express');
   }
 
+  (app as any).testMode = false;
   (app as any).rootDir = process.cwd();
-  (app as any).bootDir = _.trimEnd(bootDir, '/');
+  (app as any).bootDir = pathlib.normalize(_.trimEnd(bootDir, '/'));
   (app as any).dir = pathlib.dirname(app.bootDir);
 
   if (typeof configFiles == 'undefined') {
@@ -143,7 +149,12 @@ export async function boot(app: Application): Promise<void> {
   const BootstrapClass = _.requireClass(`${app.bootDir}/Bootstrap`) as new(app: Application) => AppBootstrap;
   const bootstrap = new BootstrapClass(app);
 
-  for (let provider of bootstrap.provide()) {
+  let providers = bootstrap.provide();
+  if (!Array.isArray(providers)) {
+    throw new Error('Bootstrap.provide() should return an array of AppProviders');
+  }
+
+  for (let provider of providers) {
     await provider(app);
   }
 }

@@ -2,6 +2,7 @@ import * as lodash from 'lodash';
 import * as crypto from 'crypto';
 import * as pathlib from 'path';
 import { Error } from './error';
+import 'reflect-metadata';
 
 /**
  * Standard object interface

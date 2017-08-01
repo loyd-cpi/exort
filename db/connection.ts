@@ -1,6 +1,6 @@
 import { checkAppConfig, AppProvider, Application } from '../core/app';
+import { createConnection, getConnectionManager } from 'typeorm';
 import { KeyValuePair, _ } from '../core/misc';
-import { createConnection } from 'typeorm';
 import { Model } from './model';
 
 /**
@@ -22,8 +22,12 @@ export function provideConnection(modelsDir?: string | KeyValuePair<string | str
 
     modelsDir = modelsDir || `${app.dir}/models`;
 
-    let dbConf = app.config.get('db');
+    const connectionManager = getConnectionManager();
+    const dbConf = app.config.get('db');
+
     for (let connectionName of dbConf.auto) {
+
+      if (connectionManager.has(connectionName) && connectionManager.get(connectionName).isConnected) continue;
 
       let conn = _.clone(dbConf.connections[connectionName]);
       conn.name = connectionName;

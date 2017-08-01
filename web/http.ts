@@ -4,6 +4,7 @@ import { KeyValuePair, Store } from '../core/misc';
 import { provideHttpErrorHandler } from './error';
 import { File } from '../core/filesystem';
 import * as formidable from 'formidable';
+import { WebApplication } from './app';
 import { Error } from '../core/error';
 import { Session } from './session';
 import * as express from 'express';
@@ -311,9 +312,9 @@ export class UploadedFile extends File {
 export interface Response extends express.Response {}
 
 /**
- * Start HTTP Server
+ * Start HTTP Server and convert Application instance to a WebApplication instance
  */
-export function startServer(app: Application): Promise<Application> {
+export function startServer(app: Application): Promise<WebApplication> {
   checkAppConfig(app);
 
   app.disable('x-powered-by');
@@ -327,7 +328,7 @@ export function startServer(app: Application): Promise<Application> {
     next();
   });
 
-  return new Promise<Application>((resolve, reject) => {
+  return new Promise<WebApplication>((resolve, reject) => {
     boot(app).then(() => {
 
       provideHttpErrorHandler()(app);
@@ -335,10 +336,17 @@ export function startServer(app: Application): Promise<Application> {
       const server = http.createServer(app);
       server.on('error', err => reject(err));
       server.on('listening', () => {
+
+        if (typeof (app as WebApplication).server != 'undefined') {
+          throw new Error('app.server already exists. There might be conflict with expressjs');
+        }
+
         let addr = server.address();
         let bind = typeof addr == 'string' ? `pipe ${addr}` : `port ${addr.port}`;
         console.log(`Listening on ${bind}`);
-        resolve(app);
+
+        (app as any).server = server;
+        resolve(app as WebApplication);
       });
 
       server.listen(app.config.get('app.port'));
