@@ -26,6 +26,10 @@ export interface Application extends express.Express {
      * Don't use this to create service instance per request
      */
     readonly context: Context;
+    /**
+     * Determine if the application instance is for testing
+     */
+    readonly testMode: boolean;
 }
 /**
  * Config class

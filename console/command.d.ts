@@ -1,5 +1,6 @@
 /// <reference types="yargs" />
 import { Application } from '../core/app';
+import { ConsoleApplication } from './app';
 import * as yargs from 'yargs';
 /**
  * Argv interface
@@ -43,4 +44,4 @@ export declare namespace Console {
 /**
  * Start CLI and you can only execute it once
  */
-export declare function startConsole(app: Application): Promise<void>;
+export declare function startConsole(app: Application): Promise<ConsoleApplication>;

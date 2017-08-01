@@ -232,7 +232,7 @@ class UploadedFile extends filesystem_1.File {
 }
 exports.UploadedFile = UploadedFile;
 /**
- * Start HTTP Server
+ * Start HTTP Server and convert Application instance to a WebApplication instance
  */
 function startServer(app) {
     app_1.checkAppConfig(app);
@@ -251,9 +251,13 @@ function startServer(app) {
             const server = http.createServer(app);
             server.on('error', err => reject(err));
             server.on('listening', () => {
+                if (typeof app.server != 'undefined') {
+                    throw new error_2.Error('app.server already exists. There might be conflict with expressjs');
+                }
                 let addr = server.address();
                 let bind = typeof addr == 'string' ? `pipe ${addr}` : `port ${addr.port}`;
                 console.log(`Listening on ${bind}`);
+                app.server = server;
                 resolve(app);
             });
             server.listen(app.config.get('app.port'));

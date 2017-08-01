@@ -1,5 +1,6 @@
 import { Connection, EntityManager, Repository } from 'typeorm';
 import { SelectQueryBuilder } from 'typeorm/query-builder/SelectQueryBuilder';
+import { QueryPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { FindManyOptions } from 'typeorm/find-options/FindManyOptions';
 import { FindOneOptions } from 'typeorm/find-options/FindOneOptions';
 import { RemoveOptions } from 'typeorm/repository/RemoveOptions';
@@ -112,6 +113,14 @@ export declare abstract class SqlService<T extends Model> extends Service {
      * Updates entity partially. Entity will be found by a given id.
      */
     updateById(id: any, partialEntity: DeepPartial<T>, options?: SaveOptions): Promise<void>;
+    /**
+     * Executes insert query and returns raw database results.
+     */
+    insert(value: QueryPartialEntity<T>): Promise<any>;
+    /**
+     * Executes insert query and returns raw database results.
+     */
+    insert(values: QueryPartialEntity<T>[]): Promise<any>;
     /**
      * Make the closure run with transaction object
      */

@@ -120,6 +120,12 @@ class SqlService extends service_1.Service {
         return this.getRepository().updateById(id, partialEntity, options);
     }
     /**
+     * Executes insert query and returns raw database results.
+     */
+    insert(values) {
+        return this.createQueryBuilder(this.modelClass.name).insert().into(this.modelClass).values(values).execute();
+    }
+    /**
      * Make the closure run with transaction object
      */
     transaction(closure, connection) {

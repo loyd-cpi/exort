@@ -30,7 +30,7 @@ exports.Config = Config;
  * Initialize application instance and configure
  */
 function createApplication(bootDir, configFiles) {
-    let app = express();
+    const app = express();
     if (typeof app.rootDir != 'undefined') {
         throw new error_1.Error('app.rootDir is already set. There might be conflict with express');
     }
@@ -40,8 +40,9 @@ function createApplication(bootDir, configFiles) {
     if (typeof app.dir != 'undefined') {
         throw new error_1.Error('app.dir is already set. There might be conflict with express');
     }
+    app.testMode = false;
     app.rootDir = process.cwd();
-    app.bootDir = misc_1._.trimEnd(bootDir, '/');
+    app.bootDir = pathlib.normalize(misc_1._.trimEnd(bootDir, '/'));
     app.dir = pathlib.dirname(app.bootDir);
     if (typeof configFiles == 'undefined') {
         configFiles = [`${app.dir}/config`];
@@ -86,7 +87,11 @@ function boot(app) {
         checkAppConfig(app);
         const BootstrapClass = misc_1._.requireClass(`${app.bootDir}/Bootstrap`);
         const bootstrap = new BootstrapClass(app);
-        for (let provider of bootstrap.provide()) {
+        let providers = bootstrap.provide();
+        if (!Array.isArray(providers)) {
+            throw new error_1.Error('Bootstrap.provide() should return an array of AppProviders');
+        }
+        for (let provider of providers) {
             yield provider(app);
         }
     });

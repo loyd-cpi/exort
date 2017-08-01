@@ -5,6 +5,7 @@ const lodash = require("lodash");
 const crypto = require("crypto");
 const pathlib = require("path");
 const error_1 = require("./error");
+require("reflect-metadata");
 const _ = lodash;
 exports._ = _;
 _.replaceAll = function (str, search, replace) {

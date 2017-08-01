@@ -3,6 +3,7 @@ import { Service, Context } from '../core/service';
 import { KeyValuePair, Store } from '../core/misc';
 import { File } from '../core/filesystem';
 import * as formidable from 'formidable';
+import { WebApplication } from './app';
 import { Session } from './session';
 import * as express from 'express';
 /**
@@ -110,6 +111,6 @@ export declare class UploadedFile extends File {
 export interface Response extends express.Response {
 }
 /**
- * Start HTTP Server
+ * Start HTTP Server and convert Application instance to a WebApplication instance
  */
-export declare function startServer(app: Application): Promise<Application>;
+export declare function startServer(app: Application): Promise<WebApplication>;

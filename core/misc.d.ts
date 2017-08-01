@@ -1,5 +1,6 @@
 /// <reference types="node" />
 import * as lodash from 'lodash';
+import 'reflect-metadata';
 /**
  * Standard object interface
  */

@@ -42,6 +42,7 @@ function startConsole(app) {
         yield app_1.boot(app);
         yargs.help('help');
         Console.execute(process.argv.slice(2));
+        return app;
     });
 }
 exports.startConsole = startConsole;
