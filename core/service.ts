@@ -44,6 +44,11 @@ export class Context {
   private resolvedInstances: Map<Function, any> = new Map<Function, any>();
 
   /**
+   * Map of bindings
+   */
+  private bindings: Map<Function, Function> = new Map<Function, Function>();
+
+  /**
    * Context constructor
    */
   constructor(public readonly app: Application) {}
@@ -56,13 +61,42 @@ export class Context {
       return this.resolvedInstances.get(serviceClass);
     }
 
+    this.checkIfServiceClass(serviceClass);
+
+    let instance: U;
+    if (this.bindings.has(serviceClass)) {
+      instance = (this.bindings.get(serviceClass) as Function)(this);
+    } else {
+      instance = Reflect.construct(serviceClass, [this]);
+    }
+
+    this.remember(serviceClass, instance);
+    return instance;
+  }
+
+  /**
+   * Provide custom way of resolving an instance for a service
+   */
+  public bind<U extends Service>(serviceClass: new(...args: any[]) => U, closure: (context: Context) => U) {
+    this.checkIfServiceClass(serviceClass);
+    this.bindings.set(serviceClass, closure);
+  }
+
+  /**
+   * Remember resolved instance and save it for future make() calls
+   */
+  public remember<U extends Service>(serviceClass: new(...args: any[]) => U, instance: U) {
+    this.checkIfServiceClass(serviceClass);
+    this.resolvedInstances.set(serviceClass, instance);
+  }
+
+  /**
+   * Check if given class extends Service class
+   */
+  private checkIfServiceClass<U extends Service>(serviceClass: new(...args: any[]) => U) {
     if (!_.classExtends(serviceClass, Service)) {
       throw new Error(`${serviceClass.name} is not a Service class`);
     }
-
-    let instance = Reflect.construct(serviceClass, [this]);
-    this.resolvedInstances.set(serviceClass, instance);
-    return instance;
   }
 
   /**

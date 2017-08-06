@@ -15,4 +15,9 @@ export interface WebApplication extends Application {
    * Server instance
    */
   readonly server: http.Server;
+
+  /**
+   * SocketIO Server instance
+   */
+  readonly socketio: SocketIO.Server;
 }

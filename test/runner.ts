@@ -36,7 +36,7 @@ export function startTesting(app: Application, testCasesDir?: string) {
   if (testCasesDir) {
     testCasesDir = pathlib.normalize(_.trimEnd(testCasesDir, '/'));
   } else {
-    testCasesDir = `${app.dir}/test/cases`;
+    testCasesDir = `${app.dir}/tests/cases`;
   }
 
   describe('Preparing test cases...', function () {
@@ -71,7 +71,7 @@ export function provideTestCommands(runnerFile?: string): AppProvider {
         runnerFile = `${runnerFile}.js`;
       }
     } else {
-      runnerFile = `${app.dir}/test/run.js`;
+      runnerFile = `${app.dir}/tests/run.js`;
     }
 
     Console.addCommand({

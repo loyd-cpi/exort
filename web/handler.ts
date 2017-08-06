@@ -1,6 +1,7 @@
 import { ErrorHandler, Error } from '../core/error';
 import { Input, Request, Response } from './http';
 import { KeyValuePair } from '../core/misc';
+import { Application } from '../core/app';
 import { Context } from '../core/service';
 import * as express from 'express';
 
@@ -23,6 +24,11 @@ export abstract class HttpHandler {
   protected readonly context: Context;
 
   /**
+   * Application instance
+   */
+  protected readonly app: Application;
+
+  /**
    * Request input instance
    */
   protected readonly input: Input;
@@ -42,6 +48,7 @@ export abstract class HttpHandler {
    */
   constructor(protected readonly request: Request, protected readonly response: Response) {
     this.context = request.context;
+    this.app = request.context.app;
     this.input = request.input;
     this.vars = response.locals;
     this.params = request.params;

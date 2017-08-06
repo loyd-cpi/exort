@@ -1,6 +1,7 @@
-import { checkAppConfig, Application, AppProvider } from '../core/app';
 import { HttpMiddleware, HttpController } from './handler';
+import { checkAppConfig, AppProvider } from '../core/app';
 import { Request, Response } from './http';
+import { WebApplication } from './app';
 import { Error } from '../core/error';
 import * as express from 'express';
 import { _ } from '../core/misc';
@@ -9,7 +10,7 @@ import { _ } from '../core/misc';
  * Provide routes
  */
 export function provideRoutes(routesModule?: string, controllersDir?: string, middlewareDir?: string): AppProvider {
-  return async (app: Application): Promise<void> => {
+  return async (app: WebApplication): Promise<void> => {
     checkAppConfig(app);
 
     if (controllersDir) {
@@ -76,7 +77,7 @@ export class Router {
   private expressRouter: express.Router;
 
   /**
-   *
+   * Middleware request handlers
    */
   private middlewareHandlers: express.RequestHandler[] = [];
 

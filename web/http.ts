@@ -328,28 +328,28 @@ export function startServer(app: Application): Promise<WebApplication> {
     next();
   });
 
+  if (typeof (app as WebApplication).server != 'undefined') {
+    throw new Error('app.server already exists. There might be conflict with expressjs');
+  }
+
+  (app as any).server = http.createServer(app);
   return new Promise<WebApplication>((resolve, reject) => {
     boot(app).then(() => {
 
       provideHttpErrorHandler()(app);
 
-      const server = http.createServer(app);
-      server.on('error', err => reject(err));
-      server.on('listening', () => {
+      (app as WebApplication).server
+        .on('error', err => reject(err))
+        .on('listening', () => {
 
-        if (typeof (app as WebApplication).server != 'undefined') {
-          throw new Error('app.server already exists. There might be conflict with expressjs');
-        }
+          let addr = (app as WebApplication).server.address();
+          let bind = typeof addr == 'string' ? `pipe ${addr}` : `port ${addr.port}`;
+          console.log(`Listening on ${bind}`);
 
-        let addr = server.address();
-        let bind = typeof addr == 'string' ? `pipe ${addr}` : `port ${addr.port}`;
-        console.log(`Listening on ${bind}`);
+          resolve(app as WebApplication);
+        })
+        .listen(app.config.get('app.port'));
 
-        (app as any).server = server;
-        resolve(app as WebApplication);
-      });
-
-      server.listen(app.config.get('app.port'));
     }).catch(err => reject(err));
   });
 }
