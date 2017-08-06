@@ -2,6 +2,11 @@ import { Service, Context } from '../../core/service';
 import { WebApplication } from '../app';
 
 /**
+ * Namespace interface
+ */
+export interface Namespace extends SocketIO.Namespace {}
+
+/**
  * SocketIO service class
  */
 export class BroadcasterService extends Service {
@@ -9,7 +14,7 @@ export class BroadcasterService extends Service {
   /**
    * SocketIO namespace name
    */
-  public readonly namespace: SocketIO.Namespace;
+  public readonly namespace: Namespace;
 
   /**
    * SocketIO Server instance
@@ -84,7 +89,7 @@ export class BroadcasterService extends Service {
       (fromRoomName ? this.namespace.in(fromRoomName) : this.namespace).clients((err: Error, clients: string[]) => {
 
         if (err) return reject(err);
-        resolve(clients);
+        resolve(clients || []);
       });
     });
   }

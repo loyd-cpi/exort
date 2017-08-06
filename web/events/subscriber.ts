@@ -1,7 +1,18 @@
-import { EventListener, EventListenerClass } from './listener';
+import { EventListener, EventListenerClass } from './handler';
 import { Context } from '../../core/service';
-import { WebApplication } from '../app';
+import { Namespace } from './service';
 import { Event } from './router';
+
+/**
+ * Socket interface
+ */
+export interface Socket extends SocketIO.Socket {
+
+  /**
+   * Context instance
+   */
+  readonly context: Context;
+}
 
 /**
  * Subscriber class
@@ -21,8 +32,8 @@ export class Subscriber {
   /**
    * Subscriber constructor
    */
-  constructor(private readonly app: WebApplication, public readonly socket: SocketIO.Socket, public readonly namespace: string) {
-    this.context = this.app.context.newInstance();
+  constructor(public readonly socket: Socket, public readonly namespace: Namespace) {
+    this.context = socket.context;
   }
 
   /**
@@ -56,8 +67,22 @@ export class Subscriber {
    */
   private createListenerInstance(eventListenerClass: EventListenerClass) {
     if (!this.listenerInstances.has(eventListenerClass)) {
-      this.listenerInstances.set(eventListenerClass, new eventListenerClass(this.context, this.socket));
+      this.listenerInstances.set(eventListenerClass, new eventListenerClass(this.socket));
     }
     return this.listenerInstances.get(eventListenerClass);
+  }
+
+  /**
+   * Disconnects this client to its current namespace
+   */
+  public disconnect() {
+    this.socket.disconnect(false);
+  }
+
+  /**
+   * * Execute disconnect method and closes the underlying connection
+   */
+  public close() {
+    this.socket.disconnect(true);
   }
 }

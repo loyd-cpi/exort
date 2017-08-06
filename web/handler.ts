@@ -1,8 +1,9 @@
+import { BroadcasterService } from './events/service';
 import { ErrorHandler, Error } from '../core/error';
 import { Input, Request, Response } from './http';
+import { Context, Bind } from '../core/service';
 import { KeyValuePair } from '../core/misc';
 import { Application } from '../core/app';
-import { Context } from '../core/service';
 import * as express from 'express';
 
 /**
@@ -42,6 +43,12 @@ export abstract class HttpHandler {
    * Express request params object
    */
   protected readonly params: HttpRequestParams;
+
+  /**
+   * BroadcasterService instance
+   */
+  @Bind(type => BroadcasterService)
+  protected readonly broadcaster: BroadcasterService;
 
   /**
    * HttpHandler constructor

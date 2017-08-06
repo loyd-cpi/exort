@@ -1,29 +1,29 @@
+import { EventMiddlewareClass, EventListener, EventMiddleware, EventListenerClass } from './handler';
 import { _, KeyValuePair } from '../../core/misc';
+import { Subscriber, Socket } from './subscriber';
 import { checkAppConfig } from '../../core/app';
-import { EventListenerClass } from './listener';
 import * as redisAdapter from 'socket.io-redis';
-import { Subscriber } from './subscriber';
 import { Error } from '../../core/error';
 import { WebApplication } from '../app';
 import * as socketio from 'socket.io';
 import * as redis from 'redis';
 
 /**
- * RouteGroupOptions interface
- */
-export interface EventRouteGroupOptions {
-  channel: string;
-}
-
-/**
- * RouteGroupClosure interface
+ * EventRouteGroupClosure interface
  */
 export interface EventRouteGroupClosure {
   (router: EventsRouter): void;
 }
 
 /**
- * EventsRegistry interface
+ * EventNextFunction interface
+ */
+export interface EventNextFunction {
+  (err?: any): void;
+}
+
+/**
+ * Event interface
  */
 export interface Event {
   name: string;
@@ -39,14 +39,28 @@ export interface Event {
 export class EventsRouter {
 
   /**
-   * Events interface
+   * Event mapping
    */
   private events: KeyValuePair<Event[]> = {};
 
   /**
+   * Middleware mapping
+   */
+  private middlewareMapping: KeyValuePair<((socket: Socket, next: EventNextFunction) => void)[]> = {};
+
+  /**
+   * Flag to determine if routes are already attached via attachRoute() method
+   */
+  private alreadyAttachedRoutes: boolean = false;
+
+  /**
    * EventsRouter constructor
    */
-  constructor(private listenersDir: string, private namespace: string = '/') {}
+  constructor(private readonly app: WebApplication, private listenersDir: string, private middlewareDir: string, private namespace: string = '/') {
+    if (typeof this.app.socketio == 'undefined') {
+      throw new Error('app.socketio must be set first passing to EventsRouter constructor');
+    }
+  }
 
   /**
    * Get listener
@@ -54,9 +68,14 @@ export class EventsRouter {
   private findListener(listener: string) {
     const [listenerClassName, actionName] = listener.split('@');
     const ListenerClass = _.requireClass(`${this.listenersDir}/${listenerClassName}`);
+    if (!_.classExtends(ListenerClass, EventListener)) {
+      throw new Error(`${ListenerClass.name} must extends EventListener class`);
+    }
+
     if (typeof ListenerClass.prototype[actionName] != 'function') {
       throw new Error(`${ListenerClass.name} doesn't have '${actionName}' method`);
     }
+
     return { class: ListenerClass as EventListenerClass, method: actionName };
   }
 
@@ -73,17 +92,53 @@ export class EventsRouter {
   /**
    * Attach routes / events to WebApplication instance
    */
-  public attachRoutes(app: WebApplication) {
-    if (typeof app.socketio == 'undefined') {
-      throw new Error('app.socketio must be set first before using EventsRouter.attachRoute');
+  public attachRoutes() {
+    if (this.alreadyAttachedRoutes) {
+      throw new Error('Already attached routes');
     }
 
     Object.keys(this.events).forEach(namespace => {
-      app.socketio.of(namespace).on('connection', socket => {
 
-        const subscriber = new Subscriber(app, socket, namespace);
+      const namespaceInstance = this.app.socketio.of(namespace);
+      namespaceInstance.use((socket: Socket, next: EventNextFunction) => {
+        if (typeof socket.context != 'undefined') {
+          throw new Error('socket.context is already set. There might be conflict with socket.io');
+        }
+        (socket as any).context = this.app.context.newInstance();
+      });
+
+      (this.middlewareMapping[namespace] || []).forEach(mware => namespaceInstance.use(mware));
+
+      namespaceInstance.on('connection', (socket: Socket) => {
+
+        const subscriber = new Subscriber(socket, namespaceInstance);
         this.events[namespace].forEach(event => subscriber.subscribe(event));
       });
+    });
+
+    this.alreadyAttachedRoutes = true;
+  }
+
+  /**
+   * Add namespace middleware
+   */
+  public middleware(middleware: string) {
+    if (typeof this.middlewareMapping[this.namespace] == 'undefined') {
+      this.middlewareMapping[this.namespace] = [];
+    }
+
+    const MiddlewareClass = _.requireClass(`${this.middlewareDir}/${middleware}`) as EventMiddlewareClass;
+    if (!_.classExtends(MiddlewareClass, EventMiddleware)) {
+      throw new Error(`${MiddlewareClass.name} must extends EventMiddleware class`);
+    }
+
+    this.middlewareMapping[this.namespace].push((socket: Socket, next: EventNextFunction) => {
+
+      const instance = Reflect.construct(MiddlewareClass, [socket]) as EventMiddleware;
+      const ret = instance.handle(next);
+      if (ret instanceof Promise) {
+        ret.catch(err => next(err));
+      }
     });
   }
 
@@ -101,7 +156,7 @@ export class EventsRouter {
 /**
  * Provide socketio events
  */
-export function provideEvents(eventRoutesFile?: string, eventListenersDir?: string) {
+export function provideEvents(eventRoutesFile?: string, eventListenersDir?: string, eventMiddlewareDir?: string) {
   return async (app: WebApplication): Promise<void> => {
     checkAppConfig(app);
 
@@ -118,20 +173,30 @@ export function provideEvents(eventRoutesFile?: string, eventListenersDir?: stri
       eventListenersDir = `${app.dir}/events/listeners`;
     }
 
+    if (eventMiddlewareDir) {
+      eventMiddlewareDir = _.trimEnd(eventMiddlewareDir, '/');
+    } else {
+      eventMiddlewareDir = `${app.dir}/events/middleware`;
+    }
+
     if (typeof app.socketio != 'undefined') {
       throw new Error('app.socketio already exists. There might be conflict with express');
     }
 
     const socketioConf = _.clone(config);
-    socketioConf.adapter = redisAdapter({ pubClient: redis.createClient(config.adapter), subClient: redis.createClient(config.adapter) });
+    socketioConf.adapter = redisAdapter({
+      pubClient: redis.createClient(config.adapter),
+      subClient: redis.createClient(config.adapter)
+    });
+
     (app as any).socketio = socketio(app.server, socketioConf);
 
     const routes = require(eventRoutesFile);
     if (!_.isNone(routes) && typeof routes == 'object' && typeof routes.setup == 'function') {
 
-      const router = new EventsRouter(eventListenersDir, '/');
+      const router = new EventsRouter(app, eventListenersDir, eventMiddlewareDir, '/');
       routes.setup(router, app);
-      router.attachRoutes(app);
+      router.attachRoutes();
     }
   };
 }
