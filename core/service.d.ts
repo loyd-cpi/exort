@@ -24,6 +24,10 @@ export declare class Context {
      */
     private resolvedInstances;
     /**
+     * Map of bindings
+     */
+    private bindings;
+    /**
      * Context constructor
      */
     constructor(app: Application);
@@ -31,6 +35,18 @@ export declare class Context {
      * Create service instance
      */
     make<U extends Service>(serviceClass: new (...args: any[]) => U): U;
+    /**
+     * Provide custom way of resolving an instance for a service
+     */
+    bind<U extends Service>(serviceClass: new (...args: any[]) => U, closure: (context: Context) => U): void;
+    /**
+     * Remember resolved instance and save it for future make() calls
+     */
+    remember<U extends Service>(serviceClass: new (...args: any[]) => U, instance: U): void;
+    /**
+     * Check if given class extends Service class
+     */
+    private checkIfServiceClass<U>(serviceClass);
     /**
      * Create new instance with app instance
      */

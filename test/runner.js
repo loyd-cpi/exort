@@ -32,7 +32,7 @@ function startTesting(app, testCasesDir) {
         testCasesDir = pathlib.normalize(misc_1._.trimEnd(testCasesDir, '/'));
     }
     else {
-        testCasesDir = `${app.dir}/test/cases`;
+        testCasesDir = `${app.dir}/tests/cases`;
     }
     describe('Preparing test cases...', function () {
         before('Preparing application...', function () {
@@ -65,7 +65,7 @@ function provideTestCommands(runnerFile) {
             }
         }
         else {
-            runnerFile = `${app.dir}/test/run.js`;
+            runnerFile = `${app.dir}/tests/run.js`;
         }
         command_1.Console.addCommand({
             command: 'test:run',

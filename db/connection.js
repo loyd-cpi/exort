@@ -11,34 +11,28 @@ const model_1 = require("./model");
 function provideConnection(modelsDir) {
     return (app) => tslib_1.__awaiter(this, void 0, void 0, function* () {
         app_1.checkAppConfig(app);
-        modelsDir = modelsDir || `${app.dir}/models`;
-        const connectionManager = typeorm_1.getConnectionManager();
         const dbConf = app.config.get('db');
+        if (!dbConf || !Array.isArray(dbConf.auto))
+            return;
+        if (modelsDir) {
+            modelsDir = misc_1._.trimEnd(modelsDir, '/');
+        }
+        else {
+            modelsDir = `${app.dir}/models`;
+        }
+        const connectionManager = typeorm_1.getConnectionManager();
         for (let connectionName of dbConf.auto) {
-            if (connectionManager.has(connectionName) && connectionManager.get(connectionName).isConnected)
+            if (connectionManager.has(connectionName) && connectionManager.get(connectionName).isConnected) {
                 continue;
-            let conn = misc_1._.clone(dbConf.connections[connectionName]);
+            }
+            const conn = misc_1._.clone(dbConf.connections[connectionName]);
             conn.name = connectionName;
             conn.entities = [];
-            let dirs = [];
-            if (typeof modelsDir == 'string') {
-                dirs.push(modelsDir);
-            }
-            else if (typeof modelsDir == 'object' && typeof modelsDir[connectionName] != 'undefined') {
-                if (typeof modelsDir[connectionName] == 'string') {
-                    dirs.push(modelsDir[connectionName]);
-                }
-                else if (Array.isArray(modelsDir[connectionName])) {
-                    dirs = dirs.concat(modelsDir[connectionName]);
-                }
-            }
-            for (let dir of dirs) {
-                let indexModule = require(dir);
-                if (!misc_1._.isNone(indexModule) && typeof indexModule == 'object') {
-                    for (let modelClassName in indexModule) {
-                        if (misc_1._.classExtends(indexModule[modelClassName], model_1.Model)) {
-                            conn.entities.push(indexModule[modelClassName]);
-                        }
+            const indexModule = require(modelsDir);
+            if (!misc_1._.isNone(indexModule) && typeof indexModule == 'object') {
+                for (let modelClassName in indexModule) {
+                    if (misc_1._.classExtends(indexModule[modelClassName], model_1.Model)) {
+                        conn.entities.push(indexModule[modelClassName]);
                     }
                 }
             }

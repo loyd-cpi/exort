@@ -42,7 +42,7 @@ export declare class Router {
      */
     private expressRouter;
     /**
-     *
+     * Middleware request handlers
      */
     private middlewareHandlers;
     /**

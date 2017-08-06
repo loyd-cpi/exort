@@ -1,8 +1,10 @@
 /// <reference types="express" />
+import { BroadcasterService } from './events/service';
 import { ErrorHandler, Error } from '../core/error';
 import { Input, Request, Response } from './http';
-import { KeyValuePair } from '../core/misc';
 import { Context } from '../core/service';
+import { KeyValuePair } from '../core/misc';
+import { Application } from '../core/app';
 import * as express from 'express';
 /**
  * HttpRequestParams interface
@@ -22,6 +24,10 @@ export declare abstract class HttpHandler {
      */
     protected readonly context: Context;
     /**
+     * Application instance
+     */
+    protected readonly app: Application;
+    /**
      * Request input instance
      */
     protected readonly input: Input;
@@ -33,6 +39,10 @@ export declare abstract class HttpHandler {
      * Express request params object
      */
     protected readonly params: HttpRequestParams;
+    /**
+     * BroadcasterService instance
+     */
+    protected readonly broadcaster: BroadcasterService;
     /**
      * HttpHandler constructor
      */

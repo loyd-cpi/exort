@@ -38,6 +38,10 @@ class Context {
          * Map of resolved instances
          */
         this.resolvedInstances = new Map();
+        /**
+         * Map of bindings
+         */
+        this.bindings = new Map();
     }
     /**
      * Create service instance
@@ -46,12 +50,38 @@ class Context {
         if (this.resolvedInstances.has(serviceClass)) {
             return this.resolvedInstances.get(serviceClass);
         }
+        this.checkIfServiceClass(serviceClass);
+        let instance;
+        if (this.bindings.has(serviceClass)) {
+            instance = this.bindings.get(serviceClass)(this);
+        }
+        else {
+            instance = Reflect.construct(serviceClass, [this]);
+        }
+        this.remember(serviceClass, instance);
+        return instance;
+    }
+    /**
+     * Provide custom way of resolving an instance for a service
+     */
+    bind(serviceClass, closure) {
+        this.checkIfServiceClass(serviceClass);
+        this.bindings.set(serviceClass, closure);
+    }
+    /**
+     * Remember resolved instance and save it for future make() calls
+     */
+    remember(serviceClass, instance) {
+        this.checkIfServiceClass(serviceClass);
+        this.resolvedInstances.set(serviceClass, instance);
+    }
+    /**
+     * Check if given class extends Service class
+     */
+    checkIfServiceClass(serviceClass) {
         if (!misc_1._.classExtends(serviceClass, Service)) {
             throw new error_1.Error(`${serviceClass.name} is not a Service class`);
         }
-        let instance = Reflect.construct(serviceClass, [this]);
-        this.resolvedInstances.set(serviceClass, instance);
-        return instance;
     }
     /**
      * Create new instance with app instance

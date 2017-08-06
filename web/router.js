@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const tslib_1 = require("tslib");
-const app_1 = require("../core/app");
 const handler_1 = require("./handler");
+const app_1 = require("../core/app");
 const error_1 = require("../core/error");
 const express = require("express");
 const misc_1 = require("../core/misc");
@@ -48,7 +48,7 @@ class Router {
         this.controllersDir = controllersDir;
         this.middlewareDir = middlewareDir;
         /**
-         *
+         * Middleware request handlers
          */
         this.middlewareHandlers = [];
         this.expressRouter = express.Router(options);

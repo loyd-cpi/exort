@@ -9,6 +9,7 @@ tslib_1.__exportStar(require("./handler"), exports);
 tslib_1.__exportStar(require("./http"), exports);
 tslib_1.__exportStar(require("./router"), exports);
 tslib_1.__exportStar(require("./session"), exports);
+tslib_1.__exportStar(require("./events"), exports);
 const express = require("express");
 exports.express = express;
 //# sourceMappingURL=index.js.map

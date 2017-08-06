@@ -245,22 +245,22 @@ function startServer(app) {
         res.setHeader('Expires', '0');
         next();
     });
+    if (typeof app.server != 'undefined') {
+        throw new error_2.Error('app.server already exists. There might be conflict with expressjs');
+    }
+    app.server = http.createServer(app);
     return new Promise((resolve, reject) => {
         app_1.boot(app).then(() => {
             error_1.provideHttpErrorHandler()(app);
-            const server = http.createServer(app);
-            server.on('error', err => reject(err));
-            server.on('listening', () => {
-                if (typeof app.server != 'undefined') {
-                    throw new error_2.Error('app.server already exists. There might be conflict with expressjs');
-                }
-                let addr = server.address();
+            app.server
+                .on('error', err => reject(err))
+                .on('listening', () => {
+                let addr = app.server.address();
                 let bind = typeof addr == 'string' ? `pipe ${addr}` : `port ${addr.port}`;
                 console.log(`Listening on ${bind}`);
-                app.server = server;
                 resolve(app);
-            });
-            server.listen(app.config.get('app.port'));
+            })
+                .listen(app.config.get('app.port'));
         }).catch(err => reject(err));
     });
 }
