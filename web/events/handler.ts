@@ -4,6 +4,13 @@ import { WebApplication } from '../app';
 import { Socket } from './subscriber';
 
 /**
+ * EventNextFunction interface
+ */
+export interface EventNextFunction {
+  (err?: any): void;
+}
+
+/**
  * Abstract EventHandler class
  */
 export abstract class EventHandler {
@@ -60,5 +67,5 @@ export abstract class EventMiddleware extends EventHandler {
   /**
    * Abstract handle method
    */
-  public abstract async handle(next: (err?: any) => void): Promise<void>;
+  public abstract async handle(next: EventNextFunction): Promise<void>;
 }

@@ -1,4 +1,4 @@
-import { EventMiddlewareClass, EventListener, EventMiddleware, EventListenerClass } from './handler';
+import { EventMiddlewareClass, EventListener, EventMiddleware, EventListenerClass, EventNextFunction } from './handler';
 import { _, KeyValuePair } from '../../core/misc';
 import { Subscriber, Socket } from './subscriber';
 import { checkAppConfig } from '../../core/app';
@@ -13,13 +13,6 @@ import * as redis from 'redis';
  */
 export interface EventRouteGroupClosure {
   (router: EventsRouter): void;
-}
-
-/**
- * EventNextFunction interface
- */
-export interface EventNextFunction {
-  (err?: any): void;
 }
 
 /**
