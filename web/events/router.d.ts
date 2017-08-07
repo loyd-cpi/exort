@@ -25,13 +25,9 @@ export declare class EventsRouter {
     private middlewareDir;
     private namespace;
     /**
-     * Event mapping
+     * Event and middleware mapping
      */
-    private events;
-    /**
-     * Middleware mapping
-     */
-    private middlewareMapping;
+    private namespaceMapping;
     /**
      * Flag to determine if routes are already attached via attachRoute() method
      */
@@ -48,6 +44,10 @@ export declare class EventsRouter {
      * Route an event to an event listener action
      */
     on(eventName: string, listener: string): void;
+    /**
+     * Initialize namespace map
+     */
+    private initNamespace();
     /**
      * Attach routes / events to WebApplication instance
      */

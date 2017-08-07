@@ -21,7 +21,12 @@ class Subscriber {
      */
     fireListener(eventListenerClass, methodName, args = []) {
         const instance = this.createListenerInstance(eventListenerClass);
-        instance[methodName].apply(instance, args);
+        const ret = instance[methodName].apply(instance, args);
+        if (ret instanceof Promise) {
+            ret.catch(err => {
+                throw err;
+            });
+        }
     }
     /**
      * Subscribe or listen to an event
