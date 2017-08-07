@@ -176,13 +176,33 @@ export function provideEvents(eventRoutesFile?: string, eventListenersDir?: stri
       throw new Error('app.socketio already exists. There might be conflict with express');
     }
 
-    const socketioConf = _.clone(config);
-    socketioConf.adapter = redisAdapter({
-      pubClient: redis.createClient(config.adapter),
-      subClient: redis.createClient(config.adapter)
-    });
+    let adapter: SocketIORedis.RedisAdapter | undefined;
+    const socketioConf = _.cloneDeep(config);
+    if (!_.isNone(socketioConf.adapter)) {
 
-    (app as any).socketio = socketio(app.server, socketioConf);
+      if (typeof socketioConf.adapter == 'object') {
+
+        if ('password' in socketioConf.adapter && !socketioConf.adapter.password) {
+          delete socketioConf.adapter.password;
+        }
+
+        adapter = redisAdapter({
+          pubClient: redis.createClient(socketioConf.adapter),
+          subClient: redis.createClient(socketioConf.adapter)
+        });
+      }
+
+      delete socketioConf.adapter;
+    }
+
+    if (Array.isArray(socketioConf.origins) && !socketioConf.origins.length) {
+      delete socketioConf.origins;
+    }
+
+    const io = (app as any).socketio = socketio(app.server, socketioConf);
+    if (adapter) {
+      io.adapter(adapter);
+    }
 
     const routes = require(eventRoutesFile);
     if (!_.isNone(routes) && typeof routes == 'object' && typeof routes.setup == 'function') {
