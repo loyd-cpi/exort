@@ -6,8 +6,8 @@
   "typings": "core/index.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc --project tsconfig.json",
-    "build:watch": "tsc --watch --project tsconfig.json",
+    "build": "npm run clean && tsc --project tsconfig.json",
+    "build:watch": "npm run clean && tsc --watch --project tsconfig.json",
     "clean": "sh clean.sh"
   },
   "repository": {
