@@ -140,12 +140,30 @@ function provideEvents(eventRoutesFile, eventListenersDir, eventMiddlewareDir) {
         if (typeof app.socketio != 'undefined') {
             throw new error_1.Error('app.socketio already exists. There might be conflict with express');
         }
-        const socketioConf = misc_1._.clone(config);
-        socketioConf.adapter = redisAdapter({
-            pubClient: redis.createClient(config.adapter),
-            subClient: redis.createClient(config.adapter)
-        });
-        app.socketio = socketio(app.server, socketioConf);
+        let adapter;
+        const socketioConf = misc_1._.cloneDeep(config);
+        if (!misc_1._.isNone(socketioConf.adapter)) {
+            if (typeof socketioConf.adapter == 'object') {
+                if ('password' in socketioConf.adapter && !socketioConf.adapter.password) {
+                    delete socketioConf.adapter.password;
+                }
+                adapter = redisAdapter({
+                    pubClient: redis.createClient(socketioConf.adapter),
+                    subClient: redis.createClient(socketioConf.adapter)
+                });
+            }
+            delete socketioConf.adapter;
+        }
+        if (Array.isArray(socketioConf.origins) && !socketioConf.origins.length) {
+            delete socketioConf.origins;
+        }
+        if (Array.isArray(socketioConf.transports) && socketioConf.transports.indexOf('polling') == -1) {
+            socketioConf.transports.unshift('polling');
+        }
+        const io = app.socketio = socketio(app.server, socketioConf);
+        if (adapter) {
+            io.adapter(adapter);
+        }
         const routes = require(eventRoutesFile);
         if (!misc_1._.isNone(routes) && typeof routes == 'object' && typeof routes.setup == 'function') {
             const router = new EventsRouter(app, eventListenersDir, eventMiddlewareDir, '/');
