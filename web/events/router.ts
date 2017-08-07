@@ -32,14 +32,12 @@ export interface Event {
 export class EventsRouter {
 
   /**
-   * Event mapping
+   * Event and middleware mapping
    */
-  private events: KeyValuePair<Event[]> = {};
-
-  /**
-   * Middleware mapping
-   */
-  private middlewareMapping: KeyValuePair<((socket: Socket, next: EventNextFunction) => void)[]> = {};
+  private namespaceMapping: KeyValuePair<{
+    events: Event[],
+    middleware: ((socket: Socket, next: EventNextFunction) => void)[]
+  }> = {};
 
   /**
    * Flag to determine if routes are already attached via attachRoute() method
@@ -76,10 +74,20 @@ export class EventsRouter {
    * Route an event to an event listener action
    */
   public on(eventName: string, listener: string) {
-    if (typeof this.events[this.namespace] == 'undefined') {
-      this.events[this.namespace] = [];
+    this.initNamespace();
+    this.namespaceMapping[this.namespace].events.push({ name: eventName, listener: this.findListener(listener) });
+  }
+
+  /**
+   * Initialize namespace map
+   */
+  private initNamespace() {
+    if (typeof this.namespaceMapping[this.namespace] == 'undefined') {
+      this.namespaceMapping[this.namespace] = {
+        events: [],
+        middleware: []
+      };
     }
-    this.events[this.namespace].push({ name: eventName, listener: this.findListener(listener) });
   }
 
   /**
@@ -90,7 +98,7 @@ export class EventsRouter {
       throw new Error('Already attached routes');
     }
 
-    Object.keys(this.events).forEach(namespace => {
+    Object.keys(this.namespaceMapping).forEach(namespace => {
 
       const namespaceInstance = this.app.socketio.of(namespace);
       namespaceInstance.use((socket: Socket, next: EventNextFunction) => {
@@ -100,12 +108,11 @@ export class EventsRouter {
         (socket as any).context = this.app.context.newInstance();
       });
 
-      (this.middlewareMapping[namespace] || []).forEach(mware => namespaceInstance.use(mware));
+      (this.namespaceMapping[namespace].middleware).forEach(mware => namespaceInstance.use(mware));
 
       namespaceInstance.on('connection', (socket: Socket) => {
-
         const subscriber = new Subscriber(socket, namespaceInstance);
-        this.events[namespace].forEach(event => subscriber.subscribe(event));
+        this.namespaceMapping[namespace].events.forEach(event => subscriber.subscribe(event));
       });
     });
 
@@ -116,16 +123,14 @@ export class EventsRouter {
    * Add namespace middleware
    */
   public middleware(middleware: string) {
-    if (typeof this.middlewareMapping[this.namespace] == 'undefined') {
-      this.middlewareMapping[this.namespace] = [];
-    }
+    this.initNamespace();
 
     const MiddlewareClass = _.requireClass(`${this.middlewareDir}/${middleware}`) as EventMiddlewareClass;
     if (!_.classExtends(MiddlewareClass, EventMiddleware)) {
       throw new Error(`${MiddlewareClass.name} must extends EventMiddleware class`);
     }
 
-    this.middlewareMapping[this.namespace].push((socket: Socket, next: EventNextFunction) => {
+    this.namespaceMapping[this.namespace].middleware.push((socket: Socket, next: EventNextFunction) => {
 
       const instance = Reflect.construct(MiddlewareClass, [socket]) as EventMiddleware;
       const ret = instance.handle(next);

@@ -41,7 +41,12 @@ export class Subscriber {
    */
   private fireListener(eventListenerClass: EventListenerClass, methodName: string, args: any[] = []) {
     const instance = this.createListenerInstance(eventListenerClass);
-    (instance as any)[methodName].apply(instance, args);
+    const ret = (instance as any)[methodName].apply(instance, args);
+    if (ret instanceof Promise) {
+      ret.catch(err => {
+        throw err;
+      });
+    }
   }
 
   /**
