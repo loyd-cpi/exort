@@ -3,6 +3,12 @@ import { BroadcasterService } from './service';
 import { WebApplication } from '../app';
 import { Socket } from './subscriber';
 /**
+ * EventNextFunction interface
+ */
+export interface EventNextFunction {
+    (err?: any): void;
+}
+/**
  * Abstract EventHandler class
  */
 export declare abstract class EventHandler {
@@ -48,5 +54,5 @@ export declare abstract class EventMiddleware extends EventHandler {
     /**
      * Abstract handle method
      */
-    abstract handle(next: (err?: any) => void): Promise<void>;
+    abstract handle(next: EventNextFunction): Promise<void>;
 }

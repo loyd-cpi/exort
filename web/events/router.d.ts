@@ -7,12 +7,6 @@ export interface EventRouteGroupClosure {
     (router: EventsRouter): void;
 }
 /**
- * EventNextFunction interface
- */
-export interface EventNextFunction {
-    (err?: any): void;
-}
-/**
  * Event interface
  */
 export interface Event {
