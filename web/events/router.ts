@@ -199,6 +199,10 @@ export function provideEvents(eventRoutesFile?: string, eventListenersDir?: stri
       delete socketioConf.origins;
     }
 
+    if (Array.isArray(socketioConf.transports) && socketioConf.transports.indexOf('polling') == -1) {
+      socketioConf.transports.unshift('polling');
+    }
+
     const io = (app as any).socketio = socketio(app.server, socketioConf);
     if (adapter) {
       io.adapter(adapter);
