@@ -76,9 +76,11 @@ class EventsRouter {
             const namespaceInstance = this.app.socketio.of(namespace);
             namespaceInstance.use((socket, next) => {
                 if (typeof socket.context != 'undefined') {
-                    throw new error_1.Error('socket.context is already set. There might be conflict with socket.io');
+                    next(new error_1.Error('socket.context is already set. There might be conflict with socket.io'));
+                    return;
                 }
                 socket.context = this.app.context.newInstance();
+                next();
             });
             (this.namespaceMapping[namespace].middleware).forEach(mware => namespaceInstance.use(mware));
             namespaceInstance.on('connection', (socket) => {
