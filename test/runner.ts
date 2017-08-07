@@ -39,14 +39,26 @@ export function startTesting(app: Application, testCasesDir?: string) {
     testCasesDir = `${app.dir}/tests/cases`;
   }
 
-  describe('Preparing test cases...', function () {
+  let testCaseFiles: string[] = [];
+  try {
+    testCaseFiles = fs.readdirSync(testCasesDir);
+  } catch (e) {
 
-    before('Preparing application...', async function () {
-      (TestRunner as any).app = await startServer(app);
-    });
+    if (e.code != 'ENOENT') {
+      throw e;
+    }
 
-    fs.readdirSync(testCasesDir as string)
-      .forEach(testCaseFile => {
+    console.log('No test cases');
+  }
+
+  if (testCaseFiles.length) {
+    describe('Preparing test cases...', function () {
+
+      before('Preparing application...', async function () {
+        (TestRunner as any).app = await startServer(app);
+      });
+
+      testCaseFiles.forEach(testCaseFile => {
         if (pathlib.extname(testCaseFile) == '.js') {
 
           const TestSuiteClass = _.requireClass(`${testCasesDir}/${testCaseFile}`);
@@ -56,7 +68,8 @@ export function startTesting(app: Application, testCasesDir?: string) {
           }
         }
       });
-  });
+    });
+  }
 }
 
 /**

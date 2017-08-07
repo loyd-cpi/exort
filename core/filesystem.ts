@@ -145,16 +145,8 @@ export class File {
   /**
    * Check if file exists
    */
-  public static async exists(path: string): Promise<boolean> {
-    try {
-      await this.getStats(path);
-    } catch (ex) {
-      if (ex.code == 'ENOENT') {
-        return false;
-      }
-      throw ex;
-    }
-    return true;
+  public static exists(path: string): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => fs.access(path, fs.constants.F_OK, err => resolve(err ? true : false)));
   }
 
   /**
