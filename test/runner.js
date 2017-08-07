@@ -34,23 +34,34 @@ function startTesting(app, testCasesDir) {
     else {
         testCasesDir = `${app.dir}/tests/cases`;
     }
-    describe('Preparing test cases...', function () {
-        before('Preparing application...', function () {
-            return tslib_1.__awaiter(this, void 0, void 0, function* () {
-                TestRunner.app = yield http_1.startServer(app);
+    let testCaseFiles = [];
+    try {
+        testCaseFiles = fs.readdirSync(testCasesDir);
+    }
+    catch (e) {
+        if (e.code != 'ENOENT') {
+            throw e;
+        }
+        console.log('No test cases');
+    }
+    if (testCaseFiles.length) {
+        describe('Preparing test cases...', function () {
+            before('Preparing application...', function () {
+                return tslib_1.__awaiter(this, void 0, void 0, function* () {
+                    TestRunner.app = yield http_1.startServer(app);
+                });
+            });
+            testCaseFiles.forEach(testCaseFile => {
+                if (pathlib.extname(testCaseFile) == '.js') {
+                    const TestSuiteClass = misc_1._.requireClass(`${testCasesDir}/${testCaseFile}`);
+                    const testSuite = misc_1.Metadata.get(TestSuiteClass.prototype, 'test:suite');
+                    if (testSuite) {
+                        describe(testSuite.description, testSuite.callback);
+                    }
+                }
             });
         });
-        fs.readdirSync(testCasesDir)
-            .forEach(testCaseFile => {
-            if (pathlib.extname(testCaseFile) == '.js') {
-                const TestSuiteClass = misc_1._.requireClass(`${testCasesDir}/${testCaseFile}`);
-                const testSuite = misc_1.Metadata.get(TestSuiteClass.prototype, 'test:suite');
-                if (testSuite) {
-                    describe(testSuite.description, testSuite.callback);
-                }
-            }
-        });
-    });
+    }
 }
 exports.startTesting = startTesting;
 /**
