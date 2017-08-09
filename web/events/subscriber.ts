@@ -1,4 +1,5 @@
 import { EventListener, EventListenerClass } from './handler';
+import { KeyValuePair } from '../../core/misc';
 import { Context } from '../../core/service';
 import { Namespace } from './service';
 import { Event } from './router';
@@ -12,6 +13,11 @@ export interface Socket extends SocketIO.Socket {
    * Context instance
    */
   readonly context: Context;
+
+  /**
+   * Socket custom data
+   */
+  readonly data: KeyValuePair<any>;
 }
 
 /**

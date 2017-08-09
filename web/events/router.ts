@@ -107,8 +107,14 @@ export class EventsRouter {
           next(new Error('socket.context is already set. There might be conflict with socket.io'));
           return;
         }
-
         (socket as any).context = this.app.context.newInstance();
+
+        if (typeof socket.data != 'undefined') {
+          next(new Error('socket.data is already set. There might be conflict with socket.io'));
+          return;
+        }
+        (socket as any).data = {};
+
         next();
       });
 
