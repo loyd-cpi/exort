@@ -1,7 +1,6 @@
 import { checkAppConfig, Application, AppProvider } from './app';
 import * as express from 'express';
 import * as morgan from 'morgan';
-import { Error } from './error';
 import { _ } from './misc';
 
 /**
