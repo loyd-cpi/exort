@@ -128,6 +128,36 @@ export declare class FieldValidator {
         label?: string;
     }[], message?: string): this;
     /**
+     * The field under validation must be present and not empty only when any of the other specified fields are not present.
+     */
+    requiredWithout(otherFields: string, message?: string): this;
+    /**
+     * The field under validation must be present and not empty only when any of the other specified fields are not present.
+     */
+    requiredWithout(otherFields: string[], message?: string): this;
+    /**
+     * The field under validation must be present and not empty only when any of the other specified fields are not present.
+     */
+    requiredWithout(otherFields: {
+        name: string;
+        label?: string;
+    }[], message?: string): this;
+    /**
+     * The field under validation must be present and not empty only when all of the other specified fields are not present.
+     */
+    requiredWithoutAll(otherFields: string, message?: string): this;
+    /**
+     * The field under validation must be present and not empty only when all of the other specified fields are not present.
+     */
+    requiredWithoutAll(otherFields: string[], message?: string): this;
+    /**
+     * The field under validation must be present and not empty only when all of the other specified fields are not present.
+     */
+    requiredWithoutAll(otherFields: {
+        name: string;
+        label?: string;
+    }[], message?: string): this;
+    /**
      * The field under validation must be included in the given list of values.
      */
     in(list: any[], message?: string): this;

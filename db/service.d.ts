@@ -46,7 +46,7 @@ export declare abstract class SqlService<T extends Model> extends Service {
     /**
      * Creates a new query builder that can be used to build a sql query
      */
-    protected createQueryBuilder(alias: string, connection?: string): SelectQueryBuilder<T>;
+    protected createQueryBuilder(alias?: string, connection?: string): SelectQueryBuilder<T>;
     /**
      * Creates a new model instance and copies all model properties from this object into a new model
      */

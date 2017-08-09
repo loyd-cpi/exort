@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const tslib_1 = require("tslib");
 const mime_1 = require("./mime");
 const pathlib = require("path");
 const misc_1 = require("./misc");
@@ -96,18 +95,7 @@ class File {
      * Check if file exists
      */
     static exists(path) {
-        return tslib_1.__awaiter(this, void 0, void 0, function* () {
-            try {
-                yield this.getStats(path);
-            }
-            catch (ex) {
-                if (ex.code == 'ENOENT') {
-                    return false;
-                }
-                throw ex;
-            }
-            return true;
-        });
+        return new Promise((resolve, reject) => fs.access(path, fs.constants.F_OK, err => resolve(err ? true : false)));
     }
     /**
      * Read content from file

@@ -41,7 +41,7 @@ class SqlService extends service_1.Service {
      * Creates a new query builder that can be used to build a sql query
      */
     createQueryBuilder(alias, connection) {
-        return this.getRepository(connection).createQueryBuilder(alias);
+        return this.getRepository(connection).createQueryBuilder(alias || this.modelClass.name);
     }
     /**
      * Creates a new model instance and copies all model properties from this object into a new model
