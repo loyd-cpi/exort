@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const tslib_1 = require("tslib");
 const app_1 = require("../core/app");
+const logger_1 = require("../core/logger");
 const yargs = require("yargs");
 /**
  * Console namespace
@@ -11,15 +12,15 @@ var Console;
     /**
      * Add command
      */
-    function addCommand(options) {
+    function addCommand(app, options) {
         yargs.command(options.command, options.desc, options.params, (argv) => {
             options.handler(argv)
                 .then(() => {
-                console.log(`\n\n${options.command} done`);
+                logger_1.Log.info(app, `\n\n${options.command} done`);
                 process.exit(0);
             })
                 .catch(err => {
-                console.error(`\n\n${err}`);
+                logger_1.Log.error(app, `\n\n${err}`);
                 process.exit(1);
             });
         });

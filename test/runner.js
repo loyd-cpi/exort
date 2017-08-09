@@ -6,6 +6,7 @@ const command_1 = require("../console/command");
 const misc_1 = require("../core/misc");
 const http_1 = require("../web/http");
 const supertest = require("supertest");
+const logger_1 = require("../core/logger");
 const pathlib = require("path");
 const Mocha = require("mocha");
 const fs = require("fs");
@@ -43,7 +44,7 @@ function startTesting(app, testCasesDir) {
         if (e.code != 'ENOENT') {
             throw e;
         }
-        console.log('No test cases');
+        logger_1.Log.info(app, 'No test cases');
     }
     if (testCaseFiles.length) {
         describe('Preparing test cases...', function () {
@@ -80,7 +81,7 @@ function provideTestCommands(runnerFile) {
         else {
             runnerFile = `${app.dir}/tests/run.js`;
         }
-        command_1.Console.addCommand({
+        command_1.Console.addCommand(app, {
             command: 'test:run',
             desc: 'Run tests',
             params: {},

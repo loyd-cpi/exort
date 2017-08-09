@@ -44,7 +44,7 @@ function provideSchemaCommands(databaseSourceDir, databaseDistDir) {
         else {
             databaseDistDir = `${app.dir}/database`;
         }
-        command_1.Console.addCommand({
+        command_1.Console.addCommand(app, {
             command: 'schema:sync',
             desc: 'Sync models and database schema',
             params: {
@@ -58,7 +58,7 @@ function provideSchemaCommands(databaseSourceDir, databaseDistDir) {
                 });
             }
         });
-        command_1.Console.addCommand({
+        command_1.Console.addCommand(app, {
             command: 'seed:run',
             desc: 'Run database seeder',
             params: {
@@ -77,7 +77,7 @@ function provideSchemaCommands(databaseSourceDir, databaseDistDir) {
                 });
             }
         });
-        command_1.Console.addCommand({
+        command_1.Console.addCommand(app, {
             command: 'seed:make',
             desc: 'Create database seeder',
             params: {

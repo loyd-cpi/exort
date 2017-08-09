@@ -36,6 +36,9 @@ function provideConnection(modelsDir) {
                     }
                 }
             }
+            if (app.testMode) {
+                delete conn.logging;
+            }
             yield typeorm_1.createConnection(conn);
         }
     });

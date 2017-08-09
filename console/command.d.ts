@@ -35,7 +35,7 @@ export declare namespace Console {
     /**
      * Add command
      */
-    function addCommand(options: CommandOptions): void;
+    function addCommand(app: Application, options: CommandOptions): void;
     /**
      * Execute command base from parsed arguments
      */
