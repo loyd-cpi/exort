@@ -385,6 +385,136 @@ export class FieldValidator {
   }
 
   /**
+   * The field under validation must be present and not empty only when any of the other specified fields are not present.
+   */
+  public requiredWithout(otherFields: string, message?: string): this;
+
+  /**
+   * The field under validation must be present and not empty only when any of the other specified fields are not present.
+   */
+  public requiredWithout(otherFields: string[], message?: string): this;
+
+  /**
+   * The field under validation must be present and not empty only when any of the other specified fields are not present.
+   */
+  public requiredWithout(otherFields: { name: string, label?: string}[], message?: string): this;
+
+  /**
+   * The field under validation must be present and not empty only when any of the other specified fields are not present.
+   */
+  public requiredWithout(otherFields: ({ name: string, label?: string} | string)[] | string, message?: string): this {
+    let otherFieldNames: string[] = [];
+    let otherFieldLabels: string[] = [];
+    if (typeof otherFields == 'string') {
+      otherFields = [otherFields];
+    }
+
+    for (let field of otherFields) {
+      if (typeof field == 'string') {
+        otherFieldNames.push(field);
+        otherFieldLabels.push(fieldLabelCase(field));
+      } else {
+        otherFieldNames.push(field.name);
+        otherFieldLabels.push(field.label || fieldLabelCase(field.name));
+      }
+    }
+
+    this.rules['requiredWithout'] = {
+      name: 'requiredWithout',
+      goWithUndefined: true,
+      handle() {
+
+        let validation = this.validator.getValidation();
+        for (let otherFieldName of otherFieldNames) {
+          if (validation.isEmpty(this.validator.getInput(otherFieldName))) {
+            return !validation.isEmpty(this.validator.getInput(this.fieldName));
+          }
+        }
+
+        return true;
+      },
+      message() {
+        return {
+          message: message || Validation.RULE_MESSAGES.requiredWithout,
+          attrs: {
+            label: this.fieldLabel,
+            values: otherFieldLabels.join(', ')
+          }
+        };
+      }
+    };
+    return this;
+  }
+
+  /**
+   * The field under validation must be present and not empty only when all of the other specified fields are not present.
+   */
+  public requiredWithoutAll(otherFields: string, message?: string): this;
+
+  /**
+   * The field under validation must be present and not empty only when all of the other specified fields are not present.
+   */
+  public requiredWithoutAll(otherFields: string[], message?: string): this;
+
+  /**
+   * The field under validation must be present and not empty only when all of the other specified fields are not present.
+   */
+  public requiredWithoutAll(otherFields: { name: string, label?: string }[], message?: string): this;
+
+  /**
+   * The field under validation must be present and not empty only when all of the other specified fields are not present.
+   */
+  public requiredWithoutAll(otherFields: ({ name: string, label?: string } | string)[] | string, message?: string): this {
+    let otherFieldNames: string[] = [];
+    let otherFieldLabels: string[] = [];
+    if (typeof otherFields == 'string') {
+      otherFields = [otherFields];
+    }
+
+    for (let field of otherFields) {
+      if (typeof field == 'string') {
+        otherFieldNames.push(field);
+        otherFieldLabels.push(fieldLabelCase(field));
+      } else {
+        otherFieldNames.push(field.name);
+        otherFieldLabels.push(field.label || fieldLabelCase(field.name));
+      }
+    }
+
+    this.rules['requiredWithoutAll'] = {
+      name: 'requiredWithoutAll',
+      goWithUndefined: true,
+      handle() {
+
+        let checkFieldValue = true;
+        let validation = this.validator.getValidation();
+        for (let otherFieldName of otherFieldNames) {
+          if (!validation.isEmpty(this.validator.getInput(otherFieldName))) {
+            checkFieldValue = false;
+            break;
+          }
+        }
+
+        if (checkFieldValue) {
+          return !validation.isEmpty(this.validator.getInput(this.fieldName));
+        }
+
+        return true;
+      },
+      message() {
+        return {
+          message: message || Validation.RULE_MESSAGES.requiredWithoutAll,
+          attrs: {
+            label: this.fieldLabel,
+            values: otherFieldLabels.join(', ')
+          }
+        };
+      }
+    };
+    return this;
+  }
+
+  /**
    * The field under validation must be included in the given list of values.
    */
   public in(list: any[], message?: string): this {

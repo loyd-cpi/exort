@@ -65,8 +65,8 @@ export abstract class SqlService<T extends Model> extends Service {
   /**
    * Creates a new query builder that can be used to build a sql query
    */
-  protected createQueryBuilder(alias: string, connection?: string): SelectQueryBuilder<T> {
-    return this.getRepository(connection).createQueryBuilder(alias);
+  protected createQueryBuilder(alias?: string, connection?: string): SelectQueryBuilder<T> {
+    return this.getRepository(connection).createQueryBuilder(alias || this.modelClass.name);
   }
 
   /**
