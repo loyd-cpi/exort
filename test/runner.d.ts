@@ -1,6 +1,7 @@
 /// <reference types="mocha" />
 import { Application, AppProvider } from '../core/app';
 import { WebApplication } from '../web/app';
+import { HttpTestClient } from './service';
 import * as Mocha from 'mocha';
 /**
  * TestRunner class
@@ -10,6 +11,10 @@ export declare class TestRunner extends Mocha {
      * WebApplication instance to test
      */
     static readonly app: WebApplication;
+    /**
+     * Supertest instance
+     */
+    static readonly httpTestClient: HttpTestClient;
 }
 /**
  * Create testable application instance

@@ -5,6 +5,7 @@ const app_1 = require("../core/app");
 const command_1 = require("../console/command");
 const misc_1 = require("../core/misc");
 const http_1 = require("../web/http");
+const supertest = require("supertest");
 const pathlib = require("path");
 const Mocha = require("mocha");
 const fs = require("fs");
@@ -49,6 +50,7 @@ function startTesting(app, testCasesDir) {
             before('Preparing application...', function () {
                 return tslib_1.__awaiter(this, void 0, void 0, function* () {
                     TestRunner.app = yield http_1.startServer(app);
+                    TestRunner.httpTestClient = supertest(TestRunner.app.server);
                 });
             });
             testCaseFiles.forEach(testCaseFile => {

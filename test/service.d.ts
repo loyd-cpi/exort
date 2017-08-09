@@ -1,26 +1,23 @@
 /// <reference types="supertest" />
+import { Service, Context } from '../core/service';
 import { WebApplication } from '../web/app';
-import { Service } from '../core/service';
 import * as supertest from 'supertest';
 /**
  * HttpTest interface
  */
-export interface HttpTest extends supertest.SuperTest<supertest.Test> {
+export interface HttpTestClient extends supertest.SuperTest<supertest.Test> {
 }
 /**
  * Abstract TestService class
  */
 export declare abstract class TestService extends Service {
+    protected readonly httpClient: HttpTestClient;
     /**
      * WebApplication instance
      */
     protected readonly app: WebApplication;
     /**
-     * Supertest instance
+     * TestService constructor
      */
-    private supertestInstance;
-    /**
-     * Create and get supertest instance
-     */
-    protected createHttpTest(): HttpTest;
+    constructor(context: Context, httpClient: HttpTestClient);
 }

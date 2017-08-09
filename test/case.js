@@ -21,7 +21,7 @@ function TestSuite(description) {
             description: description || target.name,
             callback: function () {
                 let testService;
-                before(() => testService = Reflect.construct(target, [runner_1.TestRunner.app.context.newInstance()]));
+                before(() => testService = Reflect.construct(target, [runner_1.TestRunner.app.context.newInstance(), runner_1.TestRunner.httpTestClient]));
                 beforeTestCases.forEach(beforeTestCase => {
                     before(beforeTestCase.description, function () {
                         return testService[beforeTestCase.methodName](this);
