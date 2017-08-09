@@ -1,5 +1,6 @@
 import { checkAppConfig, boot, Application } from '../core/app';
 import { ConsoleApplication } from './app';
+import { Log } from '../core/logger';
 import * as yargs from 'yargs';
 
 /**
@@ -39,15 +40,15 @@ export namespace Console {
   /**
    * Add command
    */
-  export function addCommand(options: CommandOptions): void {
+  export function addCommand(app: Application, options: CommandOptions): void {
     yargs.command(options.command, options.desc, options.params, (argv: Arguments) => {
       options.handler(argv)
         .then(() => {
-          console.log(`\n\n${options.command} done`);
+          Log.info(app, `\n\n${options.command} done`);
           process.exit(0);
         })
         .catch(err => {
-          console.error(`\n\n${err}`);
+          Log.error(app, `\n\n${err}`);
           process.exit(1);
         });
     });

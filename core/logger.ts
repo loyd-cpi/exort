@@ -1,6 +1,7 @@
 import { checkAppConfig, Application, AppProvider } from './app';
 import * as express from 'express';
 import * as morgan from 'morgan';
+import { Error } from './error';
 import { _ } from './misc';
 
 /**
@@ -9,6 +10,8 @@ import { _ } from './misc';
 export function provideLogger(): AppProvider {
   return async (app: Application): Promise<void> => {
     checkAppConfig(app);
+
+    if (app.testMode) return;
 
     let format = 'short';
     let options: any = {};
@@ -40,4 +43,56 @@ export function provideLogger(): AppProvider {
 
     app.use(morgan(format, options));
   };
+}
+
+/**
+ * Log namespace
+ */
+export namespace Log {
+
+  /**
+   * Log type enum
+   */
+  export enum Type {
+    DEBUG = 'debug',
+    ERROR = 'error',
+    INFO = 'info',
+    WARN = 'warn'
+  }
+
+  /**
+   * write console log
+   */
+  function write(app: Application, message: string, type: Type): void {
+    if (app.testMode) return;
+    (console as any)[type](message);
+  }
+
+  /**
+   * error console log
+   */
+  export function error(app: Application, message: string): void {
+    write(app, message, Type.ERROR);
+  }
+
+  /**
+   * debug console log
+   */
+  export function debug(app: Application, message: string): void {
+    write(app, message, Type.DEBUG);
+  }
+
+  /**
+   * info console log
+   */
+  export function info(app: Application, message: string): void {
+    write(app, message, Type.INFO);
+  }
+
+  /**
+   * warning console log
+   */
+  export function warning(app: Application, message: string): void {
+    write(app, message, Type.WARN);
+  }
 }

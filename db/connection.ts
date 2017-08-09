@@ -40,6 +40,10 @@ export function provideConnection(modelsDir?: string): AppProvider {
         }
       }
 
+      if (app.testMode) {
+        delete conn.logging;
+      }
+
       await createConnection(conn);
     }
   };

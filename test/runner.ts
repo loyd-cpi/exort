@@ -5,6 +5,7 @@ import { Metadata, _ } from '../core/misc';
 import { HttpTestClient } from './service';
 import { startServer } from '../web/http';
 import * as supertest from 'supertest';
+import { Log } from '../core/logger';
 import { ITestSuite } from './case';
 import * as pathlib from 'path';
 import * as Mocha from 'mocha';
@@ -55,7 +56,7 @@ export function startTesting(app: Application, testCasesDir?: string) {
       throw e;
     }
 
-    console.log('No test cases');
+    Log.info(app, 'No test cases');
   }
 
   if (testCaseFiles.length) {
@@ -95,7 +96,7 @@ export function provideTestCommands(runnerFile?: string): AppProvider {
       runnerFile = `${app.dir}/tests/run.js`;
     }
 
-    Console.addCommand({
+    Console.addCommand(app, {
       command: 'test:run',
       desc: 'Run tests',
       params: {},
