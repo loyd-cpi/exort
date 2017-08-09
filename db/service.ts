@@ -1,11 +1,12 @@
-import { Connection, EntityManager, Repository, getConnectionManager } from 'typeorm';
 import { SelectQueryBuilder } from 'typeorm/query-builder/SelectQueryBuilder';
 import { QueryPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { FindManyOptions } from 'typeorm/find-options/FindManyOptions';
 import { FindOneOptions } from 'typeorm/find-options/FindOneOptions';
 import { RemoveOptions } from 'typeorm/repository/RemoveOptions';
+import { Connection, EntityManager, Repository } from 'typeorm';
 import { SaveOptions } from 'typeorm/repository/SaveOptions';
 import { DeepPartial } from 'typeorm/common/DeepPartial';
+import { getConnection } from './connection';
 import { Service } from '../core/service';
 import { Model } from './model';
 
@@ -41,7 +42,7 @@ export abstract class SqlService<T extends Model> extends Service {
    * Throws exception if connection with the given name was not found.
    */
   protected getConnection(name?: string): Connection {
-    return getConnectionManager().get(name);
+    return getConnection(this.app, name);
   }
 
   /**

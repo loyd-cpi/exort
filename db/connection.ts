@@ -1,5 +1,5 @@
+import { createConnection, getConnectionManager, Connection } from 'typeorm';
 import { checkAppConfig, AppProvider, Application } from '../core/app';
-import { createConnection, getConnectionManager } from 'typeorm';
 import { _ } from '../core/misc';
 import { Model } from './model';
 
@@ -22,12 +22,13 @@ export function provideConnection(modelsDir?: string): AppProvider {
     const connectionManager = getConnectionManager();
     for (let connectionName of dbConf.auto) {
 
-      if (connectionManager.has(connectionName) && connectionManager.get(connectionName).isConnected) {
+      const prefixedName = `${app.id}:${connectionName}`;
+      if (connectionManager.has(prefixedName) && connectionManager.get(prefixedName).isConnected) {
         continue;
       }
 
       const conn = _.clone(dbConf.connections[connectionName]);
-      conn.name = connectionName;
+      conn.name = prefixedName;
       conn.entities = [];
 
       const indexModule = require(modelsDir);
@@ -47,4 +48,12 @@ export function provideConnection(modelsDir?: string): AppProvider {
       await createConnection(conn);
     }
   };
+}
+
+/**
+ * Get connection from specified application instance
+ */
+export function getConnection(app: Application, name?: string): Connection {
+  checkAppConfig(app);
+  return getConnectionManager().get(`${app.id}:${name || 'default'}`);
 }

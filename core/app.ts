@@ -10,6 +10,12 @@ import { Error } from './error';
 export interface Application extends express.Express {
 
   /**
+   * Application ID
+   * @type {string}
+   */
+  readonly id: string;
+
+  /**
    * Config instance
    */
   readonly config: Config;
@@ -93,6 +99,11 @@ export function createApplication(bootDir: string, configFiles?: string | string
     throw new Error('app.dir is already set. There might be conflict with express');
   }
 
+  if (typeof app.id != 'undefined') {
+    throw new Error('app.id is already set. There might be conflict with express');
+  }
+
+  (app as any).id = _.uniqueId('app:');
   (app as any).testMode = false;
   (app as any).rootDir = process.cwd();
   (app as any).bootDir = pathlib.normalize(_.trimEnd(bootDir, '/'));
