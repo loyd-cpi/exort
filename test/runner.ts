@@ -2,7 +2,9 @@ import { Application, checkAppConfig, AppProvider, createApplication } from '../
 import { Console, Arguments } from '../console/command';
 import { WebApplication } from '../web/app';
 import { Metadata, _ } from '../core/misc';
+import { HttpTestClient } from './service';
 import { startServer } from '../web/http';
+import * as supertest from 'supertest';
 import { ITestSuite } from './case';
 import * as pathlib from 'path';
 import * as Mocha from 'mocha';
@@ -17,6 +19,11 @@ export class TestRunner extends Mocha {
    * WebApplication instance to test
    */
   public static readonly app: WebApplication;
+
+  /**
+   * Supertest instance
+   */
+  public static readonly httpTestClient: HttpTestClient;
 }
 
 /**
@@ -56,6 +63,7 @@ export function startTesting(app: Application, testCasesDir?: string) {
 
       before('Preparing application...', async function () {
         (TestRunner as any).app = await startServer(app);
+        (TestRunner as any).httpTestClient = supertest(TestRunner.app.server);
       });
 
       testCaseFiles.forEach(testCaseFile => {

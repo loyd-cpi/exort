@@ -42,7 +42,7 @@ export function TestSuite(description?: string) {
       callback: function () {
 
         let testService: TestService;
-        before(() => testService = Reflect.construct(target, [TestRunner.app.context.newInstance()]));
+        before(() => testService = Reflect.construct(target, [TestRunner.app.context.newInstance(), TestRunner.httpTestClient]));
 
         beforeTestCases.forEach(beforeTestCase => {
           before(beforeTestCase.description, function () {
