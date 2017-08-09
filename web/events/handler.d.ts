@@ -6,7 +6,7 @@ import { Socket } from './subscriber';
  * EventNextFunction interface
  */
 export interface EventNextFunction {
-    (err?: any): void;
+    (err?: Error): void;
 }
 /**
  * Abstract EventHandler class

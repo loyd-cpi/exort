@@ -80,6 +80,11 @@ class EventsRouter {
                     return;
                 }
                 socket.context = this.app.context.newInstance();
+                if (typeof socket.data != 'undefined') {
+                    next(new error_1.Error('socket.data is already set. There might be conflict with socket.io'));
+                    return;
+                }
+                socket.data = {};
                 next();
             });
             (this.namespaceMapping[namespace].middleware).forEach(mware => namespaceInstance.use(mware));
