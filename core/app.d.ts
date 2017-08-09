@@ -6,6 +6,11 @@ import { Store } from './misc';
  */
 export interface Application extends express.Express {
     /**
+     * Application ID
+     * @type {string}
+     */
+    readonly id: string;
+    /**
      * Config instance
      */
     readonly config: Config;

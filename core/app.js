@@ -40,6 +40,10 @@ function createApplication(bootDir, configFiles) {
     if (typeof app.dir != 'undefined') {
         throw new error_1.Error('app.dir is already set. There might be conflict with express');
     }
+    if (typeof app.id != 'undefined') {
+        throw new error_1.Error('app.id is already set. There might be conflict with express');
+    }
+    app.id = misc_1._.uniqueId('app:');
     app.testMode = false;
     app.rootDir = process.cwd();
     app.bootDir = pathlib.normalize(misc_1._.trimEnd(bootDir, '/'));

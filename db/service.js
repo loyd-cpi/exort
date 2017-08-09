@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const tslib_1 = require("tslib");
-const typeorm_1 = require("typeorm");
+const connection_1 = require("./connection");
 const service_1 = require("../core/service");
 /**
  * Abstract SeedService class
@@ -19,7 +19,7 @@ class SqlService extends service_1.Service {
      * Throws exception if connection with the given name was not found.
      */
     getConnection(name) {
-        return typeorm_1.getConnectionManager().get(name);
+        return connection_1.getConnection(this.app, name);
     }
     /**
      * Get transaction connection

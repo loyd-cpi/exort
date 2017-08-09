@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const tslib_1 = require("tslib");
-const app_1 = require("../core/app");
 const typeorm_1 = require("typeorm");
+const app_1 = require("../core/app");
 const misc_1 = require("../core/misc");
 const model_1 = require("./model");
 /**
@@ -22,11 +22,12 @@ function provideConnection(modelsDir) {
         }
         const connectionManager = typeorm_1.getConnectionManager();
         for (let connectionName of dbConf.auto) {
-            if (connectionManager.has(connectionName) && connectionManager.get(connectionName).isConnected) {
+            const prefixedName = `${app.id}:${connectionName}`;
+            if (connectionManager.has(prefixedName) && connectionManager.get(prefixedName).isConnected) {
                 continue;
             }
             const conn = misc_1._.clone(dbConf.connections[connectionName]);
-            conn.name = connectionName;
+            conn.name = prefixedName;
             conn.entities = [];
             const indexModule = require(modelsDir);
             if (!misc_1._.isNone(indexModule) && typeof indexModule == 'object') {
@@ -44,4 +45,12 @@ function provideConnection(modelsDir) {
     });
 }
 exports.provideConnection = provideConnection;
+/**
+ * Get connection from specified application instance
+ */
+function getConnection(app, name) {
+    app_1.checkAppConfig(app);
+    return typeorm_1.getConnectionManager().get(`${app.id}:${name || 'default'}`);
+}
+exports.getConnection = getConnection;
 //# sourceMappingURL=connection.js.map
