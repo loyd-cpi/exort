@@ -1,6 +1,6 @@
 import { AppProvider, Application, checkAppConfig } from '../core/app';
 import { Console, Arguments } from '../console/command';
-import { getConnectionManager } from 'typeorm';
+import { getConnection } from './connection';
 import { File } from '../core/filesystem';
 import { SeedService } from './service';
 import { Error } from '../core/error';
@@ -9,8 +9,8 @@ import { _ } from '../core/misc';
 /**
  * Sync schema of the connection
  */
-export async function syncSchema(connectionName?: string): Promise<void> {
-  await getConnectionManager().get(connectionName).syncSchema();
+export function syncSchema(app: Application, connectionName?: string) {
+  return getConnection(app, connectionName).syncSchema();
 }
 
 const SEEDER_TEMPLATE: string = _.trimStart(`
@@ -51,7 +51,7 @@ export function provideSchemaCommands(databaseSourceDir?: string, databaseDistDi
         }
       },
       async handler(argv: Arguments) {
-        await syncSchema(argv.connection);
+        await syncSchema(app, argv.connection);
       }
     });
 
