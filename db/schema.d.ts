@@ -1,8 +1,8 @@
-import { AppProvider } from '../core/app';
+import { AppProvider, Application } from '../core/app';
 /**
  * Sync schema of the connection
  */
-export declare function syncSchema(connectionName?: string): Promise<void>;
+export declare function syncSchema(app: Application, connectionName?: string): Promise<void>;
 /**
  * Provide schema commands
  */

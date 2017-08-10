@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const tslib_1 = require("tslib");
 const app_1 = require("../core/app");
 const command_1 = require("../console/command");
-const typeorm_1 = require("typeorm");
+const connection_1 = require("./connection");
 const filesystem_1 = require("../core/filesystem");
 const service_1 = require("./service");
 const error_1 = require("../core/error");
@@ -11,10 +11,8 @@ const misc_1 = require("../core/misc");
 /**
  * Sync schema of the connection
  */
-function syncSchema(connectionName) {
-    return tslib_1.__awaiter(this, void 0, void 0, function* () {
-        yield typeorm_1.getConnectionManager().get(connectionName).syncSchema();
-    });
+function syncSchema(app, connectionName) {
+    return connection_1.getConnection(app, connectionName).syncSchema();
 }
 exports.syncSchema = syncSchema;
 const SEEDER_TEMPLATE = misc_1._.trimStart(`
@@ -54,7 +52,7 @@ function provideSchemaCommands(databaseSourceDir, databaseDistDir) {
             },
             handler(argv) {
                 return tslib_1.__awaiter(this, void 0, void 0, function* () {
-                    yield syncSchema(argv.connection);
+                    yield syncSchema(app, argv.connection);
                 });
             }
         });
