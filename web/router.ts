@@ -146,6 +146,10 @@ export class Router {
       throw new Error(`${controllerName} doesn't extend HttpController`);
     }
 
+    if (typeof controllerClass.prototype[actionName] != 'function') {
+      throw new Error(`${controllerClass.name} doesn't have ${actionName} method`);
+    }
+
     const middlewareHandlers: express.RequestHandler[] = [];
     if (Array.isArray(middleware)) {
       for (let mware of middleware) {
