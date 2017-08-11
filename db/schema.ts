@@ -9,8 +9,8 @@ import { _ } from '../core/misc';
 /**
  * Sync schema of the connection
  */
-export function syncSchema(app: Application, connectionName?: string) {
-  return getConnection(app, connectionName).syncSchema();
+export function synchronize(app: Application, connectionName?: string) {
+  return getConnection(app, connectionName).synchronize();
 }
 
 const SEEDER_TEMPLATE: string = _.trimStart(`
@@ -50,8 +50,8 @@ export function provideSchemaCommands(databaseSourceDir?: string, databaseDistDi
           required: false
         }
       },
-      async handler(argv: Arguments) {
-        await syncSchema(app, argv.connection);
+      handler(argv: Arguments) {
+        return synchronize(app, argv.connection);
       }
     });
 
