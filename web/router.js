@@ -95,6 +95,9 @@ class Router {
         if (!misc_1._.classExtends(controllerClass, handler_1.HttpController)) {
             throw new error_1.Error(`${controllerName} doesn't extend HttpController`);
         }
+        if (typeof controllerClass.prototype[actionName] != 'function') {
+            throw new error_1.Error(`${controllerClass.name} doesn't have ${actionName} method`);
+        }
         const middlewareHandlers = [];
         if (Array.isArray(middleware)) {
             for (let mware of middleware) {
