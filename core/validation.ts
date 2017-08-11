@@ -1,5 +1,6 @@
 import { Store, KeyValuePair, Metadata, _ } from './misc';
 import { Service } from './service';
+import { File } from './filesystem';
 import * as moment from 'moment';
 import { Error } from './error';
 
