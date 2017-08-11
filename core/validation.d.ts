@@ -202,6 +202,24 @@ export declare class FieldValidator {
      */
     beforeOrEqual(date: moment.MomentInput, message?: string): this;
     /**
+     * The field under validation must have a minimum value.
+     * Strings, numerics, arrays, and files are evaluated in the same fashion as the size rule.
+     */
+    min(value: number, message?: string): this;
+    /**
+     * The field under validation must be less than or equal to a maximum value.
+     * Strings, numerics, arrays, and files are evaluated in the same fashion as the size rule.
+     */
+    max(value: number, message?: string): this;
+    /**
+     * Get message type
+     */
+    private getMessageType();
+    /**
+     * Get input value
+     */
+    getInput(): any;
+    /**
      * Add error message
      */
     addError(ruleName: string, message: string, attrs?: KeyValuePair<string | number>): void;
@@ -287,12 +305,7 @@ export declare class Validation extends Service {
         array: string;
         before: string;
         beforeOrEqual: string;
-        between: {
-            numeric: string;
-            file: string;
-            string: string;
-            array: string;
-        };
+        between: KeyValuePair<string>;
         boolean: string;
         confirmed: string;
         date: string;
@@ -314,20 +327,10 @@ export declare class Validation extends Service {
         ipv4: string;
         ipv6: string;
         json: string;
-        max: {
-            numeric: string;
-            file: string;
-            string: string;
-            array: string;
-        };
+        max: KeyValuePair<string>;
         mimes: string;
         mimeTypes: string;
-        min: {
-            numeric: string;
-            file: string;
-            string: string;
-            array: string;
-        };
+        min: KeyValuePair<string>;
         notIn: string;
         numeric: string;
         present: string;
@@ -340,12 +343,7 @@ export declare class Validation extends Service {
         requiredWithout: string;
         requiredWithoutAll: string;
         same: string;
-        size: {
-            numeric: string;
-            file: string;
-            string: string;
-            array: string;
-        };
+        size: KeyValuePair<string>;
         string: string;
         timezone: string;
         unique: string;
@@ -360,6 +358,30 @@ export declare class Validation extends Service {
      * Check if value is yes, 1 or true
      */
     isAccepted(val: string | boolean | number): boolean;
+    /**
+     * Get number of value of numeric or get size if value is a string, file or array.
+     */
+    private getValueOrSize(value);
+    /**
+     * Check if first parameter is greater than second parameter
+     */
+    isGreaterThan(val: string | number | File | any[], compareValue: number): boolean;
+    /**
+     * Check if first parameter is greater than or equal to second parameter
+     */
+    isGreaterThanOrEqual(val: string | number | File | any[], compareValue: number): boolean;
+    /**
+     * Check if first parameter is less than second parameter
+     */
+    isLessThan(val: string | number | File | any[], compareValue: number): boolean;
+    /**
+     * Check if first parameter is less than or equal to second parameter
+     */
+    isLessThanOrEqual(val: string | number | File | any[], compareValue: number): boolean;
+    /**
+     * Check if first parameter is equal to second parameter
+     */
+    isEqual(val: string | number | File | any[], compareValue: number): boolean;
     /**
      * Date validation
      */

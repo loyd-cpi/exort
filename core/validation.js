@@ -79,7 +79,7 @@ class FieldValidator {
         this.rules['email'] = {
             name: 'email',
             handle() {
-                return this.validator.getValidation().isEmail(this.validator.getInput(this.fieldName));
+                return this.validator.getValidation().isEmail(this.getInput());
             },
             message() {
                 return {
@@ -99,7 +99,7 @@ class FieldValidator {
         this.rules['accepted'] = {
             name: 'accepted',
             handle() {
-                return this.validator.getValidation().isAccepted(this.validator.getInput(this.fieldName));
+                return this.validator.getValidation().isAccepted(this.getInput());
             },
             message() {
                 return {
@@ -122,7 +122,7 @@ class FieldValidator {
         this.rules['after'] = {
             name: 'after',
             handle() {
-                return this.validator.getValidation().isAfter(this.validator.getInput(this.fieldName), date);
+                return this.validator.getValidation().isAfter(this.getInput(), date);
             },
             message() {
                 return {
@@ -143,7 +143,7 @@ class FieldValidator {
         this.rules['date'] = {
             name: 'date',
             handle() {
-                return this.validator.getValidation().isDate(this.validator.getInput(this.fieldName));
+                return this.validator.getValidation().isDate(this.getInput());
             },
             message() {
                 return {
@@ -164,7 +164,7 @@ class FieldValidator {
             name: 'required',
             goWithUndefined: true,
             handle() {
-                return !this.validator.getValidation().isEmpty(this.validator.getInput(this.fieldName));
+                return !this.validator.getValidation().isEmpty(this.getInput());
             },
             message() {
                 return {
@@ -192,7 +192,7 @@ class FieldValidator {
             goWithUndefined: true,
             handle() {
                 if (this.validator.getInput(otherField.name) === value) {
-                    return !this.validator.getValidation().isEmpty(this.validator.getInput(this.fieldName));
+                    return !this.validator.getValidation().isEmpty(this.getInput());
                 }
                 return true;
             },
@@ -235,7 +235,7 @@ class FieldValidator {
                 let validation = this.validator.getValidation();
                 for (let otherFieldName of otherFieldNames) {
                     if (!validation.isEmpty(this.validator.getInput(otherFieldName))) {
-                        return !validation.isEmpty(this.validator.getInput(this.fieldName));
+                        return !validation.isEmpty(this.getInput());
                     }
                 }
                 return true;
@@ -284,7 +284,7 @@ class FieldValidator {
                     }
                 }
                 if (checkFieldValue) {
-                    return !validation.isEmpty(this.validator.getInput(this.fieldName));
+                    return !validation.isEmpty(this.getInput());
                 }
                 return true;
             },
@@ -326,7 +326,7 @@ class FieldValidator {
                 let validation = this.validator.getValidation();
                 for (let otherFieldName of otherFieldNames) {
                     if (validation.isEmpty(this.validator.getInput(otherFieldName))) {
-                        return !validation.isEmpty(this.validator.getInput(this.fieldName));
+                        return !validation.isEmpty(this.getInput());
                     }
                 }
                 return true;
@@ -375,7 +375,7 @@ class FieldValidator {
                     }
                 }
                 if (checkFieldValue) {
-                    return !validation.isEmpty(this.validator.getInput(this.fieldName));
+                    return !validation.isEmpty(this.getInput());
                 }
                 return true;
             },
@@ -398,7 +398,7 @@ class FieldValidator {
         this.rules['in'] = {
             name: 'in',
             handle() {
-                return this.validator.getValidation().isValueIn(this.validator.getInput(this.fieldName), list);
+                return this.validator.getValidation().isValueIn(this.getInput(), list);
             },
             message() {
                 return {
@@ -418,7 +418,7 @@ class FieldValidator {
         this.rules['notIn'] = {
             name: 'notIn',
             handle() {
-                return !this.validator.getValidation().isValueIn(this.validator.getInput(this.fieldName), list);
+                return !this.validator.getValidation().isValueIn(this.getInput(), list);
             },
             message() {
                 return {
@@ -438,7 +438,7 @@ class FieldValidator {
         this.rules['numeric'] = {
             name: 'numeric',
             handle() {
-                return this.validator.getValidation().isNumeric(this.validator.getInput(this.fieldName));
+                return this.validator.getValidation().isNumeric(this.getInput());
             },
             message() {
                 return {
@@ -458,7 +458,7 @@ class FieldValidator {
         this.rules['string'] = {
             name: 'string',
             handle() {
-                return this.validator.getValidation().isString(this.validator.getInput(this.fieldName));
+                return this.validator.getValidation().isString(this.getInput());
             },
             message() {
                 return {
@@ -481,7 +481,7 @@ class FieldValidator {
         this.rules['afterOrEqual'] = {
             name: 'afterOrEqual',
             handle() {
-                return this.validator.getValidation().isAfterOrEqual(this.validator.getInput(this.fieldName), date);
+                return this.validator.getValidation().isAfterOrEqual(this.getInput(), date);
             },
             message() {
                 return {
@@ -502,7 +502,7 @@ class FieldValidator {
         this.rules['alpha'] = {
             name: 'alpha',
             handle() {
-                return this.validator.getValidation().isAlpha(this.validator.getInput(this.fieldName));
+                return this.validator.getValidation().isAlpha(this.getInput());
             },
             message() {
                 return {
@@ -522,7 +522,7 @@ class FieldValidator {
         this.rules['alphaDash'] = {
             name: 'alphaDash',
             handle() {
-                return this.validator.getValidation().isAlphaDash(this.validator.getInput(this.fieldName));
+                return this.validator.getValidation().isAlphaDash(this.getInput());
             },
             message() {
                 return {
@@ -542,7 +542,7 @@ class FieldValidator {
         this.rules['alphaNum'] = {
             name: 'alphaNum',
             handle() {
-                return this.validator.getValidation().isAlphaNum(this.validator.getInput(this.fieldName));
+                return this.validator.getValidation().isAlphaNum(this.getInput());
             },
             message() {
                 return {
@@ -562,7 +562,7 @@ class FieldValidator {
         this.rules['array'] = {
             name: 'array',
             handle() {
-                return this.validator.getValidation().isArray(this.validator.getInput(this.fieldName));
+                return this.validator.getValidation().isArray(this.getInput());
             },
             message() {
                 return {
@@ -585,7 +585,7 @@ class FieldValidator {
         this.rules['before'] = {
             name: 'before',
             handle() {
-                return this.validator.getValidation().isBefore(this.validator.getInput(this.fieldName), date);
+                return this.validator.getValidation().isBefore(this.getInput(), date);
             },
             message() {
                 return {
@@ -609,7 +609,7 @@ class FieldValidator {
         this.rules['beforeOrEqual'] = {
             name: 'beforeOrEqual',
             handle() {
-                return this.validator.getValidation().isBeforeOrEqual(this.validator.getInput(this.fieldName), date);
+                return this.validator.getValidation().isBeforeOrEqual(this.getInput(), date);
             },
             message() {
                 return {
@@ -622,6 +622,72 @@ class FieldValidator {
             }
         };
         return this;
+    }
+    /**
+     * The field under validation must have a minimum value.
+     * Strings, numerics, arrays, and files are evaluated in the same fashion as the size rule.
+     */
+    min(value, message) {
+        this.rules['min'] = {
+            name: 'min',
+            handle() {
+                return this.validator.getValidation().isGreaterThanOrEqual(this.getInput(), value);
+            },
+            message() {
+                return {
+                    message: message || Validation.RULE_MESSAGES.min[this.getMessageType()],
+                    attrs: {
+                        label: this.fieldLabel,
+                        min: value
+                    }
+                };
+            }
+        };
+        return this;
+    }
+    /**
+     * The field under validation must be less than or equal to a maximum value.
+     * Strings, numerics, arrays, and files are evaluated in the same fashion as the size rule.
+     */
+    max(value, message) {
+        this.rules['max'] = {
+            name: 'max',
+            handle() {
+                return this.validator.getValidation().isLessThanOrEqual(this.getInput(), value);
+            },
+            message() {
+                return {
+                    message: message || Validation.RULE_MESSAGES.max[this.getMessageType()],
+                    attrs: {
+                        label: this.fieldLabel,
+                        max: value
+                    }
+                };
+            }
+        };
+        return this;
+    }
+    /**
+     * Get message type
+     */
+    getMessageType() {
+        let value = this.getInput();
+        if (value instanceof File) {
+            return 'file';
+        }
+        else if (typeof value == 'number' || this.validator.getValidation().isNumeric(value)) {
+            return 'numeric';
+        }
+        else if (this.validator.getValidation().isArray(value)) {
+            return 'array';
+        }
+        return 'string';
+    }
+    /**
+     * Get input value
+     */
+    getInput() {
+        return this.validator.getInput(this.fieldName);
     }
     /**
      * Add error message
@@ -647,7 +713,7 @@ class FieldValidator {
     check() {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
             this.errors = [];
-            let valueIsEmpty = this.validator.getValidation().isEmpty(this.validator.getInput(this.fieldName));
+            let valueIsEmpty = this.validator.getValidation().isEmpty(this.getInput());
             for (let rule in this.rules) {
                 if (valueIsEmpty && !this.rules[rule].goWithUndefined) {
                     continue;
@@ -779,6 +845,51 @@ class Validation extends service_1.Service {
             return val == 1;
         }
         return false;
+    }
+    /**
+     * Get number of value of numeric or get size if value is a string, file or array.
+     */
+    getValueOrSize(value) {
+        if (value instanceof File) {
+            return value.size;
+        }
+        else if (typeof value == 'number') {
+            return value;
+        }
+        else if (this.isNumeric(value)) {
+            return parseFloat(value);
+        }
+        return value.length;
+    }
+    /**
+     * Check if first parameter is greater than second parameter
+     */
+    isGreaterThan(val, compareValue) {
+        return this.getValueOrSize(val) > compareValue;
+    }
+    /**
+     * Check if first parameter is greater than or equal to second parameter
+     */
+    isGreaterThanOrEqual(val, compareValue) {
+        return this.getValueOrSize(val) >= compareValue;
+    }
+    /**
+     * Check if first parameter is less than second parameter
+     */
+    isLessThan(val, compareValue) {
+        return this.getValueOrSize(val) < compareValue;
+    }
+    /**
+     * Check if first parameter is less than or equal to second parameter
+     */
+    isLessThanOrEqual(val, compareValue) {
+        return this.getValueOrSize(val) <= compareValue;
+    }
+    /**
+     * Check if first parameter is equal to second parameter
+     */
+    isEqual(val, compareValue) {
+        return this.getValueOrSize(val) == compareValue;
     }
     /**
      * Date validation

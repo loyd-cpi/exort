@@ -11,10 +11,10 @@ const misc_1 = require("../core/misc");
 /**
  * Sync schema of the connection
  */
-function syncSchema(app, connectionName) {
-    return connection_1.getConnection(app, connectionName).syncSchema();
+function synchronize(app, connectionName) {
+    return connection_1.getConnection(app, connectionName).synchronize();
 }
-exports.syncSchema = syncSchema;
+exports.synchronize = synchronize;
 const SEEDER_TEMPLATE = misc_1._.trimStart(`
 import { SeedService } from 'exort/db';
 
@@ -51,9 +51,7 @@ function provideSchemaCommands(databaseSourceDir, databaseDistDir) {
                 }
             },
             handler(argv) {
-                return tslib_1.__awaiter(this, void 0, void 0, function* () {
-                    yield syncSchema(app, argv.connection);
-                });
+                return synchronize(app, argv.connection);
             }
         });
         command_1.Console.addCommand(app, {

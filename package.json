@@ -65,7 +65,7 @@
     "source-map-support": "^0.4.15",
     "supertest": "^3.0.0",
     "tslib": "^1.7.1",
-    "typeorm": "0.1.0-alpha.31",
+    "typeorm": "0.1.0-alpha.34",
     "yargs": "^8.0.2"
   },
   "devDependencies": {
