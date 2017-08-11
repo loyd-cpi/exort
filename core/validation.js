@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const tslib_1 = require("tslib");
 const misc_1 = require("./misc");
 const service_1 = require("./service");
+const filesystem_1 = require("./filesystem");
 const moment = require("moment");
 const error_1 = require("./error");
 /**
@@ -672,7 +673,7 @@ class FieldValidator {
      */
     getMessageType() {
         let value = this.getInput();
-        if (value instanceof File) {
+        if (value instanceof filesystem_1.File) {
             return 'file';
         }
         else if (typeof value == 'number' || this.validator.getValidation().isNumeric(value)) {
@@ -850,7 +851,7 @@ class Validation extends service_1.Service {
      * Get number of value of numeric or get size if value is a string, file or array.
      */
     getValueOrSize(value) {
-        if (value instanceof File) {
+        if (value instanceof filesystem_1.File) {
             return value.size;
         }
         else if (typeof value == 'number') {
