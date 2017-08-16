@@ -12,5 +12,13 @@
     "declaration": true,
     "noUnusedLocals": true,
     "importHelpers": true
-  }
+  },
+  "include": [
+    "console/**/*.ts",
+    "core/**/*.ts",
+    "db/**/*.ts",
+    "test/**/*.ts",
+    "web/**/*.ts",
+    "common.ts"
+  ]
 }

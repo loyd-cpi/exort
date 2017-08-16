@@ -13,6 +13,9 @@ find console -type f -name '*.d.ts' -delete
 find test -type f -name '*.js' -delete
 find test -type f -name '*.js.map' -delete
 find test -type f -name '*.d.ts' -delete
+find client -type f -name '*.js' -delete
+find client -type f -name '*.js.map' -delete
+find client -type f -name '*.d.ts' -delete
 rm -f common.js
 rm -f common.js.map
 rm -f common.d.ts
