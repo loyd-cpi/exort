@@ -6,8 +6,7 @@
   "typings": "core/index.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "npm run clean && tsc --project tsconfig.json",
-    "build:watch": "npm run clean && tsc --watch --project tsconfig.json",
+    "build": "npm run clean && tsc --project tsconfig.json && tsc --project client/tsconfig.json",
     "clean": "sh clean.sh"
   },
   "repository": {
@@ -37,6 +36,8 @@
     "@types/morgan": "^1.7.32",
     "@types/node": "^8.0.16",
     "@types/nunjucks": "0.0.32",
+    "@types/react": "^16.0.2",
+    "@types/react-dom": "^15.5.3",
     "@types/redis": "^2.6.0",
     "@types/reflect-metadata": "0.0.5",
     "@types/serve-favicon": "^2.2.28",
@@ -57,6 +58,8 @@
     "moment": "^2.18.1",
     "morgan": "^1.8.2",
     "nunjucks": "^3.0.1",
+    "react": "^15.6.1",
+    "react-dom": "^15.6.1",
     "redis": "^2.7.1",
     "reflect-metadata": "^0.1.10",
     "serve-favicon": "^2.4.3",

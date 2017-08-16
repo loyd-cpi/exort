@@ -21,7 +21,7 @@ function provideAssets() {
             }
             conf.prefix = `/${misc_1._.trim(conf.prefix, '/')}`;
             if (!pathlib.isAbsolute(conf.path)) {
-                conf.path = `${app.dir}${conf.path}`;
+                conf.path = `${app.rootDir}/${conf.path}`;
             }
             app.use(conf.prefix, express.static(conf.path, conf.options || {}));
         });
