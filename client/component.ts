@@ -1,23 +1,22 @@
 import * as React from 'react';
 
 /**
- * Container decorator
+ * ComponentClass interface
  */
-export function Container() {
-  return (target: Function) => {
-
-  };
+export interface ComponentClass<Props = {}, State = {}> {
+  new(props: Props, context?: any): Component<Props, State>;
 }
 
 /**
  * Abstract Component class
  */
-export abstract class Component<Props, State> extends React.Component<Props, State> {
+export abstract class Component<Props = {}, State = {}> extends React.Component<Props, State> {
 
   /**
    * Abstract Component constructor
    */
   constructor(props: Props, context?: any) {
     super(props, context);
+    (this as any).state = {};
   }
 }
