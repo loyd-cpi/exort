@@ -17,13 +17,10 @@ class Loader {
       throw new Error(`No extension name for ${this.resourcePath}`);
     }
 
-    const query = loaderUtils.getOptions(this) || {};
-    if (!query.name) {
-      query.name = this.resourcePath.replace(`${this.options.context.replace(/\/+$/, '')}/`, '');
-      query.name = query.name.substr(0, query.name.lastIndexOf('.')) || query.name;
-    }
+    let name = this.resourcePath.replace(`${this.options.context.replace(/\/+$/, '')}/`, '');
+    name = name.substr(0, name.lastIndexOf('.')) || name;
 
-    const chunkNameParam = JSON.stringify(loaderUtils.interpolateName(this, query.name, { context: this.options.context }));
+    const chunkNameParam = JSON.stringify(loaderUtils.interpolateName(this, name, { context: this.options.context }));
 
     return `module.exports = function(props) {
   return require('exort/client').renderBundleComponent('${className}', props, function(cb) {
