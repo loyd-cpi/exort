@@ -6,10 +6,8 @@ var React = require("react");
 function renderBundleComponent(name, props, loadBundle) {
     var Bundle = (function (_super) {
         tslib_1.__extends(Bundle, _super);
-        function Bundle(props, context) {
-            var _this = _super.call(this, props, context) || this;
-            _this.state = {};
-            return _this;
+        function Bundle() {
+            return _super !== null && _super.apply(this, arguments) || this;
         }
         Bundle.prototype.load = function () {
             var _this = this;
@@ -38,9 +36,13 @@ var BundleComponent = (function (_super) {
         this.load();
     };
     BundleComponent.prototype.render = function () {
-        if (!this.state.component)
-            return null;
-        return React.createElement(this.state.component, this.props);
+        if (this.state.component) {
+            return React.createElement(this.state.component, this.props);
+        }
+        if (this.props.loadingAnimation) {
+            return React.createElement(this.props.loadingAnimation);
+        }
+        return null;
     };
     return BundleComponent;
 }(component_1.Component));

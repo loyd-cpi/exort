@@ -8,8 +8,11 @@ export interface BuildComponentClass<Props> {
 export interface BundleComponentState {
     component?: React.ComponentClass;
 }
-export declare abstract class BundleComponent<Props> extends Component<Props, BundleComponentState> {
+export interface BundleComponentProps {
+    loadingAnimation?: React.ComponentType;
+}
+export declare abstract class BundleComponent<Props extends BundleComponentProps> extends Component<Props, BundleComponentState> {
     abstract load(): void;
     componentWillMount(): void;
-    render(): React.ComponentElement<{}, React.Component<{}, React.ComponentState>> | null;
+    render(): React.ComponentElement<{}, React.Component<{}, React.ComponentState>> | React.SFCElement<{}> | null;
 }
