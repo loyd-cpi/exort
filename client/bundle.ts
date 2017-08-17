@@ -12,14 +12,6 @@ export function renderBundleComponent<Props>(name: string, props: Props, loadBun
   class Bundle extends BundleComponent<Props> {
 
     /**
-     * Bundle constructor
-     */
-    constructor(props: Props, context?: any) {
-      super(props, context);
-      this.state = {};
-    }
-
-    /**
      * Load bundle
      */
     public load() {
@@ -54,9 +46,16 @@ export interface BundleComponentState {
 }
 
 /**
+ * BundleComponent properties interface
+ */
+export interface BundleComponentProps {
+  loadingAnimation?: React.ComponentType;
+}
+
+/**
  * BundleComponent class
  */
-export abstract class BundleComponent<Props> extends Component<Props, BundleComponentState> {
+export abstract class BundleComponent<Props extends BundleComponentProps> extends Component<Props, BundleComponentState> {
 
   /**
    * Abstract load method
@@ -74,7 +73,14 @@ export abstract class BundleComponent<Props> extends Component<Props, BundleComp
    * Render loaded or default html
    */
   public render() {
-    if (!this.state.component) return null;
-    return React.createElement(this.state.component, this.props);
+    if (this.state.component) {
+      return React.createElement(this.state.component, this.props);
+    }
+
+    if (this.props.loadingAnimation) {
+      return React.createElement(this.props.loadingAnimation as React.StatelessComponent);
+    }
+
+    return null;
   }
 }
