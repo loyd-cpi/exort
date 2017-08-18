@@ -183,6 +183,10 @@ export declare class FieldValidator {
      */
     alpha(message?: string): this;
     /**
+     * The field under validation must be entirely alphabetic characters and allows spaces.
+     */
+    alphaSpace(message?: string): this;
+    /**
      * The field under validation may have alpha-numeric characters, as well as dashes and underscores.
      */
     alphaDash(message?: string): this;
@@ -301,6 +305,7 @@ export declare class Validation extends Service {
         after: string;
         afterOrEqual: string;
         alpha: string;
+        alphaSpace: string;
         alphaDash: string;
         alphaNum: string;
         array: string;
@@ -403,6 +408,10 @@ export declare class Validation extends Service {
      * Alphabetic characters validation
      */
     isAlpha(val: string): boolean;
+    /**
+     * Alphabetic characters with space validation
+     */
+    isAlphaSpace(val: string): boolean;
     /**
      * Alpha dash validation
      */
