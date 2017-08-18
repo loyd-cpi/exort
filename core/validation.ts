@@ -646,6 +646,27 @@ export class FieldValidator {
   }
 
   /**
+   * The field under validation must be entirely alphabetic characters and allows spaces.
+   */
+  public alphaSpace(message?: string): this {
+    this.rules['alphaSpace'] = {
+      name: 'alphaSpace',
+      handle() {
+        return this.validator.getValidation().isAlphaSpace(this.getInput());
+      },
+      message() {
+        return {
+          message: message || Validation.RULE_MESSAGES.alphaSpace,
+          attrs: {
+            label: this.fieldLabel
+          }
+        };
+      }
+    };
+    return this;
+  }
+
+  /**
    * The field under validation may have alpha-numeric characters, as well as dashes and underscores.
    */
   public alphaDash(message?: string): this {
@@ -979,6 +1000,7 @@ export class Validation extends Service {
     after: 'The ${label} must be a date after ${date}.',
     afterOrEqual: 'The ${label} must be a date after or equal to ${date}.',
     alpha: 'The ${label} may only contain letters.',
+    alphaSpace: 'The ${label} may only contain letters and spaces.',
     alphaDash: 'The ${label} may only contain letters, numbers, and dashes.',
     alphaNum: 'The ${label} may only contain letters and numbers.',
     array: 'The ${label} must be an array.',
@@ -1160,6 +1182,13 @@ export class Validation extends Service {
    */
   public isAlpha(val: string): boolean {
     return (/^[a-zA-Z]+$/).test(val);
+  }
+
+  /**
+   * Alphabetic characters with space validation
+   */
+  public isAlphaSpace(val: string): boolean {
+    return (/^[a-zA-Z\s]+$/).test(val);
   }
 
   /**
