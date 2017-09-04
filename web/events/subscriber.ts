@@ -49,9 +49,7 @@ export class Subscriber {
     const instance = this.createListenerInstance(eventListenerClass);
     const ret = (instance as any)[methodName].apply(instance, args);
     if (ret instanceof Promise) {
-      ret.catch(err => {
-        throw err;
-      });
+      ret.catch(err => console.error(err));
     }
   }
 
