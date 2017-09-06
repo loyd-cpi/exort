@@ -57,6 +57,19 @@ function provideViewEngine(viewsDir) {
             });
         });
         app.set('view engine', 'html');
+        app._render = app.render;
+        app.render = function (name, options, callback) {
+            if (typeof options != 'function' && typeof callback != 'function') {
+                return new Promise((resolve, reject) => {
+                    app._render(name, options, (err, html) => {
+                        if (err)
+                            return reject(err);
+                        resolve(html);
+                    });
+                });
+            }
+            app._render(name, options, callback);
+        };
     });
 }
 exports.provideViewEngine = provideViewEngine;
