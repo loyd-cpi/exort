@@ -1,6 +1,7 @@
 import { checkAppConfig, Application, AppProvider } from './app';
 import { KeyValuePair } from './misc';
 import * as nunjucks from 'nunjucks';
+import { Error } from './error';
 import * as pathlib from 'path';
 import * as fs from 'fs';
 
@@ -69,5 +70,21 @@ export function provideViewEngine(viewsDir?: string): AppProvider {
     });
 
     app.set('view engine', 'html');
+
+    (app as any)._render = app.render;
+    (app as any).render = function (name: string, options?: Object, callback?: (err: Error, html: string) => void): Promise<string> | void {
+
+      if (typeof options != 'function' && typeof callback != 'function') {
+        return new Promise<string>((resolve, reject) => {
+
+          (app as any)._render(name, options, (err: Error, html: string) => {
+            if (err) return reject(err);
+            resolve(html);
+          });
+        });
+      }
+
+      (app as any)._render(name, options, callback);
+    };
   };
 }

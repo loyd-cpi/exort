@@ -45,6 +45,50 @@ export interface Application extends express.Express {
    * Determine if the application instance is for testing
    */
   readonly testMode: boolean;
+
+  /**
+    * Render the given view `name` name with `options`
+    * and a callback accepting an error and the
+    * rendered template string.
+    *
+    * Example:
+    *
+    *    app.render('email', { name: 'Tobi' }, function(err, html){
+    *      // ...
+    *    })
+    */
+  render(name: string, options?: Object, callback?: (err: Error, html: string) => void): void;
+
+  /**
+    * Render the given view `name` name
+    * and a callback accepting an error and the
+    * rendered template string.
+    *
+    * Example:
+    *
+    *    app.render('email', function(err, html){
+    *      // ...
+    *    })
+    */
+  render(name: string, callback: (err: Error, html: string) => void): void;
+
+  /**
+    * Render the given view `name` name with `options`
+    *
+    * Example:
+    *
+    *    let html = await app.render('email', { name: 'Tobi' })
+    */
+  render(name: string, options?: Object): Promise<string>;
+
+  /**
+    * Render the given view `name` name
+    *
+    * Example:
+    *
+    *    let html = await app.render('email')
+    */
+  render(name: string): Promise<string>;
 }
 
 /**
