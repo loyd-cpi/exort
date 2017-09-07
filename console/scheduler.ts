@@ -170,7 +170,7 @@ export function provideScheduler(schedulesModule?: string): AppProvider {
       },
       async handler(argv: Arguments) {
 
-        let schedules = require(schedulesModule || `${app.bootDir}/routes`);
+        let schedules = require(schedulesModule || `${app.bootDir}/schedules`);
         if (typeof schedules != 'object') {
           throw new Error('Invalid schedules file');
         }
