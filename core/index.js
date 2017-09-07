@@ -12,6 +12,7 @@ tslib_1.__exportStar(require("./mime"), exports);
 tslib_1.__exportStar(require("./misc"), exports);
 tslib_1.__exportStar(require("./model"), exports);
 tslib_1.__exportStar(require("./service"), exports);
+tslib_1.__exportStar(require("./store"), exports);
 tslib_1.__exportStar(require("./validation"), exports);
 tslib_1.__exportStar(require("./view"), exports);
 const moment = require("moment");

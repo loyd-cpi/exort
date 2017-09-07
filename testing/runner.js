@@ -2,9 +2,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const tslib_1 = require("tslib");
 const app_1 = require("../core/app");
-const command_1 = require("../console/command");
 const misc_1 = require("../core/misc");
 const http_1 = require("../web/http");
+const app_2 = require("../console/app");
 const supertest = require("supertest");
 const logger_1 = require("../core/logger");
 const pathlib = require("path");
@@ -81,7 +81,7 @@ function provideTestCommands(runnerFile) {
         else {
             runnerFile = `${app.dir}/tests/run.js`;
         }
-        command_1.Console.addCommand(app, {
+        app_2.Console.addCommand(app, {
             command: 'test:run',
             desc: 'Run tests',
             params: {},

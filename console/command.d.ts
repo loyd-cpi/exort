@@ -1,6 +1,7 @@
 /// <reference types="yargs" />
-import { Application } from '../core/app';
 import { ConsoleApplication } from './app';
+import { Context } from '../core/service';
+import { Input } from '../core/store';
 import * as yargs from 'yargs';
 /**
  * Argv interface
@@ -11,7 +12,7 @@ export interface Arguments extends yargs.Arguments {
  * CommandHandler interface
  */
 export interface CommandHandler {
-    (argv: Arguments): Promise<void>;
+    (argv: Arguments): Promise<boolean | void | undefined>;
 }
 /**
  * CommandParams interface
@@ -24,24 +25,30 @@ export interface CommandParams {
  */
 export interface CommandOptions {
     command: string;
-    desc: string;
+    desc?: string;
     params: CommandParams;
     handler: CommandHandler;
 }
 /**
- * Console namespace
+ * Abstract Command class
  */
-export declare namespace Console {
+export declare abstract class Command {
+    protected readonly app: ConsoleApplication;
+    protected readonly input: Input;
     /**
-     * Add command
+     * Context instance
      */
-    function addCommand(app: Application, options: CommandOptions): void;
+    protected readonly context: Context;
     /**
-     * Execute command base from parsed arguments
+     * Command constructor
      */
-    function execute(args: string[]): void;
+    constructor(app: ConsoleApplication, input: Input);
+    /**
+     * Finish the command and generate result
+     */
+    preventExit(): boolean;
+    /**
+     * Abstract handle method
+     */
+    abstract handle(): Promise<boolean | void | undefined>;
 }
-/**
- * Start CLI and you can only execute it once
- */
-export declare function startConsole(app: Application): Promise<ConsoleApplication>;

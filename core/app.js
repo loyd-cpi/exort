@@ -3,12 +3,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const tslib_1 = require("tslib");
 const misc_1 = require("./misc");
 const express = require("express");
+const store_1 = require("./store");
 const pathlib = require("path");
 const error_1 = require("./error");
 /**
  * Config class
  */
-class Config extends misc_1.Store {
+class Config extends store_1.Store {
     /**
      * Load configuration files
      */

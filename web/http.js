@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const tslib_1 = require("tslib");
 const app_1 = require("../core/app");
-const misc_1 = require("../core/misc");
+const store_1 = require("../core/store");
 const error_1 = require("./error");
 const filesystem_1 = require("../core/filesystem");
 const formidable = require("formidable");
@@ -75,7 +75,7 @@ exports.provideBodyParser = provideBodyParser;
 /**
  * Input class
  */
-class Input extends misc_1.Store {
+class Input extends store_1.Input {
     /**
      * Input constructor
      */
@@ -93,34 +93,6 @@ class Input extends misc_1.Store {
         }
         this.content = content;
         this.fileInput = req._files || {};
-    }
-    /**
-     * Get input except for specified fields
-     */
-    except(exception) {
-        let values = {};
-        let allInput = this.all();
-        if (typeof allInput == 'object') {
-            for (let field in allInput) {
-                if (exception.indexOf(field) == -1) {
-                    values[field] = allInput[field];
-                }
-            }
-        }
-        return values;
-    }
-    /**
-     * Get input only for specified fields
-     */
-    only(fields) {
-        let values = {};
-        for (let field of fields) {
-            let value = this.get(field);
-            if (typeof value != 'undefined') {
-                values[field] = value;
-            }
-        }
-        return values;
     }
     /**
      * Has file

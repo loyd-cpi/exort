@@ -2,8 +2,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const tslib_1 = require("tslib");
 const app_1 = require("./app");
-const misc_1 = require("./misc");
+const store_1 = require("./store");
 const error_1 = require("./error");
+const misc_1 = require("./misc");
 /**
  * Bind a resolve function to solve circular dependency
  */
@@ -33,7 +34,7 @@ class Context {
         /**
          * Store instance
          */
-        this.store = new misc_1.Store();
+        this.store = new store_1.Store();
         /**
          * Map of resolved instances
          */

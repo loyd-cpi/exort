@@ -1,50 +1,23 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const tslib_1 = require("tslib");
-const app_1 = require("../core/app");
-const logger_1 = require("../core/logger");
-const yargs = require("yargs");
 /**
- * Console namespace
+ * Abstract Command class
  */
-var Console;
-(function (Console) {
+class Command {
     /**
-     * Add command
+     * Command constructor
      */
-    function addCommand(app, options) {
-        yargs.command(options.command, options.desc, options.params, (argv) => {
-            options.handler(argv)
-                .then(() => {
-                logger_1.Log.info(app, `\n\n${options.command} done`);
-                process.exit(0);
-            })
-                .catch(err => {
-                logger_1.Log.error(app, `\n\n${err}`);
-                process.exit(1);
-            });
-        });
+    constructor(app, input) {
+        this.app = app;
+        this.input = input;
+        this.context = app.context;
     }
-    Console.addCommand = addCommand;
     /**
-     * Execute command base from parsed arguments
+     * Finish the command and generate result
      */
-    function execute(args) {
-        yargs.parse(args);
+    preventExit() {
+        return false;
     }
-    Console.execute = execute;
-})(Console = exports.Console || (exports.Console = {}));
-/**
- * Start CLI and you can only execute it once
- */
-function startConsole(app) {
-    return tslib_1.__awaiter(this, void 0, void 0, function* () {
-        app_1.checkAppConfig(app);
-        yield app_1.boot(app);
-        yargs.help('help');
-        Console.execute(process.argv.slice(2));
-        return app;
-    });
 }
-exports.startConsole = startConsole;
+exports.Command = Command;
 //# sourceMappingURL=command.js.map

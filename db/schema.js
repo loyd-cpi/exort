@@ -2,9 +2,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const tslib_1 = require("tslib");
 const app_1 = require("../core/app");
-const command_1 = require("../console/command");
 const connection_1 = require("./connection");
 const filesystem_1 = require("../core/filesystem");
+const app_2 = require("../console/app");
 const service_1 = require("./service");
 const error_1 = require("../core/error");
 const misc_1 = require("../core/misc");
@@ -42,7 +42,7 @@ function provideSchemaCommands(databaseSourceDir, databaseDistDir) {
         else {
             databaseDistDir = `${app.dir}/database`;
         }
-        command_1.Console.addCommand(app, {
+        app_2.Console.addCommand(app, {
             command: 'schema:sync',
             desc: 'Sync models and database schema',
             params: {
@@ -54,7 +54,7 @@ function provideSchemaCommands(databaseSourceDir, databaseDistDir) {
                 return synchronize(app, argv.connection);
             }
         });
-        command_1.Console.addCommand(app, {
+        app_2.Console.addCommand(app, {
             command: 'seed:run',
             desc: 'Run database seeder',
             params: {
@@ -73,7 +73,7 @@ function provideSchemaCommands(databaseSourceDir, databaseDistDir) {
                 });
             }
         });
-        command_1.Console.addCommand(app, {
+        app_2.Console.addCommand(app, {
             command: 'seed:make',
             desc: 'Create database seeder',
             params: {

@@ -4,7 +4,7 @@ import { ErrorHandler, Error } from '../core/error';
 import { Input, Request, Response } from './http';
 import { Context } from '../core/service';
 import { KeyValuePair } from '../core/misc';
-import { Application } from '../core/app';
+import { WebApplication } from './app';
 import * as express from 'express';
 /**
  * HttpRequestParams interface
@@ -26,7 +26,7 @@ export declare abstract class HttpHandler {
     /**
      * Application instance
      */
-    protected readonly app: Application;
+    protected readonly app: WebApplication;
     /**
      * Request input instance
      */

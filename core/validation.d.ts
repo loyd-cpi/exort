@@ -1,8 +1,9 @@
-import { Store, KeyValuePair } from './misc';
+import { KeyValuePair } from './misc';
 import { Service } from './service';
 import { File } from './filesystem';
 import * as moment from 'moment';
 import { Error } from './error';
+import { Store } from './store';
 /**
  * Rule interface
  */

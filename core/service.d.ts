@@ -1,5 +1,5 @@
 import { Application, AppProvider } from './app';
-import { Store } from './misc';
+import { Store } from './store';
 import { Error } from './error';
 /**
  * BindOptions interface

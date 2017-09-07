@@ -9,6 +9,7 @@ export * from './mime';
 export * from './misc';
 export * from './model';
 export * from './service';
+export * from './store';
 export * from './validation';
 export * from './view';
 import * as moment from 'moment';

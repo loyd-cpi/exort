@@ -6,6 +6,7 @@ const service_1 = require("./service");
 const filesystem_1 = require("./filesystem");
 const moment = require("moment");
 const error_1 = require("./error");
+const store_1 = require("./store");
 /**
  * Convert field name to field label
  */
@@ -1004,7 +1005,7 @@ class Validation extends service_1.Service {
      * Create FormValidator instance
      */
     createForm(input = {}) {
-        return new FormValidator(this, new misc_1.Store(input));
+        return new FormValidator(this, new store_1.Store(input));
     }
 }
 /**

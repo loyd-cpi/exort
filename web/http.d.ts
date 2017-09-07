@@ -1,6 +1,7 @@
 import { AppProvider, Application } from '../core/app';
 import { Service, Context } from '../core/service';
-import { KeyValuePair, Store } from '../core/misc';
+import { Input as BaseInput } from '../core/store';
+import { KeyValuePair } from '../core/misc';
 import { File } from '../core/filesystem';
 import * as formidable from 'formidable';
 import { WebApplication } from './app';
@@ -42,7 +43,7 @@ export declare function provideBodyParser(): AppProvider;
 /**
  * Input class
  */
-export declare class Input extends Store {
+export declare class Input extends BaseInput {
     /**
      * File input
      */
@@ -51,14 +52,6 @@ export declare class Input extends Store {
      * Input constructor
      */
     constructor(req: Request);
-    /**
-     * Get input except for specified fields
-     */
-    except(exception: string[]): KeyValuePair;
-    /**
-     * Get input only for specified fields
-     */
-    only(fields: string[]): KeyValuePair;
     /**
      * Has file
      */

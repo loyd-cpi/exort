@@ -1,6 +1,7 @@
-import { Store, KeyValuePair } from './misc';
+import { KeyValuePair } from './misc';
 import { Context } from './service';
 import * as express from 'express';
+import { Store } from './store';
 import { Error } from './error';
 /**
  * Application interface
