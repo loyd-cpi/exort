@@ -1,7 +1,8 @@
 import { AppProvider, Application, checkAppConfig } from '../core/app';
-import { Console, Arguments } from '../console/command';
+import { Arguments } from '../console/command';
 import { getConnection } from './connection';
 import { File } from '../core/filesystem';
+import { Console } from '../console/app';
 import { SeedService } from './service';
 import { Error } from '../core/error';
 import { _ } from '../core/misc';

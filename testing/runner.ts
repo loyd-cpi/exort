@@ -1,9 +1,10 @@
 import { Application, checkAppConfig, AppProvider, createApplication } from '../core/app';
-import { Console, Arguments } from '../console/command';
+import { Arguments } from '../console/command';
 import { WebApplication } from '../web/app';
 import { Metadata, _ } from '../core/misc';
 import { HttpTestClient } from './service';
 import { startServer } from '../web/http';
+import { Console } from '../console/app';
 import * as supertest from 'supertest';
 import { Log } from '../core/logger';
 import { ITestSuite } from './case';

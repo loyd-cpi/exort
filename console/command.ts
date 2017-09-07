@@ -1,6 +1,6 @@
-import { checkAppConfig, boot, Application } from '../core/app';
 import { ConsoleApplication } from './app';
-import { Log } from '../core/logger';
+import { Context } from '../core/service';
+import { Input } from '../core/store';
 import * as yargs from 'yargs';
 
 /**
@@ -12,7 +12,7 @@ export interface Arguments extends yargs.Arguments {}
  * CommandHandler interface
  */
 export interface CommandHandler {
-  (argv: Arguments): Promise<void>;
+  (argv: Arguments): Promise<boolean | void | undefined>;
 }
 
 /**
@@ -27,48 +27,37 @@ export interface CommandParams {
  */
 export interface CommandOptions {
   command: string;
-  desc: string;
+  desc?: string;
   params: CommandParams;
   handler: CommandHandler;
 }
 
 /**
- * Console namespace
+ * Abstract Command class
  */
-export namespace Console {
+export abstract class Command {
 
   /**
-   * Add command
+   * Context instance
    */
-  export function addCommand(app: Application, options: CommandOptions): void {
-    yargs.command(options.command, options.desc, options.params, (argv: Arguments) => {
-      options.handler(argv)
-        .then(() => {
-          Log.info(app, `\n\n${options.command} done`);
-          process.exit(0);
-        })
-        .catch(err => {
-          Log.error(app, `\n\n${err}`);
-          process.exit(1);
-        });
-    });
+  protected readonly context: Context;
+
+  /**
+   * Command constructor
+   */
+  constructor(protected readonly app: ConsoleApplication, protected readonly input: Input) {
+    this.context = app.context;
   }
 
   /**
-   * Execute command base from parsed arguments
+   * Finish the command and generate result
    */
-  export function execute(args: string[]) {
-    yargs.parse(args);
+  public preventExit() {
+    return false;
   }
-}
 
-/**
- * Start CLI and you can only execute it once
- */
-export async function startConsole(app: Application): Promise<ConsoleApplication> {
-  checkAppConfig(app);
-  await boot(app);
-  yargs.help('help');
-  Console.execute(process.argv.slice(2));
-  return app as ConsoleApplication;
+  /**
+   * Abstract handle method
+   */
+  public abstract async handle(): Promise<boolean | void | undefined>;
 }

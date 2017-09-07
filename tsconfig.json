@@ -17,7 +17,7 @@
     "console/**/*.ts",
     "core/**/*.ts",
     "db/**/*.ts",
-    "test/**/*.ts",
+    "testing/**/*.ts",
     "web/**/*.ts",
     "common.ts"
   ]

@@ -1,6 +1,7 @@
-import { Store, KeyValuePair, _ } from './misc';
+import { KeyValuePair, _ } from './misc';
 import { Context } from './service';
 import * as express from 'express';
+import { Store } from './store';
 import * as pathlib from 'path';
 import { Error } from './error';
 

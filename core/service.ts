@@ -1,8 +1,9 @@
 import { checkAppConfig, Application, AppProvider } from './app';
 import { Response, Request } from '../web/http';
 import * as express from 'express';
-import { _, Store } from './misc';
+import { Store } from './store';
 import { Error } from './error';
+import { _ } from './misc';
 
 /**
  * BindOptions interface

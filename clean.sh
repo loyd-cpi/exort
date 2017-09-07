@@ -10,9 +10,9 @@ find web -type f -name '*.d.ts' -delete
 find console -type f -name '*.js' -delete
 find console -type f -name '*.js.map' -delete
 find console -type f -name '*.d.ts' -delete
-find test -type f -name '*.js' -delete
-find test -type f -name '*.js.map' -delete
-find test -type f -name '*.d.ts' -delete
+find testing -type f -name '*.js' -delete
+find testing -type f -name '*.js.map' -delete
+find testing -type f -name '*.d.ts' -delete
 find client -type f -name '*.js' -delete
 find client -type f -name '*.js.map' -delete
 find client -type f -name '*.d.ts' -delete

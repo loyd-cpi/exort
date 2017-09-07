@@ -1,7 +1,8 @@
 import { checkAppConfig, boot, AppProvider, Application } from '../core/app';
 import { Service, Context } from '../core/service';
-import { KeyValuePair, Store } from '../core/misc';
+import { Input as BaseInput } from '../core/store';
 import { provideHttpErrorHandler } from './error';
+import { KeyValuePair } from '../core/misc';
 import { File } from '../core/filesystem';
 import * as formidable from 'formidable';
 import { WebApplication } from './app';
@@ -125,7 +126,7 @@ export function provideBodyParser(): AppProvider {
 /**
  * Input class
  */
-export class Input extends Store {
+export class Input extends BaseInput {
 
   /**
    * File input
@@ -149,36 +150,6 @@ export class Input extends Store {
     }
     this.content = content;
     this.fileInput = (req as any)._files || {};
-  }
-
-  /**
-   * Get input except for specified fields
-   */
-  public except(exception: string[]): KeyValuePair {
-    let values: KeyValuePair<string> = {};
-    let allInput = this.all();
-    if (typeof allInput == 'object') {
-      for (let field in allInput) {
-        if (exception.indexOf(field) == -1) {
-          values[field] = allInput[field];
-        }
-      }
-    }
-    return values;
-  }
-
-  /**
-   * Get input only for specified fields
-   */
-  public only(fields: string[]): KeyValuePair {
-    let values: KeyValuePair<string> = {};
-    for (let field of fields) {
-      let value = this.get(field);
-      if (typeof value != 'undefined') {
-        values[field] = value;
-      }
-    }
-    return values;
   }
 
   /**
