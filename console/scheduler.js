@@ -140,7 +140,7 @@ function provideScheduler(schedulesModule) {
             },
             handler(argv) {
                 return tslib_1.__awaiter(this, void 0, void 0, function* () {
-                    let schedules = require(schedulesModule || `${app.bootDir}/routes`);
+                    let schedules = require(schedulesModule || `${app.bootDir}/schedules`);
                     if (typeof schedules != 'object') {
                         throw new error_1.Error('Invalid schedules file');
                     }
