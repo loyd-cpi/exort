@@ -62,9 +62,9 @@ export interface Utilities extends lodash.LoDashStatic {
   checksum(str: string | Buffer, algorithm?: string, encoding?: string): string;
 
   /**
-   * Delays the program execution for the given number of milliseconds
+   * Promise based timeout
    */
-  sleep(milliseconds: number): Promise<void>;
+  timeout(milliseconds: number): Promise<void>;
 
   /**
    * Check if value is null or undefined
@@ -157,7 +157,7 @@ _.defaultIfNone = function (value: any, defaultVal: any, returnNull: boolean = f
   return value;
 };
 
-_.sleep = async function (milliseconds: number): Promise<void> {
+_.timeout = async function (milliseconds: number): Promise<void> {
   await new Promise<void>((resolve, reject) => {
     setTimeout(() => resolve(), milliseconds);
   });
