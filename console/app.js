@@ -22,7 +22,8 @@ var Console;
         yargs.command(options.command, options.desc || '', options.params, (argv) => {
             options.handler(argv)
                 .then(result => {
-                if (result !== false) {
+                let settings = argv.commandSettings || {};
+                if (result !== false && !settings.preventExit) {
                     process.exit(0);
                 }
             })
@@ -36,8 +37,8 @@ var Console;
     /**
      * Execute command base from parsed arguments
      */
-    function execute(args) {
-        yargs.parse(args);
+    function execute(args, context = {}) {
+        yargs.parse(args, context);
     }
     Console.execute = execute;
 })(Console = exports.Console || (exports.Console = {}));

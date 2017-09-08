@@ -22,6 +22,10 @@ export declare class Schedule {
      */
     private cronTab;
     /**
+     * Schedule timezone
+     */
+    private timezone;
+    /**
      * Schedule constructor
      */
     constructor(app: ConsoleApplication, task: AsyncTask);
@@ -32,7 +36,7 @@ export declare class Schedule {
     /**
      * Set a crontab for the job
      */
-    cron(cronTab: string): void;
+    cron(cronTab: string, timezone?: string): void;
     /**
      * Get job instance
      */

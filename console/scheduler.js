@@ -28,14 +28,16 @@ class Schedule {
             cronTime: this.cronTab,
             onTick: () => {
                 this.task().catch(err => logger_1.Log.error(this.app, err));
-            }
+            },
+            timeZone: this.timezone
         });
     }
     /**
      * Set a crontab for the job
      */
-    cron(cronTab) {
+    cron(cronTab, timezone) {
         this.cronTab = cronTab;
+        this.timezone = timezone || this.app.config.get('app.timezone');
         this.resetCronJob();
     }
     /**
@@ -86,7 +88,9 @@ class Scheduler {
     command(command, params) {
         params = Array.isArray(params) ? params : [];
         params.unshift(command);
-        let schedule = new Schedule(this.app, () => tslib_1.__awaiter(this, void 0, void 0, function* () { return app_2.Console.execute(params); }));
+        let schedule = new Schedule(this.app, () => tslib_1.__awaiter(this, void 0, void 0, function* () {
+            app_2.Console.execute(params, { commandSettings: { preventExit: true } });
+        }));
         this.calendar[this.groupName].push(schedule);
         return schedule;
     }

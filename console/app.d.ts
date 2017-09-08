@@ -1,5 +1,6 @@
 import { Application, AppBootstrap } from '../core/app';
 import { CommandOptions } from './command';
+import { KeyValuePair } from '../core/misc';
 /**
  * Abstract ConsoleBootstrap class
  */
@@ -21,7 +22,7 @@ export declare namespace Console {
     /**
      * Execute command base from parsed arguments
      */
-    function execute(args: string[]): void;
+    function execute(args: string[], context?: KeyValuePair): void;
 }
 /**
  * Start CLI and you can only execute it once
