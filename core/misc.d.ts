@@ -48,9 +48,9 @@ export interface Utilities extends lodash.LoDashStatic {
      */
     checksum(str: string | Buffer, algorithm?: string, encoding?: string): string;
     /**
-     * Delays the program execution for the given number of milliseconds
+     * Promise based timeout
      */
-    sleep(milliseconds: number): Promise<void>;
+    timeout(milliseconds: number): Promise<void>;
     /**
      * Check if value is null or undefined
      */

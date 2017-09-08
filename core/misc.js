@@ -79,7 +79,7 @@ _.defaultIfNone = function (value, defaultVal, returnNull = false) {
     }
     return value;
 };
-_.sleep = function (milliseconds) {
+_.timeout = function (milliseconds) {
     return tslib_1.__awaiter(this, void 0, void 0, function* () {
         yield new Promise((resolve, reject) => {
             setTimeout(() => resolve(), milliseconds);
