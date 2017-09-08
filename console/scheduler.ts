@@ -29,6 +29,11 @@ export class Schedule {
   private cronTab: string;
 
   /**
+   * Schedule timezone
+   */
+  private timezone: string;
+
+  /**
    * Schedule constructor
    */
   constructor(private app: ConsoleApplication, private task: AsyncTask) {}
@@ -45,15 +50,17 @@ export class Schedule {
       cronTime: this.cronTab,
       onTick: () => {
         this.task().catch(err => Log.error(this.app, err));
-      }
+      },
+      timeZone: this.timezone
     });
   }
 
   /**
    * Set a crontab for the job
    */
-  public cron(cronTab: string) {
+  public cron(cronTab: string, timezone?: string) {
     this.cronTab = cronTab;
+    this.timezone = timezone || this.app.config.get('app.timezone');
     this.resetCronJob();
   }
 
@@ -113,9 +120,11 @@ export class Scheduler {
     params = Array.isArray(params) ? params : [];
     params.unshift(command);
 
-    let schedule = new Schedule(this.app, async () => Console.execute(params as string[]));
-    this.calendar[this.groupName].push(schedule);
+    let schedule = new Schedule(this.app, async () => {
+      Console.execute(params as string[], { commandSettings: { preventExit: true } });
+    });
 
+    this.calendar[this.groupName].push(schedule);
     return schedule;
   }
 

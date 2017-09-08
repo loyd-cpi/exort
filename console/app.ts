@@ -1,5 +1,6 @@
 import { Application, checkAppConfig, AppBootstrap, boot } from '../core/app';
 import { CommandOptions, Arguments } from './command';
+import { KeyValuePair } from '../core/misc';
 import { Log } from '../core/logger';
 import * as yargs from 'yargs';
 
@@ -25,9 +26,12 @@ export namespace Console {
     yargs.command(options.command, options.desc || '', options.params, (argv: Arguments) => {
       options.handler(argv)
         .then(result => {
-          if (result !== false) {
+
+          let settings = argv.commandSettings || {};
+          if (result !== false && !settings.preventExit) {
             process.exit(0);
           }
+
         })
         .catch(err => {
           Log.error(app, `\n\n${err}`);
@@ -39,8 +43,8 @@ export namespace Console {
   /**
    * Execute command base from parsed arguments
    */
-  export function execute(args: string[]) {
-    yargs.parse(args);
+  export function execute(args: string[], context: KeyValuePair = {}) {
+    yargs.parse(args, context);
   }
 }
 
