@@ -2,6 +2,7 @@ import { checkAppConfig, boot, AppProvider, Application } from '../core/app';
 import { Service, Context } from '../core/service';
 import { Input as BaseInput } from '../core/store';
 import { provideHttpErrorHandler } from './error';
+import { argument } from '../core/environment';
 import { KeyValuePair } from '../core/misc';
 import { File } from '../core/filesystem';
 import * as formidable from 'formidable';
@@ -9,6 +10,7 @@ import { WebApplication } from './app';
 import { Error } from '../core/error';
 import { Session } from './session';
 import * as express from 'express';
+import * as cluster from 'cluster';
 import * as pathlib from 'path';
 import * as bytes from 'bytes';
 import * as http from 'http';
@@ -283,9 +285,9 @@ export class UploadedFile extends File {
 export interface Response extends express.Response {}
 
 /**
- * Start HTTP Server and convert Application instance to a WebApplication instance
+ * Prepare server for launch
  */
-export function startServer(app: Application): Promise<WebApplication> {
+export function prepareServer(app: Application) {
   checkAppConfig(app);
 
   app.disable('x-powered-by');
@@ -303,24 +305,69 @@ export function startServer(app: Application): Promise<WebApplication> {
     throw new Error('app.server already exists. There might be conflict with expressjs');
   }
 
-  (app as any).server = http.createServer(app);
-  return new Promise<WebApplication>((resolve, reject) => {
-    boot(app).then(() => {
+  return (app as any).server = http.createServer(app);
+}
 
-      provideHttpErrorHandler()(app);
+/**
+ * Start HTTP Server and convert Application instance to a WebApplication instance
+ */
+export function startServer(app: Application) {
+  const clusterize = argument('cluster');
+  if (clusterize) {
 
-      (app as WebApplication).server
-        .on('error', err => reject(err))
-        .on('listening', () => {
+    const server = prepareServer(app);
+    const sticky = require('sticky-session');
+    if (cluster.isMaster) {
 
-          let addr = (app as WebApplication).server.address();
-          let bind = typeof addr == 'string' ? `pipe ${addr}` : `port ${addr.port}`;
-          console.log(`Listening on ${bind}`);
+      if (sticky.listen(server, app.config.get('app.port'))) {
+        throw new Error('Sticky should return false');
+      }
 
-          resolve(app as WebApplication);
+      server.on('error', err => console.error(err));
+      server.once('listening', () => {
+        console.info(`Listening on port ${app.config.get('app.port')}`);
+      });
+
+    } else {
+      boot(app)
+        .then(() => {
+          provideHttpErrorHandler()(app);
+
+          if (!sticky.listen(server, app.config.get('app.port'))) {
+            throw new Error('Sticky should return true');
+          }
+
+          console.info(`Spawned worker ${cluster.worker.id} with process ID ${process.pid}`);
         })
-        .listen(app.config.get('app.port'));
+        .catch(err => console.error(err));
+    }
 
-    }).catch(err => reject(err));
+    return;
+  }
+
+  startSingleNodeServer(app).catch(err => console.error(err));
+}
+
+/**
+ * Start HTTP Server and convert Application instance to a WebApplication instance
+ * using just one node
+ */
+export function startSingleNodeServer(app: Application): Promise<WebApplication> {
+  const server = prepareServer(app);
+  return new Promise<WebApplication>((resolve, reject) => {
+
+    boot(app)
+      .then(() => {
+        provideHttpErrorHandler()(app);
+
+        server.on('error', err => reject(err))
+          .on('listening', () => {
+            console.info(`Listening on port ${app.config.get('app.port')}`);
+            resolve(app as WebApplication);
+          })
+          .listen(app.config.get('app.port'));
+
+      })
+      .catch(err => reject(err));
   });
 }

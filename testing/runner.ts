@@ -1,9 +1,9 @@
 import { Application, checkAppConfig, AppProvider, createApplication } from '../core/app';
+import { startSingleNodeServer } from '../web/http';
 import { Arguments } from '../console/command';
 import { WebApplication } from '../web/app';
 import { Metadata, _ } from '../core/misc';
 import { HttpTestClient } from './service';
-import { startServer } from '../web/http';
 import { Console } from '../console/app';
 import * as supertest from 'supertest';
 import { Log } from '../core/logger';
@@ -64,7 +64,7 @@ export function startTesting(app: Application, testCasesDir?: string) {
     describe('Preparing test cases...', function () {
 
       before('Preparing application...', async function () {
-        (TestRunner as any).app = await startServer(app);
+        (TestRunner as any).app = await startSingleNodeServer(app);
         (TestRunner as any).httpTestClient = supertest(TestRunner.app.server);
       });
 
