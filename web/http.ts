@@ -319,6 +319,7 @@ export function startServer(app: Application) {
     const sticky = require('sticky-session');
     if (cluster.isMaster) {
 
+      console.info('Using NodeJS Cluster');
       if (sticky.listen(server, app.config.get('app.port'))) {
         throw new Error('Sticky should return false');
       }
