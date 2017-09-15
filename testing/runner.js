@@ -2,8 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const tslib_1 = require("tslib");
 const app_1 = require("../core/app");
-const misc_1 = require("../core/misc");
 const http_1 = require("../web/http");
+const misc_1 = require("../core/misc");
 const app_2 = require("../console/app");
 const supertest = require("supertest");
 const logger_1 = require("../core/logger");
@@ -50,7 +50,7 @@ function startTesting(app, testCasesDir) {
         describe('Preparing test cases...', function () {
             before('Preparing application...', function () {
                 return tslib_1.__awaiter(this, void 0, void 0, function* () {
-                    TestRunner.app = yield http_1.startServer(app);
+                    TestRunner.app = yield http_1.startSingleNodeServer(app);
                     TestRunner.httpTestClient = supertest(TestRunner.app.server);
                 });
             });

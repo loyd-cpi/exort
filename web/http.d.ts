@@ -1,3 +1,4 @@
+/// <reference types="node" />
 import { AppProvider, Application } from '../core/app';
 import { Service, Context } from '../core/service';
 import { Input as BaseInput } from '../core/store';
@@ -7,6 +8,7 @@ import * as formidable from 'formidable';
 import { WebApplication } from './app';
 import { Session } from './session';
 import * as express from 'express';
+import * as http from 'http';
 /**
  * Request interface
  */
@@ -104,6 +106,15 @@ export declare class UploadedFile extends File {
 export interface Response extends express.Response {
 }
 /**
+ * Prepare server for launch
+ */
+export declare function prepareServer(app: Application): http.Server;
+/**
  * Start HTTP Server and convert Application instance to a WebApplication instance
  */
-export declare function startServer(app: Application): Promise<WebApplication>;
+export declare function startServer(app: Application): void;
+/**
+ * Start HTTP Server and convert Application instance to a WebApplication instance
+ * using just one node
+ */
+export declare function startSingleNodeServer(app: Application): Promise<WebApplication>;
