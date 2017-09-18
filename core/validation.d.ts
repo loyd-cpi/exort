@@ -200,6 +200,14 @@ export declare class FieldValidator {
      */
     array(message?: string): this;
     /**
+     * The field under validation must be a successfully uploaded file.
+     */
+    file(message?: string): this;
+    /**
+     * The file under validation must be an image (jpeg, png, bmp, gif, or svg)
+     */
+    image(message?: string): this;
+    /**
      * The field under validation must be a value preceding the given date. The dates will be passed into moment library.
      */
     before(date: moment.MomentInput, message?: string): this;
@@ -357,6 +365,14 @@ export declare class Validation extends Service {
         uploaded: string;
         url: string;
     };
+    /**
+     * Check if value given is a valid file
+     */
+    isFile(val: any): boolean;
+    /**
+     * Check if value given is an image
+     */
+    isImage(val: any): boolean;
     /**
      * Check if value given is a valid email address
      */

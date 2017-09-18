@@ -598,6 +598,46 @@ class FieldValidator {
         return this;
     }
     /**
+     * The field under validation must be a successfully uploaded file.
+     */
+    file(message) {
+        this.rules['file'] = {
+            name: 'file',
+            handle() {
+                return this.validator.getValidation().isFile(this.getInput());
+            },
+            message() {
+                return {
+                    message: message || Validation.RULE_MESSAGES.file,
+                    attrs: {
+                        label: this.fieldLabel
+                    }
+                };
+            }
+        };
+        return this;
+    }
+    /**
+     * The file under validation must be an image (jpeg, png, bmp, gif, or svg)
+     */
+    image(message) {
+        this.rules['image'] = {
+            name: 'image',
+            handle() {
+                return this.validator.getValidation().isImage(this.getInput());
+            },
+            message() {
+                return {
+                    message: message || Validation.RULE_MESSAGES.image,
+                    attrs: {
+                        label: this.fieldLabel
+                    }
+                };
+            }
+        };
+        return this;
+    }
+    /**
      * The field under validation must be a value preceding the given date. The dates will be passed into moment library.
      */
     before(date, message) {
@@ -846,6 +886,23 @@ exports.FormValidator = FormValidator;
  * Validator class
  */
 class Validation extends service_1.Service {
+    /**
+     * Check if value given is a valid file
+     */
+    isFile(val) {
+        return val instanceof filesystem_1.File;
+    }
+    /**
+     * Check if value given is an image
+     */
+    isImage(val) {
+        if (!this.isFile(val))
+            return false;
+        const extension = val.guessExtension();
+        if (!extension)
+            return false;
+        return ['jpeg', 'png', 'gif', 'bmp', 'svg'].indexOf(extension) != -1;
+    }
     /**
      * Check if value given is a valid email address
      */
