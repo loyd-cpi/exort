@@ -731,6 +731,48 @@ export class FieldValidator {
   }
 
   /**
+   * The field under validation must be a successfully uploaded file.
+   */
+  public file(message?: string): this {
+    this.rules['file'] = {
+      name: 'file',
+      handle() {
+        return this.validator.getValidation().isFile(this.getInput());
+      },
+      message() {
+        return {
+          message: message || Validation.RULE_MESSAGES.file,
+          attrs: {
+            label: this.fieldLabel
+          }
+        };
+      }
+    };
+    return this;
+  }
+
+  /**
+   * The file under validation must be an image (jpeg, png, bmp, gif, or svg)
+   */
+  public image(message?: string): this {
+    this.rules['image'] = {
+      name: 'image',
+      handle() {
+        return this.validator.getValidation().isImage(this.getInput());
+      },
+      message() {
+        return {
+          message: message || Validation.RULE_MESSAGES.image,
+          attrs: {
+            label: this.fieldLabel
+          }
+        };
+      }
+    };
+    return this;
+  }
+
+  /**
    * The field under validation must be a value preceding the given date. The dates will be passed into moment library.
    */
   public before(date: moment.MomentInput, message?: string): this {
@@ -1072,6 +1114,25 @@ export class Validation extends Service {
     uploaded: 'The ${label} failed to upload.',
     url: 'The ${label} format is invalid.',
   };
+
+  /**
+   * Check if value given is a valid file
+   */
+  public isFile(val: any): boolean {
+    return val instanceof File;
+  }
+
+  /**
+   * Check if value given is an image
+   */
+  public isImage(val: any) {
+    if (!this.isFile(val)) return false;
+
+    const extension = (val as File).guessExtension();
+    if (!extension) return false;
+
+    return ['jpeg', 'png', 'gif', 'bmp', 'svg'].indexOf(extension) != -1;
+  }
 
   /**
    * Check if value given is a valid email address
