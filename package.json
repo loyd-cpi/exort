@@ -1,6 +1,6 @@
 {
   "name": "exort",
-  "version": "0.1.1",
+  "version": "0.1.3",
   "description": "A web framework on top of ExpressJS, React and TypeORM",
   "main": "core/index.js",
   "typings": "core/index.d.ts",
@@ -71,7 +71,7 @@
     "sticky-session": "^1.1.2",
     "supertest": "^3.0.0",
     "tslib": "^1.7.1",
-    "typeorm": "0.1.0-alpha.42",
+    "typeorm": "0.1.0-alpha.47",
     "yargs": "^8.0.2"
   },
   "devDependencies": {
