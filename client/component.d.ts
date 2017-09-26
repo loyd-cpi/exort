@@ -31,4 +31,4 @@ export declare class Application extends React.Component<ApplicationProps, any> 
     };
     render(): React.ReactElement<any> | null;
 }
-export declare function AppStateListener(appStateMapper: (state: State, propsFromParent?: KeyValuePair<any>) => State): (target: typeof Component) => any;
+export declare function AppStateListener(appStateMapper: (state: State, propsFromParent?: KeyValuePair<any>) => State): (target: ComponentClass<{}, {}>) => any;
