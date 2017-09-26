@@ -116,7 +116,7 @@ export class Application extends React.Component<ApplicationProps, any> implemen
  * Container decorator
  */
 export function AppStateListener(appStateMapper: (state: State, propsFromParent?: KeyValuePair<any>) => State) {
-  return (target: typeof Component): any => {
+  return (target: ComponentClass): any => {
 
     /**
      * ContainerState interface
