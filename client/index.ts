@@ -2,7 +2,6 @@ import 'reflect-metadata';
 
 export * from './bundle';
 export * from './component';
-export * from './misc';
 export * from './state';
 
 import * as React from 'react';
