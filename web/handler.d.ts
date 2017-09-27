@@ -5,6 +5,7 @@ import { Input, Request, Response } from './http';
 import { Context } from '../core/service';
 import { KeyValuePair } from '../core/misc';
 import { WebApplication } from './app';
+import { Session } from './session';
 import * as express from 'express';
 /**
  * HttpRequestParams interface
@@ -39,6 +40,10 @@ export declare abstract class HttpHandler {
      * Express request params object
      */
     protected readonly params: HttpRequestParams;
+    /**
+     * Express session instance
+     */
+    protected readonly session: Session;
     /**
      * BroadcasterService instance
      */

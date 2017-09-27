@@ -19,6 +19,7 @@ class HttpHandler {
         this.input = request.input;
         this.vars = response.locals;
         this.params = request.params;
+        this.session = request.session;
     }
 }
 tslib_1.__decorate([
