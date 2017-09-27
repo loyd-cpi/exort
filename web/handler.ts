@@ -4,6 +4,7 @@ import { Input, Request, Response } from './http';
 import { Context, Bind } from '../core/service';
 import { KeyValuePair } from '../core/misc';
 import { WebApplication } from './app';
+import { Session } from './session';
 import * as express from 'express';
 
 /**
@@ -45,6 +46,11 @@ export abstract class HttpHandler {
   protected readonly params: HttpRequestParams;
 
   /**
+   * Express session instance
+   */
+  protected readonly session: Session;
+
+  /**
    * BroadcasterService instance
    */
   @Bind(type => BroadcasterService)
@@ -59,6 +65,7 @@ export abstract class HttpHandler {
     this.input = request.input;
     this.vars = response.locals;
     this.params = request.params;
+    this.session = request.session;
   }
 }
 
