@@ -12,3 +12,4 @@ export declare abstract class Component<Props = {}, State = {}> extends React.Co
     constructor(props: Props, context: any);
     protected getAppState(): AppState;
 }
+export declare function BindThis(): (target: Object, propertyKey: string, descriptor: PropertyDescriptor) => void;

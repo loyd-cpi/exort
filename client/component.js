@@ -20,4 +20,29 @@ var Component = (function (_super) {
     return Component;
 }(React.Component));
 exports.Component = Component;
+function BindThis() {
+    return function (target, propertyKey, descriptor) {
+        var boundFn;
+        var origFnValue = descriptor.value;
+        if (typeof origFnValue != 'function') {
+            throw new Error('Use only @BindThis to a class method');
+        }
+        delete descriptor.value;
+        delete descriptor.writable;
+        descriptor.configurable = true;
+        descriptor.get = function () {
+            if (!boundFn) {
+                boundFn = origFnValue.bind(this);
+            }
+            return boundFn;
+        };
+        descriptor.set = function (val) {
+            if (typeof val != 'function') {
+                throw new Error("Can't assign " + typeof val + " to " + propertyKey);
+            }
+            boundFn = val.bind(this);
+        };
+    };
+}
+exports.BindThis = BindThis;
 //# sourceMappingURL=component.js.map
