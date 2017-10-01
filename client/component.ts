@@ -36,3 +36,36 @@ export abstract class Component<Props = {}, State = {}> extends React.Component<
     return this.context.$appState;
   }
 }
+
+/**
+ * BindThis decorator
+ * Automatically bind this to the class method
+ */
+export function BindThis() {
+  return (target: Object, propertyKey: string, descriptor: PropertyDescriptor) => {
+
+    let boundFn: Function | null | undefined;
+    const origFnValue = descriptor.value;
+    if (typeof origFnValue != 'function') {
+      throw new Error('Use only @BindThis to a class method');
+    }
+
+    delete descriptor.value;
+    delete descriptor.writable;
+
+    descriptor.configurable = true;
+    descriptor.get = function () {
+      if (!boundFn) {
+        boundFn = origFnValue.bind(this);
+      }
+      return boundFn;
+    };
+
+    descriptor.set = function (val) {
+      if (typeof val != 'function') {
+        throw new Error(`Can't assign ${typeof val} to ${propertyKey}`);
+      }
+      boundFn = val.bind(this);
+    };
+  };
+}
