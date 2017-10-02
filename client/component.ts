@@ -35,6 +35,33 @@ export abstract class Component<Props = {}, State = {}> extends React.Component<
   protected getAppState(): AppState {
     return this.context.$appState;
   }
+
+  /**
+   * Create state link
+   */
+  protected linkState(stateKey: string): StateLink {
+    return new StateLink(
+      (this.state as any)[stateKey],
+      (event: React.FormEvent<any>) => {
+
+        let val = (event.target as any).value;
+        if ((this.state as any)[stateKey] !== val) {
+          this.setState({ [stateKey]: val } as any);
+        }
+      }
+    );
+  }
+}
+
+/**
+ * StateLink class
+ */
+export class StateLink {
+
+  /**
+   * StateLink constructor
+   */
+  constructor(public value: any, public onChange: (event: React.FormEvent<any>) => void) {}
 }
 
 /**

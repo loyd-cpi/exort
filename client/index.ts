@@ -2,6 +2,7 @@ import 'reflect-metadata';
 
 export * from './bundle';
 export * from './component';
+export * from './form';
 export * from './state';
 export * from './util';
 
