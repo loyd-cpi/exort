@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = require("tslib");
 var component_1 = require("./component");
 var React = require("react");
-function renderBundleComponent(name, props, load) {
+function createBundleComponent(name, load) {
     var Bundle = (function (_super) {
         tslib_1.__extends(Bundle, _super);
         function Bundle() {
@@ -11,7 +11,7 @@ function renderBundleComponent(name, props, load) {
         }
         Bundle.prototype.load = function () {
             var _this = this;
-            this.props.load(function (bundle) {
+            load(function (bundle) {
                 if (bundle && typeof bundle == 'object') {
                     if (typeof bundle[name] == 'function' && bundle[name].prototype instanceof React.Component) {
                         _this.setState({ component: bundle[name] });
@@ -24,9 +24,9 @@ function renderBundleComponent(name, props, load) {
         };
         return Bundle;
     }(BundleComponent));
-    return React.createElement(Bundle, tslib_1.__assign({}, props, { load: load }));
+    return Bundle;
 }
-exports.renderBundleComponent = renderBundleComponent;
+exports.createBundleComponent = createBundleComponent;
 var BundleComponent = (function (_super) {
     tslib_1.__extends(BundleComponent, _super);
     function BundleComponent() {
