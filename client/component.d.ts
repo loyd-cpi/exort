@@ -11,5 +11,11 @@ export declare abstract class Component<Props = {}, State = {}> extends React.Co
     };
     constructor(props: Props, context: any);
     protected getAppState(): AppState;
+    protected linkState(stateKey: string): StateLink;
+}
+export declare class StateLink {
+    value: any;
+    onChange: (event: React.FormEvent<any>) => void;
+    constructor(value: any, onChange: (event: React.FormEvent<any>) => void);
 }
 export declare function BindThis(): (target: Object, propertyKey: string, descriptor: PropertyDescriptor) => void;

@@ -14,12 +14,30 @@ var Component = (function (_super) {
     Component.prototype.getAppState = function () {
         return this.context.$appState;
     };
+    Component.prototype.linkState = function (stateKey) {
+        var _this = this;
+        return new StateLink(this.state[stateKey], function (event) {
+            var val = event.target.value;
+            if (_this.state[stateKey] !== val) {
+                _this.setState((_a = {}, _a[stateKey] = val, _a));
+            }
+            var _a;
+        });
+    };
     Component.contextTypes = {
         $appState: types.instanceOf(state_1.AppState)
     };
     return Component;
 }(React.Component));
 exports.Component = Component;
+var StateLink = (function () {
+    function StateLink(value, onChange) {
+        this.value = value;
+        this.onChange = onChange;
+    }
+    return StateLink;
+}());
+exports.StateLink = StateLink;
 function BindThis() {
     return function (target, propertyKey, descriptor) {
         var boundFn;
