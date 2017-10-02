@@ -9,6 +9,13 @@ export interface BundleLoadFunction {
 }
 
 /**
+ * BundleComponentClass interface
+ */
+export interface BundleComponentClass {
+  new(props: any, context: any): BundleComponent;
+}
+
+/**
  * BundleComponent state interface
  */
 export interface BundleComponentState {
@@ -16,20 +23,12 @@ export interface BundleComponentState {
 }
 
 /**
- * BundleComponent properties interface
- */
-export interface BundleComponentProps {
-  loadingAnimation?: React.ComponentType;
-  load: BundleLoadFunction;
-}
-
-/**
  * Render bundle component
  */
-export function renderBundleComponent(name: string, props: any, load: BundleLoadFunction) {
+export function createBundleComponent(name: string, load: BundleLoadFunction): BundleComponentClass {
 
   /**
-   * Dynamic bundle class creation
+   * Dynamically created bundle class
    */
   class Bundle extends BundleComponent {
 
@@ -37,8 +36,7 @@ export function renderBundleComponent(name: string, props: any, load: BundleLoad
      * Load bundle
      */
     public load() {
-      this.props.load((bundle: any) => {
-
+      load((bundle: any) => {
         if (bundle && typeof bundle == 'object') {
           if (typeof bundle[name] == 'function' && bundle[name].prototype instanceof React.Component) {
             this.setState({ component: bundle[name] });
@@ -50,13 +48,13 @@ export function renderBundleComponent(name: string, props: any, load: BundleLoad
     }
   }
 
-  return React.createElement(Bundle, { ...props, load }) as React.ComponentElement<BundleComponentProps, BundleComponent>;
+  return Bundle;
 }
 
 /**
  * BundleComponent class
  */
-export abstract class BundleComponent extends Component<BundleComponentProps, BundleComponentState> {
+export abstract class BundleComponent extends Component<any, BundleComponentState> {
 
   /**
    * Abstract load method

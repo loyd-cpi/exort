@@ -22,13 +22,11 @@ class Loader {
 
     const chunkNameParam = JSON.stringify(loaderUtils.interpolateName(this, name, { context: this.options.context }));
 
-    return `module.exports = function(props) {
-  return require('exort/client').renderBundleComponent('${className}', props, function(cb) {
-    require.ensure([], function(require) {
-      cb(require(${requireModuleName}));
-    }, ${chunkNameParam});
-  });
-};`;
+    return `module.exports = require('exort/client').createBundleComponent('${className}', function(cb) {
+  require.ensure([], function(require) {
+    cb(require(${requireModuleName}));
+  }, ${chunkNameParam});
+});`;
   }
 }
 
