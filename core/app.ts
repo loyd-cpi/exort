@@ -176,7 +176,8 @@ export function configure(app: Application, files: string[]): void {
     }
   }
 
-  let config = (app as any).config = Config.load(files);
+  const config = (app as any).config = Config.load(files);
+  process.env.TZ = config.get('app.timezone');
   app.set('env', config.get('app.env'));
 }
 
