@@ -71,7 +71,8 @@ function configure(app, files) {
             throw new error_1.Error('app.config already exists. there must be conflict with express');
         }
     }
-    let config = app.config = Config.load(files);
+    const config = app.config = Config.load(files);
+    process.env.TZ = config.get('app.timezone');
     app.set('env', config.get('app.env'));
 }
 exports.configure = configure;
