@@ -498,6 +498,37 @@ class FieldValidator {
         return this;
     }
     /**
+     * The given field must match the field under validation.
+     */
+    same(otherField, message) {
+        let otherFieldName;
+        let otherFieldLabel;
+        if (typeof otherField == 'string') {
+            otherFieldName = otherField;
+            otherFieldLabel = fieldLabelCase(otherField);
+        }
+        else {
+            otherFieldName = otherField.name;
+            otherFieldLabel = otherField.label || fieldLabelCase(otherField.name);
+        }
+        this.rules['same'] = {
+            name: 'same',
+            handle() {
+                return this.validator.getValidation().isSame(this.getInput(), this.validator.getInput(otherFieldName));
+            },
+            message() {
+                return {
+                    message: message || Validation.RULE_MESSAGES.same,
+                    attrs: {
+                        label: this.fieldLabel,
+                        other: otherFieldLabel
+                    }
+                };
+            }
+        };
+        return this;
+    }
+    /**
      * The field under validation must be entirely alphabetic characters.
      */
     alpha(message) {
@@ -997,6 +1028,12 @@ class Validation extends service_1.Service {
      */
     isAfterOrEqual(dateToCheck, afterDate) {
         return moment(dateToCheck).isSameOrAfter(afterDate);
+    }
+    /**
+     * Check if two values are the same
+     */
+    isSame(firstVal, secondVal) {
+        return firstVal === secondVal;
     }
     /**
      * Alphabetic characters validation

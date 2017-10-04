@@ -180,6 +180,17 @@ export declare class FieldValidator {
      */
     afterOrEqual(date: moment.MomentInput, message?: string): this;
     /**
+     * The given field must match the field under validation.
+     */
+    same(otherField: string, message?: string): this;
+    /**
+     * The given field must match the field under validation.
+     */
+    same(otherField: {
+        name: string;
+        label?: string;
+    }, message?: string): this;
+    /**
      * The field under validation must be entirely alphabetic characters.
      */
     alpha(message?: string): this;
@@ -421,6 +432,10 @@ export declare class Validation extends Service {
      * After or same date validation
      */
     isAfterOrEqual(dateToCheck: moment.MomentInput, afterDate: moment.MomentInput): boolean;
+    /**
+     * Check if two values are the same
+     */
+    isSame(firstVal: any, secondVal: any): boolean;
     /**
      * Alphabetic characters validation
      */
