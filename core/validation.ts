@@ -626,6 +626,48 @@ export class FieldValidator {
   }
 
   /**
+   * The given field must match the field under validation.
+   */
+  public same(otherField: string, message?: string): this;
+
+  /**
+   * The given field must match the field under validation.
+   */
+  public same(otherField: { name: string, label?: string }, message?: string): this;
+
+  /**
+   * The given field must match the field under validation.
+   */
+  public same(otherField: string | { name: string, label?: string }, message?: string): this {
+    let otherFieldName: string;
+    let otherFieldLabel: string;
+    if (typeof otherField == 'string') {
+      otherFieldName = otherField;
+      otherFieldLabel = fieldLabelCase(otherField);
+    } else {
+      otherFieldName = otherField.name;
+      otherFieldLabel = otherField.label || fieldLabelCase(otherField.name);
+    }
+
+    this.rules['same'] = {
+      name: 'same',
+      handle() {
+        return this.validator.getValidation().isSame(this.getInput(), this.validator.getInput(otherFieldName));
+      },
+      message() {
+        return {
+          message: message || Validation.RULE_MESSAGES.same,
+          attrs: {
+            label: this.fieldLabel,
+            other: otherFieldLabel
+          }
+        };
+      }
+    };
+    return this;
+  }
+
+  /**
    * The field under validation must be entirely alphabetic characters.
    */
   public alpha(message?: string): this {
@@ -1235,8 +1277,15 @@ export class Validation extends Service {
   /**
    * After or same date validation
    */
-  public isAfterOrEqual(dateToCheck: moment.MomentInput, afterDate: moment.MomentInput) {
+  public isAfterOrEqual(dateToCheck: moment.MomentInput, afterDate: moment.MomentInput): boolean {
     return moment(dateToCheck).isSameOrAfter(afterDate);
+  }
+
+  /**
+   * Check if two values are the same
+   */
+  public isSame(firstVal: any, secondVal: any): boolean {
+    return firstVal === secondVal;
   }
 
   /**
