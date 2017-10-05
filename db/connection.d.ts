@@ -3,7 +3,7 @@ import { AppProvider, Application } from '../core/app';
 /**
  * Provide sql and nosql connection
  */
-export declare function provideConnection(modelsDir?: string): AppProvider;
+export declare function provideConnection(modelsDir?: string, migrationsReadDir?: string, migrationsWriteDir?: string): AppProvider;
 /**
  * Get connection from specified application instance
  */

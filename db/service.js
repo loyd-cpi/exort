@@ -87,7 +87,7 @@ class SqlService extends service_1.Service {
      * Saves one or many given entities.
      */
     save(entityOrEntities, options) {
-        return this.getRepository().persist(entityOrEntities, options);
+        return this.getRepository().save(entityOrEntities, options);
     }
     /**
      * Removes one or many given entities.

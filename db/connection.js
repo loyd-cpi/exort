@@ -8,7 +8,7 @@ const model_1 = require("./model");
 /**
  * Provide sql and nosql connection
  */
-function provideConnection(modelsDir) {
+function provideConnection(modelsDir, migrationsReadDir, migrationsWriteDir) {
     return (app) => tslib_1.__awaiter(this, void 0, void 0, function* () {
         app_1.checkAppConfig(app);
         const dbConf = app.config.get('db');
@@ -20,6 +20,18 @@ function provideConnection(modelsDir) {
         else {
             modelsDir = `${app.dir}/models`;
         }
+        if (migrationsReadDir) {
+            migrationsReadDir = misc_1._.trimEnd(migrationsReadDir, '/');
+        }
+        else {
+            migrationsReadDir = `${app.dir}/database/migrations`;
+        }
+        if (migrationsWriteDir) {
+            migrationsWriteDir = misc_1._.trimEnd(migrationsWriteDir, '/');
+        }
+        else {
+            migrationsWriteDir = `${app.rootDir}/src/server/database/migrations`;
+        }
         const connectionManager = typeorm_1.getConnectionManager();
         for (let connectionName of dbConf.auto) {
             const prefixedName = `${app.id}:${connectionName}`;
@@ -28,7 +40,14 @@ function provideConnection(modelsDir) {
             }
             const conn = misc_1._.clone(dbConf.connections[connectionName]);
             conn.name = prefixedName;
+            conn.synchronize = false;
+            conn.migrationsRun = false;
+            conn.dropSchema = false;
             conn.entities = [];
+            conn.migrations = [`${migrationsReadDir}/*.js`];
+            conn.cli = {
+                migrationsDir: migrationsWriteDir
+            };
             const indexModule = require(modelsDir);
             if (!misc_1._.isNone(indexModule) && typeof indexModule == 'object') {
                 for (let modelClassName in indexModule) {
