@@ -132,7 +132,7 @@ export abstract class SqlService<T extends Model> extends Service {
    * Saves one or many given entities.
    */
   public save(entityOrEntities: T | T[], options?: SaveOptions): Promise<T | T[]> {
-    return this.getRepository().persist(entityOrEntities as any, options);
+    return this.getRepository().save(entityOrEntities as any, options);
   }
 
   /**

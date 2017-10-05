@@ -6,7 +6,7 @@ import { Model } from './model';
 /**
  * Provide sql and nosql connection
  */
-export function provideConnection(modelsDir?: string): AppProvider {
+export function provideConnection(modelsDir?: string, migrationsReadDir?: string, migrationsWriteDir?: string): AppProvider {
   return async (app: Application): Promise<void> => {
     checkAppConfig(app);
 
@@ -19,6 +19,18 @@ export function provideConnection(modelsDir?: string): AppProvider {
       modelsDir = `${app.dir}/models`;
     }
 
+    if (migrationsReadDir) {
+      migrationsReadDir = _.trimEnd(migrationsReadDir, '/');
+    } else {
+      migrationsReadDir = `${app.dir}/database/migrations`;
+    }
+
+    if (migrationsWriteDir) {
+      migrationsWriteDir = _.trimEnd(migrationsWriteDir, '/');
+    } else {
+      migrationsWriteDir = `${app.rootDir}/src/server/database/migrations`;
+    }
+
     const connectionManager = getConnectionManager();
     for (let connectionName of dbConf.auto) {
 
@@ -29,7 +41,14 @@ export function provideConnection(modelsDir?: string): AppProvider {
 
       const conn = _.clone(dbConf.connections[connectionName]);
       conn.name = prefixedName;
+      conn.synchronize = false;
+      conn.migrationsRun = false;
+      conn.dropSchema = false;
       conn.entities = [];
+      conn.migrations = [`${migrationsReadDir}/*.js`];
+      conn.cli = {
+        migrationsDir: migrationsWriteDir
+      };
 
       const indexModule = require(modelsDir);
       if (!_.isNone(indexModule) && typeof indexModule == 'object') {
