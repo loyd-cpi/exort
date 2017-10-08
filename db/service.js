@@ -19,11 +19,11 @@ class SqlService extends service_1.Service {
      * Throws exception if connection with the given name was not found.
      */
     getEntityManager(connection) {
-        const entityManager = this.context.store.get(SqlService.STORE_TRANS_KEY);
-        if (entityManager && entityManager.connection.name == (connection || connection_1.DEFAULT_CONNECTION_NAME)) {
-            return entityManager;
+        const manager = this.context.store.get(SqlService.STORE_TRANS_KEY);
+        if (manager && manager.connection.name == (connection || connection_1.DEFAULT_CONNECTION_NAME)) {
+            return manager;
         }
-        return connection_1.getConnection(this.app, connection).entityManager;
+        return connection_1.getConnection(this.app, connection).manager;
     }
     /**
      * Gets repository for the service model
