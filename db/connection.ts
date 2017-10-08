@@ -4,6 +4,11 @@ import { _ } from '../core/misc';
 import { Model } from './model';
 
 /**
+ * Default connection name
+ */
+export const DEFAULT_CONNECTION_NAME: string = 'default';
+
+/**
  * Provide sql and nosql connection
  */
 export function provideConnection(modelsDir?: string, migrationsReadDir?: string, migrationsWriteDir?: string): AppProvider {
@@ -74,5 +79,5 @@ export function provideConnection(modelsDir?: string, migrationsReadDir?: string
  */
 export function getConnection(app: Application, name?: string): Connection {
   checkAppConfig(app);
-  return getConnectionManager().get(`${app.id}:${name || 'default'}`);
+  return getConnectionManager().get(`${app.id}:${name || DEFAULT_CONNECTION_NAME}`);
 }
