@@ -42,11 +42,11 @@ export abstract class SqlService<T extends Model> extends Service {
    * Throws exception if connection with the given name was not found.
    */
   protected getEntityManager(connection?: string): EntityManager {
-    const entityManager: EntityManager | undefined = this.context.store.get(SqlService.STORE_TRANS_KEY);
-    if (entityManager && entityManager.connection.name == (connection || DEFAULT_CONNECTION_NAME)) {
-      return entityManager;
+    const manager: EntityManager | undefined = this.context.store.get(SqlService.STORE_TRANS_KEY);
+    if (manager && manager.connection.name == (connection || DEFAULT_CONNECTION_NAME)) {
+      return manager;
     }
-    return getConnection(this.app, connection).entityManager;
+    return getConnection(this.app, connection).manager;
   }
 
   /**
