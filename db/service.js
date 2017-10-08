@@ -14,34 +14,28 @@ exports.SeedService = SeedService;
  */
 class SqlService extends service_1.Service {
     /**
-     * Gets registered connection with the given name.
+     * Gets entity manager from the registered connection with the given name.
      * If connection name is not given then it will get a default connection.
      * Throws exception if connection with the given name was not found.
      */
-    getConnection(name) {
-        return connection_1.getConnection(this.app, name);
-    }
-    /**
-     * Get transaction connection
-     */
-    getTransaction() {
-        return this.context.store.get(SqlService.STORE_TRANS_KEY);
+    getEntityManager(connection) {
+        const entityManager = this.context.store.get(SqlService.STORE_TRANS_KEY);
+        if (entityManager && entityManager.connection.name == (connection || connection_1.DEFAULT_CONNECTION_NAME)) {
+            return entityManager;
+        }
+        return connection_1.getConnection(this.app, connection).entityManager;
     }
     /**
      * Gets repository for the service model
      */
     getRepository(connection) {
-        let transaction = this.getTransaction();
-        if (transaction && (!connection || transaction.connection.name == connection)) {
-            return transaction.getRepository(this.modelClass);
-        }
-        return this.getConnection(connection).getRepository(this.modelClass);
+        return this.getEntityManager(connection).getRepository(this.entity);
     }
     /**
      * Creates a new query builder that can be used to build a sql query
      */
     createQueryBuilder(alias, connection) {
-        return this.getRepository(connection).createQueryBuilder(alias || this.modelClass.name);
+        return this.getRepository(connection).createQueryBuilder(alias || this.entity.name);
     }
     /**
      * Creates a new model instance and copies all model properties from this object into a new model
@@ -123,7 +117,7 @@ class SqlService extends service_1.Service {
      * Executes insert query and returns raw database results.
      */
     insert(values) {
-        return this.createQueryBuilder(this.modelClass.name).insert().into(this.modelClass).values(values).execute();
+        return this.createQueryBuilder(this.entity.name).insert().into(this.entity).values(values).execute();
     }
     /**
      * Make the closure run with transaction object
@@ -131,7 +125,7 @@ class SqlService extends service_1.Service {
     transaction(closure, connection) {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
             let result;
-            yield this.getConnection(connection).transaction((transaction) => tslib_1.__awaiter(this, void 0, void 0, function* () {
+            yield this.getEntityManager(connection).transaction((transaction) => tslib_1.__awaiter(this, void 0, void 0, function* () {
                 const newContext = this.context.newInstance();
                 newContext.store.set(SqlService.STORE_TRANS_KEY, transaction);
                 const startingService = newContext.make(this.constructor);

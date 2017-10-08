@@ -3,9 +3,9 @@ import { QueryPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { FindManyOptions } from 'typeorm/find-options/FindManyOptions';
 import { FindOneOptions } from 'typeorm/find-options/FindOneOptions';
 import { RemoveOptions } from 'typeorm/repository/RemoveOptions';
-import { Connection, EntityManager, Repository } from 'typeorm';
 import { SaveOptions } from 'typeorm/repository/SaveOptions';
 import { DeepPartial } from 'typeorm/common/DeepPartial';
+import { EntityManager, Repository } from 'typeorm';
 import { Service } from '../core/service';
 import { Model } from './model';
 /**
@@ -28,17 +28,13 @@ export declare abstract class SqlService<T extends Model> extends Service {
     /**
      * Model class
      */
-    protected modelClass: new () => T;
+    protected abstract entity: new () => T;
     /**
-     * Gets registered connection with the given name.
+     * Gets entity manager from the registered connection with the given name.
      * If connection name is not given then it will get a default connection.
      * Throws exception if connection with the given name was not found.
      */
-    protected getConnection(name?: string): Connection;
-    /**
-     * Get transaction connection
-     */
-    protected getTransaction(): EntityManager | undefined;
+    protected getEntityManager(connection?: string): EntityManager;
     /**
      * Gets repository for the service model
      */

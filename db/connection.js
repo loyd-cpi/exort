@@ -6,6 +6,10 @@ const app_1 = require("../core/app");
 const misc_1 = require("../core/misc");
 const model_1 = require("./model");
 /**
+ * Default connection name
+ */
+exports.DEFAULT_CONNECTION_NAME = 'default';
+/**
  * Provide sql and nosql connection
  */
 function provideConnection(modelsDir, migrationsReadDir, migrationsWriteDir) {
@@ -69,7 +73,7 @@ exports.provideConnection = provideConnection;
  */
 function getConnection(app, name) {
     app_1.checkAppConfig(app);
-    return typeorm_1.getConnectionManager().get(`${app.id}:${name || 'default'}`);
+    return typeorm_1.getConnectionManager().get(`${app.id}:${name || exports.DEFAULT_CONNECTION_NAME}`);
 }
 exports.getConnection = getConnection;
 //# sourceMappingURL=connection.js.map
