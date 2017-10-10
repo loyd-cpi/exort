@@ -20,7 +20,7 @@ class SqlService extends service_1.Service {
      */
     getEntityManager(connection) {
         const manager = this.context.store.get(SqlService.STORE_TRANS_KEY);
-        if (manager && manager.connection.name == (connection || connection_1.DEFAULT_CONNECTION_NAME)) {
+        if (manager && manager.connection.name == connection_1.prefixConnectionName(this.app, connection)) {
             return manager;
         }
         return connection_1.getConnection(this.app, connection).manager;

@@ -69,11 +69,18 @@ function provideConnection(modelsDir, migrationsReadDir, migrationsWriteDir) {
 }
 exports.provideConnection = provideConnection;
 /**
+ * Compose prefixed connection name
+ */
+function prefixConnectionName(app, name) {
+    return `${app.id}:${name || exports.DEFAULT_CONNECTION_NAME}`;
+}
+exports.prefixConnectionName = prefixConnectionName;
+/**
  * Get connection from specified application instance
  */
 function getConnection(app, name) {
     app_1.checkAppConfig(app);
-    return typeorm_1.getConnectionManager().get(`${app.id}:${name || exports.DEFAULT_CONNECTION_NAME}`);
+    return typeorm_1.getConnectionManager().get(prefixConnectionName(app, name));
 }
 exports.getConnection = getConnection;
 //# sourceMappingURL=connection.js.map
