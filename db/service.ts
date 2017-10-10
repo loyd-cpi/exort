@@ -1,8 +1,8 @@
 import { SelectQueryBuilder } from 'typeorm/query-builder/SelectQueryBuilder';
 import { QueryPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { FindManyOptions } from 'typeorm/find-options/FindManyOptions';
-import { getConnection, DEFAULT_CONNECTION_NAME } from './connection';
 import { FindOneOptions } from 'typeorm/find-options/FindOneOptions';
+import { getConnection, prefixConnectionName } from './connection';
 import { RemoveOptions } from 'typeorm/repository/RemoveOptions';
 import { SaveOptions } from 'typeorm/repository/SaveOptions';
 import { DeepPartial } from 'typeorm/common/DeepPartial';
@@ -43,7 +43,7 @@ export abstract class SqlService<T extends Model> extends Service {
    */
   protected getEntityManager(connection?: string): EntityManager {
     const manager: EntityManager | undefined = this.context.store.get(SqlService.STORE_TRANS_KEY);
-    if (manager && manager.connection.name == (connection || DEFAULT_CONNECTION_NAME)) {
+    if (manager && manager.connection.name == prefixConnectionName(this.app, connection)) {
       return manager;
     }
     return getConnection(this.app, connection).manager;

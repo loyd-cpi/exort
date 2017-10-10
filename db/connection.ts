@@ -75,9 +75,16 @@ export function provideConnection(modelsDir?: string, migrationsReadDir?: string
 }
 
 /**
+ * Compose prefixed connection name
+ */
+export function prefixConnectionName(app: Application, name?: string): string {
+  return `${app.id}:${name || DEFAULT_CONNECTION_NAME}`;
+}
+
+/**
  * Get connection from specified application instance
  */
 export function getConnection(app: Application, name?: string): Connection {
   checkAppConfig(app);
-  return getConnectionManager().get(`${app.id}:${name || DEFAULT_CONNECTION_NAME}`);
+  return getConnectionManager().get(prefixConnectionName(app, name));
 }
