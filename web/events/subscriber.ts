@@ -26,11 +26,6 @@ export interface Socket extends SocketIO.Socket {
 export class Subscriber {
 
   /**
-   * Context instance
-   */
-  private readonly context: Context;
-
-  /**
    * Listener instance cache
    */
   private readonly listenerInstances = new Map<EventListenerClass, EventListener>();
@@ -38,9 +33,7 @@ export class Subscriber {
   /**
    * Subscriber constructor
    */
-  constructor(public readonly socket: Socket, public readonly namespace: Namespace) {
-    this.context = socket.context;
-  }
+  constructor(public readonly socket: Socket, public readonly namespace: Namespace) {}
 
   /**
    * Fire an event listener

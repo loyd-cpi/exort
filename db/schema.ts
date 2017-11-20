@@ -77,17 +77,17 @@ export async function generateMigrationFiles(app: Application, className?: strin
       if (connection.driver instanceof MysqlDriver) {
         sqlQueries.forEach(query => {
           const queryString = typeof query == 'string' ? query : query.up;
-          upSqls.push('await queryRunner.query(\"' + queryString.replace(new RegExp(`"`, 'g'), `\\"`) + '\");');
+          upSqls.push(`await queryRunner.query('${queryString.replace(new RegExp(`'`, 'g'), `\\'`)}');`);
           if (typeof query != 'string' && query.down) {
-            downSqls.push('await queryRunner.query(\"' + query.down.replace(new RegExp(`"`, 'g'), `\\"`) + '\");');
+            downSqls.push(`await queryRunner.query('${query.down.replace(new RegExp(`'`, 'g'), `\\'`)}');`);
           }
         });
       } else {
         sqlQueries.forEach(query => {
           const queryString = typeof query == 'string' ? query : query.up;
-          upSqls.push('await queryRunner.query(`' + queryString.replace(new RegExp('`', 'g'), '\\`') + '`);');
+          upSqls.push(`await queryRunner.query(\`${queryString.replace(new RegExp('`', 'g'), '\\`')}\`);`);
           if (typeof query != "string" && query.down) {
-            downSqls.push('await queryRunner.query(`' + query.down.replace(new RegExp('`', 'g'), '\\`') + '`);');
+            downSqls.push(`await queryRunner.query(\`${query.down.replace(new RegExp('`', 'g'), '\\`')}\`);`);
           }
         });
       }
@@ -193,7 +193,7 @@ export function provideSchemaCommands(databaseSourceDir?: string, databaseDistDi
     });
 
     Console.addCommand(app, {
-      command: 'migration:generate',
+      command: 'migration:make',
       desc: 'Generate migration files from model changes',
       params: {
         'class': {
