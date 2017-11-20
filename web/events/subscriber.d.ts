@@ -22,10 +22,6 @@ export declare class Subscriber {
     readonly socket: Socket;
     readonly namespace: Namespace;
     /**
-     * Context instance
-     */
-    private readonly context;
-    /**
      * Listener instance cache
      */
     private readonly listenerInstances;

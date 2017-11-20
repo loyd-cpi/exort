@@ -14,7 +14,6 @@ class Subscriber {
          * Listener instance cache
          */
         this.listenerInstances = new Map();
-        this.context = socket.context;
     }
     /**
      * Fire an event listener
