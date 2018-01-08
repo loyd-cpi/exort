@@ -1,7 +1,6 @@
 import { KeyValuePair } from './misc';
 import { Context } from './service';
 import { Application } from './app';
-import { __ } from './i18n';
 
 /**
  * ContextHandler class
@@ -22,18 +21,11 @@ export abstract class ContextHandler {
   }
 
   /**
-   * Get default render data
-   */
-  protected addFrameworkRenderData(data: KeyValuePair) {
-    data.__ = (key: string, params?: KeyValuePair) => __(this, key, params);
-  }
-
-  /**
    * Render template without sending and returns as string
    */
   protected compileView(name: string, options?: KeyValuePair, callback?: (err: Error, html: string) => void): Promise<string> | void {
     if (typeof options == 'object' && options) {
-      this.addFrameworkRenderData(options);
+      this.context.addFrameworkRenderData(options);
     }
     return this.context.app.render(name, options as any, callback as any);
   }

@@ -1,19 +1,25 @@
 import { ContextHandler, Service } from './handler';
 import { KeyValuePair, _ } from './misc';
+import { Context } from './service';
 import { Store } from './store';
 import { Error } from './error';
 
 /**
  * Retrieve lines from language files
  */
-export function __(handler: ContextHandler, key: string, params?: KeyValuePair): string {
-  let messages = handler.getContext().getLocale().get('messages');
+export function __(context: ContextHandler | Context, key: string, params?: KeyValuePair): string {
+  if (context instanceof ContextHandler) {
+    context = context.getContext();
+  }
+
+  let messages = context.getLocale().get('messages');
   if (typeof messages[key] == 'string') {
     if (messages[key] && messages[key].indexOf('${') != -1) {
       return _.template(messages[key])(params || {});
     }
     return messages[key];
   }
+
   return '';
 }
 

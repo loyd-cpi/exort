@@ -69,7 +69,7 @@ export abstract class HttpHandler extends ContextHandler {
    */
   protected renderView(name: string, options?: KeyValuePair): void {
     options = options || {};
-    this.addFrameworkRenderData(options);
+    this.context.addFrameworkRenderData(options);
     this.response.render(name, options);
   }
 }
