@@ -1,11 +1,11 @@
 import { checkAppConfig, Application, AppProvider } from './app';
+import { __, I18nService, Language } from './i18n';
 import { Response, Request } from '../web/http';
-import { I18nService, Language } from './i18n';
+import { KeyValuePair, _ } from './misc';
 import { Service } from './handler';
 import * as express from 'express';
 import { Store } from './store';
 import { Error } from './error';
-import { _ } from './misc';
 
 /**
  * BindOptions interface
@@ -105,6 +105,13 @@ export class Context {
     if (!_.classExtends(serviceClass, Service)) {
       throw new Error(`${serviceClass.name} is not a Service class`);
     }
+  }
+
+  /**
+   * Get default render data
+   */
+  public addFrameworkRenderData(data: KeyValuePair) {
+    data.__ = (key: string, params?: KeyValuePair) => __(this, key, params);
   }
 
   /**
