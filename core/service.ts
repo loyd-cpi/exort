@@ -126,7 +126,11 @@ export class Context {
    */
   public getLocale(): Language {
     if (!this.language) {
-      this.setLocale(this.app.config.get('locale'));
+      const locale = this.app.config.get('app.locale');
+      if (!locale) {
+        throw new Error('app.locale config must be set');
+      }
+      this.setLocale(locale);
     }
     return this.language;
   }
