@@ -1,5 +1,7 @@
 import { checkAppConfig, Application, AppProvider } from './app';
 import { Response, Request } from '../web/http';
+import { I18nService, Language } from './i18n';
+import { Service } from './handler';
 import * as express from 'express';
 import { Store } from './store';
 import { Error } from './error';
@@ -48,6 +50,11 @@ export class Context {
    * Map of bindings
    */
   private bindings: Map<Function, Function> = new Map<Function, Function>();
+
+  /**
+   * Language object
+   */
+  private language: Language;
 
   /**
    * Context constructor
@@ -101,6 +108,23 @@ export class Context {
   }
 
   /**
+   * Change the active language at runtime
+   */
+  public setLocale(locale: string) {
+    this.language = this.make(I18nService).getTranslations(locale);
+  }
+
+  /**
+   * Get locale
+   */
+  public getLocale(): Language {
+    if (!this.language) {
+      this.setLocale(this.app.config.get('locale'));
+    }
+    return this.language;
+  }
+
+  /**
    * Create new instance with app instance
    */
   public newInstance(): Context {
@@ -140,31 +164,6 @@ export function provideServices(): AppProvider {
       next();
     });
   };
-}
-
-/**
- * Abstract Service class
- */
-export abstract class Service {
-
-  /**
-   * Application instance
-   */
-  protected readonly app: Application;
-
-  /**
-   * Service constructor
-   */
-  constructor(protected readonly context: Context) {
-    this.app = context.app;
-  }
-
-  /**
-   * Create instance of given Service class. Just like what req.make() does
-   */
-  protected make<U extends Service>(serviceClass: new(...args: any[]) => U): U {
-    return this.context.make(serviceClass);
-  }
 }
 
 /**

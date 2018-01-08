@@ -1,9 +1,10 @@
+import { ContextHandler, ErrorHandler } from '../core/handler';
 import { BroadcasterService } from './events/service';
-import { ErrorHandler, Error } from '../core/error';
 import { Input, Request, Response } from './http';
-import { Context, Bind } from '../core/service';
 import { KeyValuePair } from '../core/misc';
 import { WebApplication } from './app';
+import { Bind } from '../core/service';
+import { Error } from '../core/error';
 import { Session } from './session';
 import * as express from 'express';
 
@@ -18,12 +19,7 @@ export interface HttpRequestParams {
 /**
  * Abstract HttpHandler class
  */
-export abstract class HttpHandler {
-
-  /**
-   * Context instance
-   */
-  protected readonly context: Context;
+export abstract class HttpHandler extends ContextHandler {
 
   /**
    * Application instance
@@ -60,12 +56,21 @@ export abstract class HttpHandler {
    * HttpHandler constructor
    */
   constructor(protected readonly request: Request, protected readonly response: Response) {
-    this.context = request.context;
+    super(request.context);
     this.app = request.context.app as WebApplication;
     this.input = request.input;
     this.vars = response.locals;
     this.params = request.params;
     this.session = request.session;
+  }
+
+  /**
+   * Render and send view
+   */
+  protected renderView(name: string, options?: KeyValuePair): void {
+    options = options || {};
+    this.addFrameworkRenderData(options);
+    this.response.render(name, options);
   }
 }
 

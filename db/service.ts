@@ -7,7 +7,7 @@ import { RemoveOptions } from 'typeorm/repository/RemoveOptions';
 import { SaveOptions } from 'typeorm/repository/SaveOptions';
 import { DeepPartial } from 'typeorm/common/DeepPartial';
 import { EntityManager, Repository } from 'typeorm';
-import { Service } from '../core/service';
+import { Service } from '../core/handler';
 import { Model } from './model';
 
 /**

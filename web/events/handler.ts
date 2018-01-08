@@ -1,5 +1,6 @@
-import { Context, Bind } from '../../core/service';
+import { ContextHandler } from '../../core/handler';
 import { BroadcasterService } from './service';
+import { Bind } from '../../core/service';
 import { WebApplication } from '../app';
 import { Socket } from './subscriber';
 
@@ -13,7 +14,7 @@ export interface EventNextFunction {
 /**
  * Abstract EventHandler class
  */
-export abstract class EventHandler {
+export abstract class EventHandler extends ContextHandler {
 
   /**
    * BroadcasterService instance
@@ -27,15 +28,10 @@ export abstract class EventHandler {
   protected readonly app: WebApplication;
 
   /**
-   * Context instance
-   */
-  protected readonly context: Context;
-
-  /**
    * EventHandler constructor
    */
   constructor(protected readonly socket: Socket) {
-    this.context = socket.context;
+    super(socket.context);
     this.app = socket.context.app as WebApplication;
   }
 }

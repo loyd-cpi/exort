@@ -1,22 +1,4 @@
 import { KeyValuePair } from './misc';
-import { Application } from './app';
-import { Context } from './service';
-
-/**
- * Base ErrorHandler class
- */
-export abstract class ErrorHandler {
-
-  /**
-   * ErrorHandler constructor
-   */
-  constructor(protected readonly app: Application, protected readonly context: Context) {}
-
-  /**
-   * Abstract report method
-   */
-  public abstract async report(error: Error): Promise<void>;
-}
 
 /**
  * Error class

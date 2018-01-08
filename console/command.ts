@@ -1,5 +1,5 @@
+import { ContextHandler } from '../core/handler';
 import { ConsoleApplication } from './app';
-import { Context } from '../core/service';
 import { Input } from '../core/store';
 import * as yargs from 'yargs';
 
@@ -35,18 +35,13 @@ export interface CommandOptions {
 /**
  * Abstract Command class
  */
-export abstract class Command {
-
-  /**
-   * Context instance
-   */
-  protected readonly context: Context;
+export abstract class Command extends ContextHandler {
 
   /**
    * Command constructor
    */
   constructor(protected readonly app: ConsoleApplication, protected readonly input: Input) {
-    this.context = app.context;
+    super(app.context);
   }
 
   /**

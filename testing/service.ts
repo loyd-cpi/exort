@@ -1,5 +1,6 @@
-import { Service, Context } from '../core/service';
 import { WebApplication } from '../web/app';
+import { Service } from '../core/handler';
+import { Context } from '../core/service';
 import * as supertest from 'supertest';
 
 /**

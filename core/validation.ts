@@ -1,5 +1,5 @@
 import { KeyValuePair, Metadata, _ } from './misc';
-import { Service } from './service';
+import { Service } from './handler';
 import { File } from './filesystem';
 import * as moment from 'moment';
 import { Error } from './error';
@@ -112,7 +112,7 @@ export class FieldValidator {
       },
       message() {
         return {
-          message: message || Validation.RULE_MESSAGES.email,
+          message: message || this.validator.getErrorTemplates().email,
           attrs: {
             label: this.fieldLabel
           }
@@ -133,7 +133,7 @@ export class FieldValidator {
       },
       message() {
         return {
-          message: message || Validation.RULE_MESSAGES.accepted,
+          message: message || this.validator.getErrorTemplates().accepted,
           attrs: {
             label: this.fieldLabel
           }
@@ -157,7 +157,7 @@ export class FieldValidator {
       },
       message() {
         return {
-          message: message || Validation.RULE_MESSAGES.after,
+          message: message || this.validator.getErrorTemplates().after,
           attrs: {
             label: this.fieldLabel,
             date: (date as moment.Moment).toString()
@@ -179,7 +179,7 @@ export class FieldValidator {
       },
       message() {
         return {
-          message: message || Validation.RULE_MESSAGES.date,
+          message: message || this.validator.getErrorTemplates().date,
           attrs: {
             label: this.fieldLabel
           }
@@ -201,7 +201,7 @@ export class FieldValidator {
       },
       message() {
         return {
-          message: message || Validation.RULE_MESSAGES.required,
+          message: message || this.validator.getErrorTemplates().required,
           attrs: {
             label: this.fieldLabel
           }
@@ -244,7 +244,7 @@ export class FieldValidator {
       },
       message() {
         return {
-          message: message || Validation.RULE_MESSAGES.requiredIf,
+          message: message || this.validator.getErrorTemplates().requiredIf,
           attrs: {
             label: this.fieldLabel,
             other: (otherField as any).label,
@@ -307,7 +307,7 @@ export class FieldValidator {
       },
       message() {
         return {
-          message: message || Validation.RULE_MESSAGES.requiredWith,
+          message: message || this.validator.getErrorTemplates().requiredWith,
           attrs: {
             label: this.fieldLabel,
             values: otherFieldLabels.join(', ')
@@ -375,7 +375,7 @@ export class FieldValidator {
       },
       message() {
         return {
-          message: message || Validation.RULE_MESSAGES.requiredWithAll,
+          message: message || this.validator.getErrorTemplates().requiredWithAll,
           attrs: {
             label: this.fieldLabel,
             values: otherFieldLabels.join(', ')
@@ -437,7 +437,7 @@ export class FieldValidator {
       },
       message() {
         return {
-          message: message || Validation.RULE_MESSAGES.requiredWithout,
+          message: message || this.validator.getErrorTemplates().requiredWithout,
           attrs: {
             label: this.fieldLabel,
             values: otherFieldLabels.join(', ')
@@ -505,7 +505,7 @@ export class FieldValidator {
       },
       message() {
         return {
-          message: message || Validation.RULE_MESSAGES.requiredWithoutAll,
+          message: message || this.validator.getErrorTemplates().requiredWithoutAll,
           attrs: {
             label: this.fieldLabel,
             values: otherFieldLabels.join(', ')
@@ -527,7 +527,7 @@ export class FieldValidator {
       },
       message() {
         return {
-          message: message || Validation.RULE_MESSAGES.in,
+          message: message || this.validator.getErrorTemplates().in,
           attrs: {
             label: this.fieldLabel
           }
@@ -548,7 +548,7 @@ export class FieldValidator {
       },
       message() {
         return {
-          message: message || Validation.RULE_MESSAGES.notIn,
+          message: message || this.validator.getErrorTemplates().notIn,
           attrs: {
             label: this.fieldLabel
           }
@@ -569,7 +569,7 @@ export class FieldValidator {
       },
       message() {
         return {
-          message: message || Validation.RULE_MESSAGES.numeric,
+          message: message || this.validator.getErrorTemplates().numeric,
           attrs: {
             label: this.fieldLabel
           }
@@ -590,7 +590,7 @@ export class FieldValidator {
       },
       message() {
         return {
-          message: message || Validation.RULE_MESSAGES.string,
+          message: message || this.validator.getErrorTemplates().string,
           attrs: {
             label: this.fieldLabel
           }
@@ -614,7 +614,7 @@ export class FieldValidator {
       },
       message() {
         return {
-          message: message || Validation.RULE_MESSAGES.afterOrEqual,
+          message: message || this.validator.getErrorTemplates().afterOrEqual,
           attrs: {
             label: this.fieldLabel,
             date: (date as moment.Moment).toString()
@@ -656,7 +656,7 @@ export class FieldValidator {
       },
       message() {
         return {
-          message: message || Validation.RULE_MESSAGES.same,
+          message: message || this.validator.getErrorTemplates().same,
           attrs: {
             label: this.fieldLabel,
             other: otherFieldLabel
@@ -678,7 +678,7 @@ export class FieldValidator {
       },
       message() {
         return {
-          message: message || Validation.RULE_MESSAGES.alpha,
+          message: message || this.validator.getErrorTemplates().alpha,
           attrs: {
             label: this.fieldLabel
           }
@@ -699,7 +699,7 @@ export class FieldValidator {
       },
       message() {
         return {
-          message: message || Validation.RULE_MESSAGES.alphaSpace,
+          message: message || this.validator.getErrorTemplates().alphaSpace,
           attrs: {
             label: this.fieldLabel
           }
@@ -720,7 +720,7 @@ export class FieldValidator {
       },
       message() {
         return {
-          message: message || Validation.RULE_MESSAGES.alphaDash,
+          message: message || this.validator.getErrorTemplates().alphaDash,
           attrs: {
             label: this.fieldLabel
           }
@@ -741,7 +741,7 @@ export class FieldValidator {
       },
       message() {
         return {
-          message: message || Validation.RULE_MESSAGES.alphaNum,
+          message: message || this.validator.getErrorTemplates().alphaNum,
           attrs: {
             label: this.fieldLabel
           }
@@ -762,7 +762,7 @@ export class FieldValidator {
       },
       message() {
         return {
-          message: message || Validation.RULE_MESSAGES.array,
+          message: message || this.validator.getErrorTemplates().array,
           attrs: {
             label: this.fieldLabel
           }
@@ -783,7 +783,7 @@ export class FieldValidator {
       },
       message() {
         return {
-          message: message || Validation.RULE_MESSAGES.file,
+          message: message || this.validator.getErrorTemplates().file,
           attrs: {
             label: this.fieldLabel
           }
@@ -804,7 +804,7 @@ export class FieldValidator {
       },
       message() {
         return {
-          message: message || Validation.RULE_MESSAGES.image,
+          message: message || this.validator.getErrorTemplates().image,
           attrs: {
             label: this.fieldLabel
           }
@@ -828,7 +828,7 @@ export class FieldValidator {
       },
       message() {
         return {
-          message: message || Validation.RULE_MESSAGES.before,
+          message: message || this.validator.getErrorTemplates().before,
           attrs: {
             label: this.fieldLabel,
             date: (date as moment.Moment).toString()
@@ -853,7 +853,7 @@ export class FieldValidator {
       },
       message() {
         return {
-          message: message || Validation.RULE_MESSAGES.beforeOrEqual,
+          message: message || this.validator.getErrorTemplates().beforeOrEqual,
           attrs: {
             label: this.fieldLabel,
             date: (date as moment.Moment).toString()
@@ -876,7 +876,7 @@ export class FieldValidator {
       },
       message() {
         return {
-          message: message || Validation.RULE_MESSAGES.min[this.getMessageType()],
+          message: message || this.validator.getErrorTemplates().min[this.getMessageType()],
           attrs: {
             label: this.fieldLabel,
             min: value
@@ -899,7 +899,7 @@ export class FieldValidator {
       },
       message() {
         return {
-          message: message || Validation.RULE_MESSAGES.max[this.getMessageType()],
+          message: message || this.validator.getErrorTemplates().max[this.getMessageType()],
           attrs: {
             label: this.fieldLabel,
             max: value
@@ -1003,6 +1003,13 @@ export class FormValidator {
   constructor(private validation: Validation, private input: Store) {}
 
   /**
+   * Get error message template
+   */
+  public getErrorTemplates() {
+    return this.validation.getContext().getLocale().get('validation');
+  }
+
+  /**
    * Initiate rules for the given field name
    */
   public field(fieldName: string, fieldLabel?: string): FieldValidator {
@@ -1075,87 +1082,6 @@ export class FormValidator {
  * Validator class
  */
 export class Validation extends Service {
-
-  /**
-   * Map of rule messages
-   */
-  public static readonly RULE_MESSAGES = {
-    accepted: 'The ${label} must be accepted.',
-    activeUrl: 'The ${label} is not a valid URL.',
-    after: 'The ${label} must be a date after ${date}.',
-    afterOrEqual: 'The ${label} must be a date after or equal to ${date}.',
-    alpha: 'The ${label} may only contain letters.',
-    alphaSpace: 'The ${label} may only contain letters and spaces.',
-    alphaDash: 'The ${label} may only contain letters, numbers, and dashes.',
-    alphaNum: 'The ${label} may only contain letters and numbers.',
-    array: 'The ${label} must be an array.',
-    before: 'The ${label} must be a date before ${date}.',
-    beforeOrEqual: 'The ${label} must be a date before or equal to ${date}.',
-    between: {
-      numeric: 'The ${label} must be between ${min} and ${max}.',
-      file: 'The ${label} must be between ${min} and ${max} kilobytes.',
-      string: 'The ${label} must be between ${min} and ${max} characters.',
-      array: 'The ${label} must have between ${min} and ${max} items.'
-    } as KeyValuePair<string>,
-    boolean: 'The ${label} field must be true or false.',
-    confirmed: 'The ${label} confirmation does not match.',
-    date: 'The ${label} is not a valid date.',
-    dateFormat: 'The ${label} does not match the format :format.',
-    different: 'The ${label} and ${other} must be different.',
-    digits: 'The ${label} must be ${digits} digits.',
-    digitsBetween: 'The ${label} must be between ${min} and ${max} digits.',
-    dimensions: 'The ${label} has invalid image dimensions.',
-    distinct: 'The ${label} field has a duplicate value.',
-    email: 'The ${label} must be a valid email address.',
-    exists: 'The selected ${label} is invalid.',
-    file: 'The ${label} must be a file.',
-    filled: 'The ${label} field must have a value.',
-    image: 'The ${label} must be an image.',
-    in: 'The selected ${label} is invalid.',
-    inArray: 'The ${label} field does not exist in ${other}.',
-    integer: 'The ${label} must be an integer.',
-    ip: 'The ${label} must be a valid IP address.',
-    ipv4: 'The ${label} must be a valid IPv4 address.',
-    ipv6: 'The ${label} must be a valid IPv6 address.',
-    json: 'The ${label} must be a valid JSON string.',
-    max: {
-      numeric: 'The ${label} may not be greater than ${max}.',
-      file: 'The ${label} may not be greater than ${max} kilobytes.',
-      string: 'The ${label} may not be greater than ${max} characters.',
-      array: 'The ${label} may not have more than ${max} items.'
-    } as KeyValuePair<string>,
-    mimes: 'The ${label} must be a file of type: ${values}.',
-    mimeTypes: 'The ${label} must be a file of type: ${values}.',
-    min: {
-      numeric: 'The ${label} must be at least ${min}.',
-      file: 'The ${label} must be at least ${min} kilobytes.',
-      string: 'The ${label} must be at least ${min} characters.',
-      array: 'The ${label} must have at least ${min} items.'
-    } as KeyValuePair<string>,
-    notIn: 'The selected ${label} is invalid.',
-    numeric: 'The ${label} must be a number.',
-    present: 'The ${label} field must be present.',
-    regex: 'The ${label} format is invalid.',
-    required: 'The ${label} field is required.',
-    requiredIf: 'The ${label} field is required when ${other} is ${value}.',
-    requiredUnless: 'The ${label} field is required unless ${other} is in ${values}.',
-    requiredWith: 'The ${label} field is required when ${values} is present.',
-    requiredWithAll: 'The ${label} field is required when ${values} is present.',
-    requiredWithout: 'The ${label} field is required when ${values} is not present.',
-    requiredWithoutAll: 'The ${label} field is required when none of ${values} are present.',
-    same: 'The ${label} and ${other} must match.',
-    size: {
-      numeric: 'The ${label} must be ${size}.',
-      file: 'The ${label} must be ${size} kilobytes.',
-      string: 'The ${label} must be ${size} characters.',
-      array: 'The ${label} must contain ${size} items.'
-    } as KeyValuePair<string>,
-    string: 'The ${label} must be a string.',
-    timezone: 'The ${label} must be a valid zone.',
-    unique: 'The ${label} has already been taken.',
-    uploaded: 'The ${label} failed to upload.',
-    url: 'The ${label} format is invalid.',
-  };
 
   /**
    * Check if value given is a valid file

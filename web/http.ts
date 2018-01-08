@@ -1,10 +1,11 @@
 import { checkAppConfig, boot, AppProvider, Application } from '../core/app';
-import { Service, Context } from '../core/service';
 import { Input as BaseInput } from '../core/store';
 import { provideHttpErrorHandler } from './error';
 import { argument } from '../core/environment';
 import { KeyValuePair } from '../core/misc';
+import { Context } from '../core/service';
 import { File } from '../core/filesystem';
+import { Service } from '../core/handler';
 import * as formidable from 'formidable';
 import { WebApplication } from './app';
 import { Error } from '../core/error';

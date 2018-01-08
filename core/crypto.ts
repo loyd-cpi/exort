@@ -1,4 +1,4 @@
-import { Service } from './service';
+import { Service } from './handler';
 import * as bcrypt from 'bcrypt';
 import * as crypto from 'crypto';
 

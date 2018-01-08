@@ -1,4 +1,5 @@
-import { Service, Context } from '../../core/service';
+import { Context } from '../../core/service';
+import { Service } from '../../core/handler';
 import { WebApplication } from '../app';
 
 /**
