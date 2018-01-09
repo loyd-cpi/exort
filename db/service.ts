@@ -7,6 +7,7 @@ import { RemoveOptions } from 'typeorm/repository/RemoveOptions';
 import { SaveOptions } from 'typeorm/repository/SaveOptions';
 import { DeepPartial } from 'typeorm/common/DeepPartial';
 import { EntityManager, Repository } from 'typeorm';
+import { Transformer } from './transformer';
 import { Service } from '../core/handler';
 import { Model } from './model';
 
@@ -60,7 +61,23 @@ export abstract class SqlService<T extends Model> extends Service {
    * Creates a new query builder that can be used to build a sql query
    */
   protected createQueryBuilder(alias?: string, connection?: string): SelectQueryBuilder<T> {
-    return this.getRepository(connection).createQueryBuilder(alias || this.entity.name);
+    const builder = this.getRepository(connection).createQueryBuilder(alias || this.entity.name) as any;
+    const context = this.context;
+    const entityClass = this.entity;
+
+    builder._getRawAndEntities = builder.getRawAndEntities;
+    builder.getRawAndEntities = async function () {
+
+      const result = await builder._getRawAndEntities();
+      if (Array.isArray(result.entities) && result.entities.length) {
+        const transformer = new Transformer(this.connection);
+        await transformer.transformAll(entityClass, context, result.entities);
+      }
+
+      return result;
+    };
+
+    return builder;
   }
 
   /**
