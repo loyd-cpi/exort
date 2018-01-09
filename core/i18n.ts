@@ -12,12 +12,12 @@ export function __(context: ContextHandler | Context, key: string, params?: KeyV
     context = context.getContext();
   }
 
-  let messages = context.getLocale().get('messages');
-  if (typeof messages[key] == 'string') {
-    if (messages[key] && messages[key].indexOf('${') != -1) {
-      return _.template(messages[key])(params || {});
+  let message = context.getLocale().getMessage(key);
+  if (typeof message == 'string') {
+    if (message && message.indexOf('${') != -1) {
+      return _.template(message)(params || {});
     }
-    return messages[key];
+    return message;
   }
 
   return '';
@@ -61,27 +61,38 @@ export interface LanguageContent {
 /**
  * Language class
  */
-export class Language extends Store {
+export class Language {
+
+  /**
+   * Store object contains messages
+   */
+  private messages: Store;
+
+  /**
+   * Store object contains validation messages
+   */
+  private validation: Store;
 
   /**
    * Language constructor
    */
   constructor(protected readonly name: string, content: LanguageContent) {
-    super(content);
+    this.messages = new Store(content.messages);
+    this.validation = new Store(content.validation);
   }
 
   /**
-   * Get messages translations
+   * Get messages translation
    */
-  public getMessages() {
-    return this.get('messages');
+  public getMessage(key: string) {
+    return this.messages.get(key);
   }
 
   /**
-   * Get validation translations
+   * Get validation translation
    */
-  public getValidation() {
-    return this.get('validation');
+  public getValidation(key: string) {
+    return this.validation.get(key);
   }
 
   /**
