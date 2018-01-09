@@ -112,7 +112,7 @@ export class FieldValidator {
       },
       message() {
         return {
-          message: message || this.validator.getErrorTemplates().email,
+          message: message || this.validator.getErrorTemplate('email'),
           attrs: {
             label: this.fieldLabel
           }
@@ -133,7 +133,7 @@ export class FieldValidator {
       },
       message() {
         return {
-          message: message || this.validator.getErrorTemplates().accepted,
+          message: message || this.validator.getErrorTemplate('accepted'),
           attrs: {
             label: this.fieldLabel
           }
@@ -157,7 +157,7 @@ export class FieldValidator {
       },
       message() {
         return {
-          message: message || this.validator.getErrorTemplates().after,
+          message: message || this.validator.getErrorTemplate('after'),
           attrs: {
             label: this.fieldLabel,
             date: (date as moment.Moment).toString()
@@ -179,7 +179,7 @@ export class FieldValidator {
       },
       message() {
         return {
-          message: message || this.validator.getErrorTemplates().date,
+          message: message || this.validator.getErrorTemplate('date'),
           attrs: {
             label: this.fieldLabel
           }
@@ -201,7 +201,7 @@ export class FieldValidator {
       },
       message() {
         return {
-          message: message || this.validator.getErrorTemplates().required,
+          message: message || this.validator.getErrorTemplate('required'),
           attrs: {
             label: this.fieldLabel
           }
@@ -244,7 +244,7 @@ export class FieldValidator {
       },
       message() {
         return {
-          message: message || this.validator.getErrorTemplates().requiredIf,
+          message: message || this.validator.getErrorTemplate('requiredIf'),
           attrs: {
             label: this.fieldLabel,
             other: (otherField as any).label,
@@ -307,7 +307,7 @@ export class FieldValidator {
       },
       message() {
         return {
-          message: message || this.validator.getErrorTemplates().requiredWith,
+          message: message || this.validator.getErrorTemplate('requiredWith'),
           attrs: {
             label: this.fieldLabel,
             values: otherFieldLabels.join(', ')
@@ -375,7 +375,7 @@ export class FieldValidator {
       },
       message() {
         return {
-          message: message || this.validator.getErrorTemplates().requiredWithAll,
+          message: message || this.validator.getErrorTemplate('requiredWithAll'),
           attrs: {
             label: this.fieldLabel,
             values: otherFieldLabels.join(', ')
@@ -437,7 +437,7 @@ export class FieldValidator {
       },
       message() {
         return {
-          message: message || this.validator.getErrorTemplates().requiredWithout,
+          message: message || this.validator.getErrorTemplate('requiredWithout'),
           attrs: {
             label: this.fieldLabel,
             values: otherFieldLabels.join(', ')
@@ -505,7 +505,7 @@ export class FieldValidator {
       },
       message() {
         return {
-          message: message || this.validator.getErrorTemplates().requiredWithoutAll,
+          message: message || this.validator.getErrorTemplate('requiredWithoutAll'),
           attrs: {
             label: this.fieldLabel,
             values: otherFieldLabels.join(', ')
@@ -527,7 +527,7 @@ export class FieldValidator {
       },
       message() {
         return {
-          message: message || this.validator.getErrorTemplates().in,
+          message: message || this.validator.getErrorTemplate('in'),
           attrs: {
             label: this.fieldLabel
           }
@@ -548,7 +548,7 @@ export class FieldValidator {
       },
       message() {
         return {
-          message: message || this.validator.getErrorTemplates().notIn,
+          message: message || this.validator.getErrorTemplate('notIn'),
           attrs: {
             label: this.fieldLabel
           }
@@ -569,7 +569,7 @@ export class FieldValidator {
       },
       message() {
         return {
-          message: message || this.validator.getErrorTemplates().numeric,
+          message: message || this.validator.getErrorTemplate('numeric'),
           attrs: {
             label: this.fieldLabel
           }
@@ -590,7 +590,7 @@ export class FieldValidator {
       },
       message() {
         return {
-          message: message || this.validator.getErrorTemplates().string,
+          message: message || this.validator.getErrorTemplate('string'),
           attrs: {
             label: this.fieldLabel
           }
@@ -614,7 +614,7 @@ export class FieldValidator {
       },
       message() {
         return {
-          message: message || this.validator.getErrorTemplates().afterOrEqual,
+          message: message || this.validator.getErrorTemplate('afterOrEqual'),
           attrs: {
             label: this.fieldLabel,
             date: (date as moment.Moment).toString()
@@ -656,7 +656,7 @@ export class FieldValidator {
       },
       message() {
         return {
-          message: message || this.validator.getErrorTemplates().same,
+          message: message || this.validator.getErrorTemplate('same'),
           attrs: {
             label: this.fieldLabel,
             other: otherFieldLabel
@@ -678,7 +678,7 @@ export class FieldValidator {
       },
       message() {
         return {
-          message: message || this.validator.getErrorTemplates().alpha,
+          message: message || this.validator.getErrorTemplate('alpha'),
           attrs: {
             label: this.fieldLabel
           }
@@ -699,7 +699,7 @@ export class FieldValidator {
       },
       message() {
         return {
-          message: message || this.validator.getErrorTemplates().alphaSpace,
+          message: message || this.validator.getErrorTemplate('alphaSpace'),
           attrs: {
             label: this.fieldLabel
           }
@@ -720,7 +720,7 @@ export class FieldValidator {
       },
       message() {
         return {
-          message: message || this.validator.getErrorTemplates().alphaDash,
+          message: message || this.validator.getErrorTemplate('alphaDash'),
           attrs: {
             label: this.fieldLabel
           }
@@ -741,7 +741,7 @@ export class FieldValidator {
       },
       message() {
         return {
-          message: message || this.validator.getErrorTemplates().alphaNum,
+          message: message || this.validator.getErrorTemplate('alphaNum'),
           attrs: {
             label: this.fieldLabel
           }
@@ -762,7 +762,7 @@ export class FieldValidator {
       },
       message() {
         return {
-          message: message || this.validator.getErrorTemplates().array,
+          message: message || this.validator.getErrorTemplate('array'),
           attrs: {
             label: this.fieldLabel
           }
@@ -783,7 +783,7 @@ export class FieldValidator {
       },
       message() {
         return {
-          message: message || this.validator.getErrorTemplates().file,
+          message: message || this.validator.getErrorTemplate('file'),
           attrs: {
             label: this.fieldLabel
           }
@@ -804,7 +804,7 @@ export class FieldValidator {
       },
       message() {
         return {
-          message: message || this.validator.getErrorTemplates().image,
+          message: message || this.validator.getErrorTemplate('image'),
           attrs: {
             label: this.fieldLabel
           }
@@ -828,7 +828,7 @@ export class FieldValidator {
       },
       message() {
         return {
-          message: message || this.validator.getErrorTemplates().before,
+          message: message || this.validator.getErrorTemplate('before'),
           attrs: {
             label: this.fieldLabel,
             date: (date as moment.Moment).toString()
@@ -853,7 +853,7 @@ export class FieldValidator {
       },
       message() {
         return {
-          message: message || this.validator.getErrorTemplates().beforeOrEqual,
+          message: message || this.validator.getErrorTemplate('beforeOrEqual'),
           attrs: {
             label: this.fieldLabel,
             date: (date as moment.Moment).toString()
@@ -876,7 +876,7 @@ export class FieldValidator {
       },
       message() {
         return {
-          message: message || this.validator.getErrorTemplates().min[this.getMessageType()],
+          message: message || this.validator.getErrorTemplate(`min.${this.getMessageType()}`),
           attrs: {
             label: this.fieldLabel,
             min: value
@@ -899,7 +899,7 @@ export class FieldValidator {
       },
       message() {
         return {
-          message: message || this.validator.getErrorTemplates().max[this.getMessageType()],
+          message: message || this.validator.getErrorTemplate(`max.${this.getMessageType()}`),
           attrs: {
             label: this.fieldLabel,
             max: value
@@ -1005,8 +1005,8 @@ export class FormValidator {
   /**
    * Get error message template
    */
-  public getErrorTemplates() {
-    return this.validation.getContext().getLocale().get('validation');
+  public getErrorTemplate(key: string) {
+    return this.validation.getContext().getLocale().getValidation(key);
   }
 
   /**
