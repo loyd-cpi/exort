@@ -1,6 +1,6 @@
 {
   "name": "exort",
-  "version": "0.1.27",
+  "version": "0.1.28",
   "description": "A web framework on top of ExpressJS, React and TypeORM",
   "main": "core/index.js",
   "typings": "core/index.d.ts",
