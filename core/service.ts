@@ -117,8 +117,12 @@ export class Context {
   /**
    * Change the active language at runtime
    */
-  public setLocale(locale: string) {
-    this.language = this.make(I18nService).getTranslations(locale);
+  public setLocale(locale: Language | string) {
+    if (typeof locale == 'string' && locale) {
+      this.language = this.make(I18nService).getTranslations(locale);
+    } else if (locale instanceof Language) {
+      this.language = locale;
+    }
   }
 
   /**
@@ -139,7 +143,11 @@ export class Context {
    * Create new instance with app instance
    */
   public newInstance(): Context {
-    return Reflect.construct(this.constructor, [this.app]);
+    const context = Reflect.construct(this.constructor, [this.app]);
+    if (this.language) {
+      context.setLocale(this.language);
+    }
+    return context;
   }
 }
 

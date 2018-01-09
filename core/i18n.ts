@@ -12,7 +12,7 @@ export function __(context: ContextHandler | Context, key: string, params?: KeyV
     context = context.getContext();
   }
 
-  let message = context.getLocale().getMessage(key);
+  const message = context.getLocale().getMessage(key);
   if (typeof message == 'string') {
     if (message && message.indexOf('${') != -1) {
       return _.template(message)(params || {});
