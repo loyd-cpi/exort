@@ -71,7 +71,7 @@ export abstract class SqlService<T extends Model> extends Service {
       const result = await builder._getRawAndEntities();
       if (Array.isArray(result.entities) && result.entities.length) {
         const transformer = new Transformer(this.connection);
-        await transformer.transformAll(entityClass, context, result.entities);
+        await transformer.transformAll(entityClass, context, result.entities, result.raw);
       }
 
       return result;
